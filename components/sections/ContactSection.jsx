@@ -1,0 +1,69 @@
+import SectionHeader from "@/components/ui/SectionHeader";
+import Reveal from "@/components/ui/Reveal";
+import StartProjectForm from "@/components/start/StartProjectForm";
+import { SITE } from "@/lib/site";
+
+const SOCIALS = ["Instagram", "LinkedIn", "YouTube", "X / Twitter"];
+
+export default function ContactSection() {
+  return (
+    <div id="start" className="scroll-mt-24">
+      <SectionHeader
+        index="05"
+        eyebrow="Start a project"
+        title="Tell us what you're"
+        accent="building."
+        blurb="Whether it's one film or an always-on content engine, we'll tell you exactly how we'd do it. No decks, no runaround."
+      />
+
+      {/* Form + info */}
+      <section className="container-px pb-24 pt-10 lg:pb-32">
+        <div className="grid grid-cols-12 gap-y-12 lg:gap-x-16">
+          <div className="col-span-12 lg:col-span-7">
+            <Reveal>
+              <StartProjectForm />
+            </Reveal>
+          </div>
+
+          <aside className="col-span-12 lg:col-span-5">
+            <Reveal delay={0.1}>
+              <div className="panel p-8 lg:p-10">
+                <p className="eyebrow mb-6">What happens next</p>
+                <p className="text-lg leading-relaxed text-bone">
+                  We reply within 24 hours with a{" "}
+                  <span className="font-serif italic text-gold-gradient">point of view</span>, not a
+                  sales pitch.
+                </p>
+                <p className="mt-4 text-sm leading-relaxed text-bone-dim">
+                  Every brief gets a real answer from a human: a straight read on how we&apos;d
+                  approach it, what it would take, and whether we&apos;re the right studio for it.
+                </p>
+
+                <div className="mt-8 border-t border-white/[0.07] pt-6">
+                  <p className="text-sm text-bone-dim">Prefer email?</p>
+                  <a
+                    href={`mailto:${SITE.email}`}
+                    className="mt-1 inline-block rounded-sm font-mono text-sm text-gold-300 transition-colors hover:text-gold-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-400"
+                  >
+                    {SITE.email}
+                  </a>
+                </div>
+
+                <div className="mt-6 border-t border-white/[0.07] pt-6">
+                  <p className="eyebrow mb-3">Find us</p>
+                  <div className="flex flex-wrap gap-x-5 gap-y-2">
+                    {SOCIALS.map((s) => (
+                      <span key={s} className="text-sm text-bone-dim">
+                        {s}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </Reveal>
+          </aside>
+        </div>
+      </section>
+    </div>
+  );
+}

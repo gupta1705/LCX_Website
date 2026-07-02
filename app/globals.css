@@ -1,0 +1,119 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --gold: #c9923d;
+  --gold-bright: #f1d08a;
+  --ink: #0a0908;
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--ink);
+  color: #f4f1ea;
+  /* Subtle warm vignette + grain sit behind the 3D canvas fallback */
+  background-image:
+    radial-gradient(120% 80% at 50% -10%, rgba(201, 146, 61, 0.10), transparent 60%),
+    radial-gradient(80% 60% at 100% 110%, rgba(201, 146, 61, 0.06), transparent 55%);
+  overflow-x: hidden;
+}
+
+@layer components {
+  .container-px {
+    @apply mx-auto w-full max-w-container px-5 sm:px-8 lg:px-10;
+  }
+
+  /* Mono eyebrow / technical label, Axiom-style */
+  .eyebrow {
+    @apply font-mono text-[11px] uppercase tracking-[0.32em] text-gold-300;
+  }
+
+  /* Gold gradient text for accent words */
+  .text-gold-gradient {
+    background-image: linear-gradient(100deg, #f7e3b5 0%, #e8b96a 35%, #c9923d 70%, #f1d08a 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .text-gold-shimmer {
+    background-image: linear-gradient(100deg, #c9923d, #f7e3b5, #c9923d);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    @apply animate-shimmer;
+  }
+
+  /* Hairline divider */
+  .hairline {
+    @apply h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent;
+  }
+
+  /* Glass panel used for cards over the dark scene */
+  .panel {
+    @apply rounded-2xl border border-white/[0.07] bg-white/[0.025] backdrop-blur-sm;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .border-gold-soft {
+    border-color: rgba(201, 146, 61, 0.22);
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 9px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0908;
+}
+::-webkit-scrollbar-thumb {
+  background: #2a261d;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #825922;
+}
+
+::selection {
+  background: rgba(201, 146, 61, 0.3);
+  color: #fff;
+}
+
+/* Forced-colors / Windows High Contrast: gradient-clipped text would render
+   invisible (transparent color + dropped background), so restore a system color. */
+@media (forced-colors: active) {
+  .text-gold-gradient,
+  .text-gold-shimmer {
+    background: none !important;
+    color: CanvasText !important;
+    -webkit-text-fill-color: CanvasText !important;
+  }
+}
+
+/* Respect reduced motion globally */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
