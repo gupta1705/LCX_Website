@@ -16,7 +16,7 @@ import { CTA } from "@/lib/site";
 const TICKS = ["left-0 top-0", "right-0 top-0 rotate-90", "right-0 bottom-0 rotate-180", "left-0 bottom-0 -rotate-90"];
 
 export default function SystemCard({ system, index, last = false }) {
-  const { name, status, live, blurb, pipeline, href, linkLabel } = system;
+  const { name, live, blurb, pipeline, href, linkLabel } = system;
   const num = String(index + 1).padStart(2, "0");
   const serial = String(index - 3).padStart(2, "0");
 
@@ -36,16 +36,7 @@ export default function SystemCard({ system, index, last = false }) {
 
       {/* the entry */}
       <Cell className="flex flex-col lg:col-span-5" delay={0.18}>
-        <div className="flex items-center gap-2.5">
-          <span className="relative flex h-2 w-2">
-            {live && (
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-gold-400/60" />
-            )}
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-gold-400" />
-          </span>
-          <span className="font-mono text-[11px] uppercase tracking-[0.28em] text-gold-300">{status}</span>
-        </div>
-        <h4 className="mt-4 font-sans text-[clamp(1.9rem,3.25vw,2.875rem)] font-medium leading-[1.05] tracking-tighter text-bone">
+        <h4 className="font-sans text-[clamp(1.9rem,3.25vw,2.875rem)] font-medium leading-[1.05] tracking-tighter text-bone">
           <span className="mr-3 font-serif text-[0.8em] italic text-gold-gradient lg:hidden">{num}.</span>
           {name}
         </h4>
