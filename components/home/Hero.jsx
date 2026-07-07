@@ -50,7 +50,7 @@ export default function Hero() {
             <span aria-hidden="true">
               We make
               <br />
-              <span className="relative block h-[1.18em] overflow-hidden">
+              <span className="relative block h-[1.75em] overflow-hidden">
                 {WORDS.map((word, i) => (
                   <motion.span
                     key={word}
