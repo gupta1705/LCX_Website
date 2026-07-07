@@ -17,19 +17,26 @@ import { CTA } from "@/lib/site";
 /** Plain play control — a circular button with the play glyph, nothing else. */
 function Aperture({ reduce }) {
   return (
-    <span className="relative grid h-16 w-16 place-items-center rounded-full bg-ink-800/70 text-gold-200 backdrop-blur-sm transition-colors duration-300 group-hover/poster:bg-gold-500 group-hover/poster:text-ink-900">
+    <span className="relative grid h-16 w-16 place-items-center rounded-full border border-gold-soft bg-ink-900 text-gold-200 transition-colors duration-300 group-hover/poster:border-gold-500 group-hover/poster:bg-gold-500 group-hover/poster:text-ink-900">
       <Play className="ml-0.5 h-6 w-6" strokeWidth={1.5} aria-hidden="true" />
     </span>
   );
 }
 
-function Poster({ youtubeId, thumbnail, href, onPlay, title, reduce }) {
+function Poster({ youtubeId, thumbnail, thumbnailBg, href, onPlay, title, reduce }) {
   const src = thumbnail || (youtubeId ? `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg` : null);
+  // A supplied `thumbnail` (brand logo, arbitrary still) can be any aspect
+  // ratio and must never crop; only a YouTube frame grab is reliably 16:9.
+  // object-contain never crops, but can letterbox — thumbnailBg (sampled
+  // from the asset's own background) fills that margin so it reads as a
+  // full-bleed frame instead of a visible seam.
+  const fit = thumbnail ? "object-contain" : "object-cover";
   const media = src ? (
     <img
       src={src}
       alt=""
-      className="absolute inset-0 h-full w-full object-cover opacity-80 transition-opacity duration-500 group-hover/poster:opacity-100"
+      style={thumbnailBg ? { backgroundColor: thumbnailBg } : undefined}
+      className={`absolute inset-0 h-full w-full ${fit} opacity-80 transition-opacity duration-500 group-hover/poster:opacity-100`}
     />
   ) : (
     <div className="absolute inset-0 bg-[radial-gradient(120%_90%_at_30%_0%,rgba(201,146,61,0.15),transparent_60%)]" />
@@ -58,7 +65,7 @@ function Poster({ youtubeId, thumbnail, href, onPlay, title, reduce }) {
 }
 
 export default function FilmCard({ film, index, flip = false, last = false }) {
-  const { title, tag, status, blurb, idea, metric, youtubeId, thumbnail, href, linkLabel } = film;
+  const { title, tag, blurb, idea, metric, youtubeId, thumbnail, thumbnailBg, href, linkLabel } = film;
   const [playing, setPlaying] = useState(false);
   const reduce = useReducedMotion();
   const watchHref = href || CTA.href;
@@ -122,6 +129,7 @@ export default function FilmCard({ film, index, flip = false, last = false }) {
             <Poster
               youtubeId={youtubeId}
               thumbnail={thumbnail}
+              thumbnailBg={thumbnailBg}
               href={watchHref}
               onPlay={youtubeId ? () => setPlaying(true) : null}
               title={title}
@@ -134,12 +142,6 @@ export default function FilmCard({ film, index, flip = false, last = false }) {
             <span aria-hidden="true" className="pointer-events-none absolute inset-3 rounded-[2px] ring-1 ring-white/10" />
           )}
 
-          {status && !playing && (
-            <span className="pointer-events-none absolute right-3 top-3 z-10 inline-flex items-center gap-1.5 border border-gold-soft bg-ink-900/70 px-2.5 py-1 font-mono text-[11px] uppercase tracking-[0.2em] text-gold-300 backdrop-blur-sm">
-              <span className="h-1.5 w-1.5 rounded-full bg-gold-400" aria-hidden="true" />
-              {status}
-            </span>
-          )}
         </div>
       </Cell>
     </article>

@@ -48,13 +48,30 @@ export default function SystemCard({ system, index, last = false }) {
 
       {/* the machine readout */}
       <Cell className="flex flex-col lg:col-span-5" delay={0.26}>
-        <div className="group/readout relative overflow-hidden rounded-sm border border-gold-soft bg-ink-900/60 px-5 py-4">
+        <div className="group/readout relative w-full max-w-[380px] overflow-hidden rounded-sm border border-gold-soft bg-ink-800 px-5 py-4">
+          {/* engraved blueprint grid — a technical plate, opaque, nothing
+              bleeds through it (the opposite of frosted glass) */}
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0"
+            style={{
+              backgroundImage:
+                "linear-gradient(rgba(232,185,106,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(232,185,106,0.07) 1px, transparent 1px)",
+              backgroundSize: "24px 24px",
+            }}
+          />
+          {/* raking top light — a faint machined sheen on the plate */}
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-white/[0.05] to-transparent"
+          />
+
           {/* schematic corner ticks */}
           {TICKS.map((pos) => (
             <span
               key={pos}
               aria-hidden="true"
-              className={`pointer-events-none absolute h-2.5 w-2.5 border-l border-t border-gold-500/40 ${pos}`}
+              className={`pointer-events-none absolute z-10 h-2.5 w-2.5 border-l border-t border-gold-500/40 ${pos}`}
             />
           ))}
 
@@ -62,15 +79,17 @@ export default function SystemCard({ system, index, last = false }) {
           {live && (
             <span
               aria-hidden="true"
-              className="absolute left-0 top-0 h-px w-2/5 bg-gradient-to-r from-transparent via-gold-300 to-transparent motion-safe:animate-scanline"
+              className="absolute left-0 top-0 z-10 h-px w-2/5 bg-gradient-to-r from-transparent via-gold-300 to-transparent motion-safe:animate-scanline"
             />
           )}
 
-          <PipelineDiagram variant={live ? "loop" : "fanout"} gid={`pipe-${index}`} />
-
-          <p className="mt-3 font-mono text-[clamp(0.68rem,1.1vw,0.8rem)] uppercase tracking-[0.14em] text-gold-200">
-            {pipeline}
-          </p>
+          {/* content sits above the etched grid */}
+          <div className="relative">
+            <PipelineDiagram variant={live ? "loop" : "fanout"} gid={`pipe-${index}`} />
+            <p className="mt-3 font-mono text-[clamp(0.68rem,1.1vw,0.8rem)] uppercase tracking-[0.14em] text-gold-200">
+              {pipeline}
+            </p>
+          </div>
         </div>
 
         {linkLabel && (

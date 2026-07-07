@@ -27,13 +27,16 @@ const FILMS = [
       "A cinematic spot for a brand we love. Concept film, self-initiated, not affiliated with Chaayos.",
     youtubeId: "JCCdgJLM_Ag",
     thumbnail: "/work/chaayos-logo.png", // drop the brand logo here, see checklist above
+    thumbnailBg: "#018c36", // sampled from the logo's own background, blends the contain-fit margin
   },
   {
     title: "Laxmipati Sarees",
     tag: "Concept film",
     blurb:
       "Premium, traditional, and shot without a set. Concept film, self-initiated, not affiliated with Laxmipati.",
-    // youtubeId: "",
+    youtubeId: "q7iT_ydwMNw",
+    thumbnail: "/work/laxmipati-logo.png",
+    thumbnailBg: "#fefefe", // sampled from the logo's own background
   },
   {
     title: "Coffee Monster",
@@ -42,7 +45,8 @@ const FILMS = [
     blurb: "An animated micro-drama we write, produce, and publish ourselves.",
     linkLabel: "Watch on Instagram",
     href: "https://www.instagram.com/reel/DY9v1M6tWn-/",
-    thumbnail: "/work/coffee-monster.jpg", // drop a cover frame here, see checklist above
+    thumbnail: "/work/coffee-logo.png",
+    thumbnailBg: "#000000", // sampled from the logo's own background
   },
   {
     title: "The PukiPoo Song",
