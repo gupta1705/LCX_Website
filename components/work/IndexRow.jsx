@@ -53,10 +53,10 @@ export function Cell({ className = "", delay = 0, children }) {
 export function IndexNumeral({ n }) {
   return (
     <div className="grid select-none" aria-hidden="true">
-      <span className="[grid-area:1/1] font-serif italic text-[clamp(3.5rem,7.5vw,6rem)] leading-[0.8] tracking-[-0.04em] text-bone/[0.14] transition-opacity duration-[600ms] ease-out-expo group-hover:opacity-40">
+      <span className="[grid-area:1/1] font-serif italic text-[clamp(3.5rem,7.5vw,8.5rem)] leading-[0.8] tracking-[-0.04em] text-bone/[0.14] transition-opacity duration-[600ms] ease-out-expo group-hover:opacity-40">
         {n}
       </span>
-      <span className="[grid-area:1/1] font-serif italic text-[clamp(3.5rem,7.5vw,6rem)] leading-[0.8] tracking-[-0.04em] text-gold-gradient opacity-0 transition-all duration-[600ms] ease-out-expo group-hover:-translate-y-[3px] group-hover:opacity-100 motion-reduce:group-hover:translate-y-0">
+      <span className="[grid-area:1/1] font-serif italic text-[clamp(3.5rem,7.5vw,8.5rem)] leading-[0.8] tracking-[-0.04em] text-gold-gradient opacity-0 transition-all duration-[600ms] ease-out-expo group-hover:-translate-y-[3px] group-hover:opacity-100 motion-reduce:group-hover:translate-y-0">
         {n}
       </span>
     </div>

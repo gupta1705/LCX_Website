@@ -45,7 +45,7 @@ export default function SystemCard({ system, index, last = false }) {
           </span>
           <span className="font-mono text-[11px] uppercase tracking-[0.28em] text-gold-300">{status}</span>
         </div>
-        <h4 className="mt-4 font-sans text-[clamp(1.9rem,3.6vw,3rem)] font-medium leading-[1.05] tracking-tighter text-bone">
+        <h4 className="mt-4 font-sans text-[clamp(1.9rem,3.6vw,4.25rem)] font-medium leading-[1.05] tracking-tighter text-bone">
           <span className="mr-3 font-serif text-[0.8em] italic text-gold-gradient lg:hidden">{num}.</span>
           {name}
         </h4>

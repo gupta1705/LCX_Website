@@ -41,7 +41,7 @@ export default function Hero() {
         >
           <motion.h1
             variants={item}
-            className="font-sans text-[clamp(2.6rem,7vw,5.4rem)] font-medium leading-[0.98] tracking-tightest text-bone"
+            className="font-sans text-[clamp(2.6rem,7vw,8rem)] font-medium leading-[0.98] tracking-tightest text-bone"
           >
             {/* one clean sentence for screen readers; the visual cycle is hidden from AT */}
             <span className="sr-only">
