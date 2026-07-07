@@ -50,28 +50,34 @@ export default function Hero() {
             <span aria-hidden="true">
               We make
               <br />
-              <span className="relative block h-[1.75em] overflow-hidden">
-                {WORDS.map((word, i) => (
-                  <motion.span
-                    key={word}
-                    className="absolute inset-x-0 top-0 flex h-full items-center font-serif italic text-gold-gradient"
-                    initial={false}
-                    animate={
-                      reduced
-                        ? { y: 0, opacity: index === i ? 1 : 0 }
-                        : index === i
-                          ? { y: "0%", opacity: 1 }
-                          : { y: index > i ? "-110%" : "110%", opacity: 0 }
-                    }
-                    transition={
-                      reduced
-                        ? { duration: 0.4, ease: "easeInOut" }
-                        : { type: "spring", stiffness: 55, damping: 13 }
-                    }
-                  >
-                    {word}
-                  </motion.span>
-                ))}
+              {/* Outer span sets the visible line gap (tight); the inner span
+                  is taller and does the actual clipping, so Besley's deep
+                  descenders (campaigns, systems) have room without stretching
+                  the layout gap between "We make" and "that go viral." */}
+              <span className="relative block h-[1.08em]">
+                <span className="absolute inset-x-0 -top-[0.36em] -bottom-[0.36em] overflow-hidden">
+                  {WORDS.map((word, i) => (
+                    <motion.span
+                      key={word}
+                      className="absolute inset-x-0 top-0 flex h-full items-center font-serif italic text-gold-gradient"
+                      initial={false}
+                      animate={
+                        reduced
+                          ? { y: 0, opacity: index === i ? 1 : 0 }
+                          : index === i
+                            ? { y: "0%", opacity: 1 }
+                            : { y: index > i ? "-110%" : "110%", opacity: 0 }
+                      }
+                      transition={
+                        reduced
+                          ? { duration: 0.4, ease: "easeInOut" }
+                          : { type: "spring", stiffness: 55, damping: 13 }
+                      }
+                    >
+                      {word}
+                    </motion.span>
+                  ))}
+                </span>
               </span>
               that go viral.
             </span>
