@@ -1,4 +1,4 @@
-import { Schibsted_Grotesk, Besley, Fragment_Mono } from "next/font/google";
+import { Schibsted_Grotesk, Zilla_Slab, Fragment_Mono } from "next/font/google";
 import "./globals.css";
 import SceneBackground from "@/components/three/SceneBackground";
 import Navbar from "@/components/layout/Navbar";
@@ -16,11 +16,14 @@ const sans = Schibsted_Grotesk({
   display: "swap",
 });
 
-// SERIF — Besley: a Clarendon with a TRUE drawn italic. Its sturdy,
-// near-monolinear slab strokes carry the gold gradient clip at every size
-// (where a Didone's hairlines would shimmer to nothing on the dark canvas).
-const serif = Besley({
+// SERIF — Zilla Slab: sturdy, near-monolinear slab strokes (same reason
+// Besley was chosen over a Didone: hairlines shimmer to nothing on the gold
+// gradient clip), but with a plainer, less swash-heavy true italic that
+// stays legible on short display words (Besley's italic "f"/"l" swashes
+// read as extra "o" shapes at a glance).
+const serif = Zilla_Slab({
   subsets: ["latin"],
+  weight: ["400", "500", "600"],
   style: ["normal", "italic"],
   variable: "--font-serif",
   display: "swap",
