@@ -13,7 +13,7 @@ export default function ContactSection() {
         eyebrow="Start a project"
         title="Tell us what you're"
         accent="building."
-        blurb="Whether it's one film or an always-on content engine, we'll tell you exactly how we'd do it. No decks, no runaround."
+        blurb="Whether it's one film or a content engine, we'll tell you how we'd do it. No decks, no runaround."
       />
 
       {/* Form + info */}
@@ -35,8 +35,8 @@ export default function ContactSection() {
                   sales pitch.
                 </p>
                 <p className="mt-4 text-sm leading-relaxed text-bone-dim">
-                  Every brief gets a real answer from a human: a straight read on how we&apos;d
-                  approach it, what it would take, and whether we&apos;re the right studio for it.
+                  Every brief gets an answer from a human: how we&apos;d approach it, what it would
+                  take, and whether we&apos;re the studio for it.
                 </p>
 
                 <div className="mt-8 border-t border-white/[0.07] pt-6">

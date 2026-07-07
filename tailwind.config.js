@@ -40,9 +40,11 @@ module.exports = {
         serif: ["var(--font-serif)", "Georgia", "serif"],
         mono: ["var(--font-mono)", "ui-monospace", "monospace"],
       },
+      // Schibsted Grotesk sets tighter than the old sans; -0.045em welds
+      // closed apertures at display sizes, so the ladder relaxes a notch.
       letterSpacing: {
-        tightest: "-0.045em",
-        tighter: "-0.03em",
+        tightest: "-0.03em",
+        tighter: "-0.02em",
       },
       maxWidth: {
         container: "1240px",
@@ -64,12 +66,17 @@ module.exports = {
           "0%, 100%": { opacity: "0.35" },
           "50%": { opacity: "0.9" },
         },
+        scanline: {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(350%)" },
+        },
       },
       animation: {
         "fade-up": "fade-up 0.8s cubic-bezier(0.16,1,0.3,1) both",
         shimmer: "shimmer 6s linear infinite",
         marquee: "marquee 38s linear infinite",
         "pulse-soft": "pulse-soft 3.5s ease-in-out infinite",
+        scanline: "scanline 3.2s ease-in-out infinite",
       },
       transitionTimingFunction: {
         "out-expo": "cubic-bezier(0.16,1,0.3,1)",

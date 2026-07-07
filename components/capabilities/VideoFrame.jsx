@@ -48,7 +48,7 @@ export default function VideoFrame({
         </span>
       </Link>
 
-      <span className="pointer-events-none absolute bottom-4 left-5 font-mono text-[10px] uppercase tracking-[0.28em] text-bone-dim">
+      <span className="pointer-events-none absolute bottom-4 left-5 font-mono text-[11px] uppercase tracking-[0.28em] text-bone-dim">
         {caption}
       </span>
     </div>

@@ -86,26 +86,31 @@ const smoothstep = (f) => f * f * (3 - 2 * f);
 // p = position, s = scale (zoom), r = base rotation (rad). rotY climbs
 // monotonically so scrolling always reads as continuous rotation.
 const KEYS = [
-  { p: [2.4, 0.2, 0], s: 1.15, r: [0.5, 0.0, 0.2] }, // hero: butterfly face-on, right of centre
-  { p: [-2.6, 0.7, -0.4], s: 0.75, r: [0.2, 1.5, -0.15] }, // drift left + shrink, swing edge-on (compressed sliver)
-  { p: [-1.4, -0.3, 0.5], s: 2.4, r: [0.85, 2.4, 0.3] }, // dive into a wing: rings fill the left flank
-  { p: [2.4, -0.5, -0.3], s: 1.3, r: [0.4, 3.5, -0.2] }, // pull back out wide on the right
-  { p: [-0.9, 0.4, 0.4], s: 2.8, r: [1.15, 4.6, 0.1] }, // second dive: bands sweep the edges
-  { p: [1.2, -0.4, 0], s: 1.2, r: [0.5, 5.6, 0.2] }, // settle centre-right, face-on again
+  { p: [2.4, 0.2, 0], s: 1.35, r: [0.5, 0.0, 0.2] }, // hero: butterfly face-on, right of centre
+  { p: [1.2, -0.3, 0.4], s: 1.95, r: [0.75, 0.7, -0.1] }, // quick punch-in off the hero: zoom + tip
+  { p: [-0.6, 0.6, -0.3], s: 1.5, r: [0.35, 1.4, 0.15] }, // pull back out, drift across centre
+  { p: [-2.4, 0.6, -0.3], s: 1.4, r: [0.2, 2.2, -0.15] }, // left, swing edge-on
+  { p: [-1.4, -0.3, 0.5], s: 2.6, r: [0.85, 3.0, 0.3] }, // dive into a wing: rings fill the left flank
+  { p: [0.8, 0.3, 0.2], s: 1.75, r: [0.55, 3.8, -0.1] }, // pull out through the centre
+  { p: [2.3, -0.5, -0.3], s: 1.65, r: [0.4, 4.6, -0.2] }, // wide on the right
+  { p: [-0.9, 0.4, 0.4], s: 2.9, r: [1.15, 5.5, 0.1] }, // second dive: bands sweep the edges
+  { p: [-2.1, -0.2, -0.2], s: 1.5, r: [0.7, 6.4, -0.15] }, // pull back, far left
+  { p: [0.6, 0.6, 0.3], s: 2.05, r: [0.95, 7.3, 0.15] }, // swoop back in, mid-close
+  { p: [1.2, -0.4, 0], s: 1.55, r: [0.5, 8.2, 0.2] }, // settle centre-right, face-on again
 ];
 
 // Cursor radii in WORLD units — divided by the group scale each frame so the
 // eye and the highlight stay a constant size on screen at any zoom. The eye is
 // carved as a CYLINDER along the cursor's sight-line, so filaments at every
 // depth part around it (a clean hole, not a dent at one depth plane).
-const HIGHLIGHT_R = 2.6; // radius the cursor lights up
-const REPEL_R = 1.8; // influence radius — cleared void ≈ R − R²/(4·PUSH) ≈ 1.2
-const REPEL_PUSH = 1.4; // outward push; the primary void-size knob (keep ≤ REPEL_R)
+const HIGHLIGHT_R = 1.9; // radius the cursor lights up
+const REPEL_R = 1.1; // influence radius — cleared void ≈ R − R²/(4·PUSH) ≈ 0.75
+const REPEL_PUSH = 0.85; // outward push; the primary void-size knob (keep ≤ REPEL_R)
 
 // Scroll body language — while the page is actually moving the form spins a
 // touch faster and compresses slightly, relaxing open when the scroll rests
 // (rotate → compress → expand, matching the Axiom reference).
-const SWIRL_GAIN = 1.0; // extra spin (rad/s) at full scroll speed
+const SWIRL_GAIN = 1.4; // extra spin (rad/s) at full scroll speed
 const COMPRESS = 0.12; // max scale compression while scrolling
 
 // Travelling glow — a bright arc of the filament that runs along the curve
@@ -208,9 +213,9 @@ function LorenzAttractor() {
     const kf = smoothstep(kt - ki);
     const KA = KEYS[ki];
     const KB = KEYS[ki + 1];
-    g.position.x += (KA.p[0] + (KB.p[0] - KA.p[0]) * kf - g.position.x) * 0.05;
-    g.position.y += (KA.p[1] + (KB.p[1] - KA.p[1]) * kf - g.position.y) * 0.05;
-    g.position.z += (KA.p[2] + (KB.p[2] - KA.p[2]) * kf - g.position.z) * 0.05;
+    g.position.x += (KA.p[0] + (KB.p[0] - KA.p[0]) * kf - g.position.x) * 0.085;
+    g.position.y += (KA.p[1] + (KB.p[1] - KA.p[1]) * kf - g.position.y) * 0.085;
+    g.position.z += (KA.p[2] + (KB.p[2] - KA.p[2]) * kf - g.position.z) * 0.085;
     const tS = KA.s + (KB.s - KA.s) * kf;
     const tRx = KA.r[0] + (KB.r[0] - KA.r[0]) * kf;
     const tRy = KA.r[1] + (KB.r[1] - KA.r[1]) * kf;
@@ -219,9 +224,9 @@ function LorenzAttractor() {
     // ambient spin layered on the keyframed pose — faster while scrolling, and
     // the form compresses slightly in motion, relaxing open at rest
     ambient.current += delta * (0.05 + swirl.current * SWIRL_GAIN);
-    g.rotation.x += (tRx + pointer.y * 0.4 - g.rotation.x) * 0.06;
-    g.rotation.y += (tRy + ambient.current - g.rotation.y) * 0.06;
-    g.rotation.z += (tRz + pointer.x * 0.3 - g.rotation.z) * 0.06;
+    g.rotation.x += (tRx + pointer.y * 0.4 - g.rotation.x) * 0.095;
+    g.rotation.y += (tRy + ambient.current - g.rotation.y) * 0.095;
+    g.rotation.z += (tRz + pointer.x * 0.3 - g.rotation.z) * 0.095;
     g.scale.setScalar(
       tS * (1 + Math.sin(t * 0.4) * 0.02) * (1 - COMPRESS * Math.min(swirl.current, 1)),
     );

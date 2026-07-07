@@ -1,27 +1,36 @@
-import { Inter, Instrument_Serif, JetBrains_Mono } from "next/font/google";
+import { Schibsted_Grotesk, Besley, Fragment_Mono } from "next/font/google";
 import "./globals.css";
 import SceneBackground from "@/components/three/SceneBackground";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 
-const sans = Inter({
+// "The Engraved Ledger" type system — three rarely-used faces, one idea:
+// the site behaves like an engraved certificate of value (gold on near-black,
+// serial plates, schematic readouts), so the type is set like one.
+
+// SANS — Schibsted Grotesk: a Scandinavian news grotesque with real character.
+// Variable wght 400-900, so font-medium/font-semibold map natively.
+const sans = Schibsted_Grotesk({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
   variable: "--font-sans",
   display: "swap",
 });
 
-const serif = Instrument_Serif({
+// SERIF — Besley: a Clarendon with a TRUE drawn italic. Its sturdy,
+// near-monolinear slab strokes carry the gold gradient clip at every size
+// (where a Didone's hairlines would shimmer to nothing on the dark canvas).
+const serif = Besley({
   subsets: ["latin"],
-  weight: "400",
   style: ["normal", "italic"],
   variable: "--font-serif",
   display: "swap",
 });
 
-const mono = JetBrains_Mono({
+// MONO — Fragment Mono: a monospaced Helvetica, cold and instrument-panel
+// precise. Fixed 400 only; label hierarchy is done with color, not weight.
+const mono = Fragment_Mono({
   subsets: ["latin"],
-  weight: ["400", "500"],
+  weight: "400",
   variable: "--font-mono",
   display: "swap",
 });

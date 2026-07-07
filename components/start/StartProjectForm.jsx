@@ -142,14 +142,14 @@ export default function StartProjectForm() {
           name="message"
           rows={5}
           required
-          placeholder="One film or an always-on engine? Tell us what you're building, the timeline, and what 'viral' looks like for you…"
+          placeholder="One film or a content engine? Tell us what you're building, the timeline, and what 'viral' looks like for you…"
           className={`${field} resize-none`}
         />
       </div>
 
       <button
         type="submit"
-        className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-gold-500 px-7 py-4 text-sm font-medium text-ink-900 transition-all duration-300 hover:bg-gold-300 hover:shadow-[0_0_42px_-8px_rgba(233,185,106,0.7)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-400 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-900 sm:w-auto"
+        className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-gold-500 px-7 py-4 text-sm font-medium text-ink-900 transition-all duration-300 ease-out-expo hover:bg-gold-300 hover:shadow-[0_0_42px_-8px_rgba(233,185,106,0.7)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-400 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-900 active:scale-[0.98] sm:w-auto"
       >
         Send the brief
         <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />

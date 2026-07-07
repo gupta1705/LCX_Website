@@ -16,7 +16,7 @@ export default function WorkCard({ caseItem, wide = false }) {
   const VisualIcon = category === "Automation" ? Workflow : LayoutGrid;
 
   return (
-    <article className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/[0.07] bg-white/[0.02] backdrop-blur-sm transition-all duration-500 ease-out-expo hover:border-gold-soft hover:bg-white/[0.04]">
+    <article className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/[0.07] bg-white/[0.02] backdrop-blur-sm transition-all duration-500 ease-out-expo hover:-translate-y-1.5 hover:border-gold-soft hover:bg-white/[0.04] hover:shadow-[0_24px_60px_-30px_rgba(0,0,0,0.9)]">
       {/* hover wash — own overflow-hidden wrapper */}
       <span className="pointer-events-none absolute inset-0 overflow-hidden rounded-2xl">
         <span className="absolute -right-16 -top-16 h-44 w-44 rounded-full bg-gold-500/0 blur-3xl transition-all duration-700 group-hover:bg-gold-500/15" />

@@ -64,7 +64,7 @@ export default function AboutSection() {
         eyebrow="About"
         title="Inside the"
         accent="Lab."
-        blurb="A creative studio, not a software vendor, built by storytellers. Here's why we exist, how we think, and who does the work."
+        blurb="A studio, not a software vendor, built by storytellers. Here's why we exist, how we think, and who does the work."
       />
 
       {/* The origin */}
@@ -92,10 +92,10 @@ export default function AboutSection() {
 
             <div className="col-span-12 lg:col-span-8">
               <Reveal>
-                <p className="text-balance font-sans text-[clamp(1.7rem,3.4vw,2.9rem)] font-light leading-[1.22] tracking-tighter text-bone">
-                  The Viral Labs started with a simple frustration: the world&apos;s best AI tools
-                  were in the hands of people who didn&apos;t understand why some things go viral and
-                  most don&apos;t. So we put them in the hands of{" "}
+                <p className="text-balance font-sans text-[clamp(1.7rem,3.4vw,2.9rem)] font-normal leading-[1.22] tracking-tighter text-bone">
+                  The Viral Labs started with a frustration: the world&apos;s best AI tools were in
+                  the hands of people who didn&apos;t understand why some things go viral and most
+                  don&apos;t. So we put them in the hands of{" "}
                   <span className="font-serif italic text-gold-gradient">people who do.</span>
                 </p>
               </Reveal>
@@ -115,7 +115,7 @@ export default function AboutSection() {
             </div>
             <div className="col-span-12 lg:col-span-8">
               <Reveal>
-                <p className="text-balance font-sans text-[clamp(1.6rem,3.2vw,2.6rem)] font-light leading-[1.25] tracking-tighter text-bone">
+                <p className="text-balance font-sans text-[clamp(1.6rem,3.2vw,2.6rem)] font-normal leading-[1.25] tracking-tighter text-bone">
                   We&apos;re a{" "}
                   <span className="font-serif italic text-gold-gradient">
                     studio, not a software vendor.
@@ -207,7 +207,7 @@ export default function AboutSection() {
       {/* Closing one-liner */}
       <section className="container-px pb-8 pt-4 lg:pb-12">
         <Reveal>
-          <p className="max-w-3xl text-balance font-sans text-[clamp(1.5rem,3vw,2.4rem)] font-light leading-[1.25] tracking-tighter text-bone">
+          <p className="max-w-3xl text-balance font-sans text-[clamp(1.5rem,3vw,2.4rem)] font-normal leading-[1.25] tracking-tighter text-bone">
             The tools get better every week. Knowing{" "}
             <span className="font-serif italic text-gold-gradient">why it works</span> doesn&apos;t
             come in an update.

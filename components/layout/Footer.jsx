@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
+import Magnetic from "@/components/ui/Magnetic";
 import { NAV_LINKS, CTA, SITE } from "@/lib/site";
 
 export default function Footer() {
@@ -17,13 +18,15 @@ export default function Footer() {
               </span>
             </h2>
           </div>
-          <Link
-            href={CTA.href}
-            className="group inline-flex shrink-0 items-center gap-2 rounded-full bg-gold-500 px-7 py-4 text-sm font-medium text-ink-900 transition-colors duration-300 hover:bg-gold-300"
-          >
-            {CTA.label}
-            <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-          </Link>
+          <Magnetic className="shrink-0">
+            <Link
+              href={CTA.href}
+              className="group inline-flex items-center gap-2 rounded-full bg-gold-500 px-7 py-4 text-sm font-medium text-ink-900 transition-all duration-300 ease-out-expo hover:bg-gold-300 hover:shadow-[0_0_46px_-8px_rgba(233,185,106,0.7)] active:scale-[0.97]"
+            >
+              {CTA.label}
+              <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </Link>
+          </Magnetic>
         </div>
 
         {/* Columns */}
@@ -35,13 +38,13 @@ export default function Footer() {
               </span>
             </div>
             <p className="mt-5 max-w-sm text-balance text-sm leading-relaxed text-bone-dim">
-              An AI-native creative studio. We design, produce, and automate the
-              content that gets brands noticed, faster than an agency, sharper
-              than a tool.
+              An AI-native studio. We design, produce, and automate the content
+              that gets brands noticed, faster than an agency, sharper than a
+              tool.
             </p>
             <a
               href={`mailto:${SITE.email}`}
-              className="mt-6 inline-block font-mono text-sm text-gold-300 transition-colors hover:text-gold-100"
+              className="link-underline mt-6 inline-block font-mono text-sm text-gold-300 transition-colors hover:text-gold-100"
             >
               {SITE.email}
             </a>
@@ -54,7 +57,7 @@ export default function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm text-bone-dim transition-colors hover:text-bone"
+                    className="link-underline text-sm text-bone-dim transition-colors hover:text-bone"
                   >
                     {link.label}
                   </Link>

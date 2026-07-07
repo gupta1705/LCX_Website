@@ -1,8 +1,10 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { ArrowUpRight, Play } from "lucide-react";
+import Magnetic from "@/components/ui/Magnetic";
 import { CTA } from "@/lib/site";
 
 const EASE = [0.16, 1, 0.3, 1];
@@ -15,7 +17,19 @@ const item = {
   show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: EASE } },
 };
 
+// The rotating headline word — the four capabilities, cycling in place.
+const WORDS = ["films", "campaigns", "visuals", "systems"];
+const WORD_INTERVAL = 2200;
+
 export default function Hero() {
+  const reduced = useReducedMotion();
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const id = setInterval(() => setIndex((i) => (i + 1) % WORDS.length), WORD_INTERVAL);
+    return () => clearInterval(id);
+  }, []);
+
   return (
     <section className="relative flex min-h-[100svh] items-center overflow-hidden">
       <div className="container-px grid w-full grid-cols-12 pb-16 pt-32">
@@ -27,61 +41,76 @@ export default function Hero() {
         >
           <motion.h1
             variants={item}
-            className="text-balance font-sans text-[clamp(2.6rem,7vw,5.4rem)] font-medium leading-[0.98] tracking-tightest text-bone"
+            className="font-sans text-[clamp(2.6rem,7vw,5.4rem)] font-medium leading-[0.98] tracking-tightest text-bone"
           >
-            Story-first.
-            <br />
-            AI-powered.
-            <br />
-            <span className="font-serif italic text-gold-gradient">
-              Built to go viral.
+            {/* one clean sentence for screen readers; the visual cycle is hidden from AT */}
+            <span className="sr-only">
+              We make films, campaigns, visuals, and systems that go viral.
+            </span>
+            <span aria-hidden="true">
+              We make
+              <br />
+              <span className="relative block h-[1.18em] overflow-hidden">
+                {WORDS.map((word, i) => (
+                  <motion.span
+                    key={word}
+                    className="absolute inset-x-0 top-0 flex h-full items-center font-serif italic text-gold-gradient"
+                    initial={false}
+                    animate={
+                      reduced
+                        ? { y: 0, opacity: index === i ? 1 : 0 }
+                        : index === i
+                          ? { y: "0%", opacity: 1 }
+                          : { y: index > i ? "-110%" : "110%", opacity: 0 }
+                    }
+                    transition={
+                      reduced
+                        ? { duration: 0.4, ease: "easeInOut" }
+                        : { type: "spring", stiffness: 55, damping: 13 }
+                    }
+                  >
+                    {word}
+                  </motion.span>
+                ))}
+              </span>
+              that go viral.
             </span>
           </motion.h1>
 
           <motion.p
             variants={item}
-            className="mt-8 max-w-xl text-balance text-lg leading-relaxed text-bone-dim"
+            className="mt-8 max-w-xl text-balance font-sans text-lg font-normal leading-[1.75] text-bone-dim md:text-xl"
           >
             From a single brief to a finished campaign, we use AI to{" "}
-            <span className="font-normal text-gold-gradient">design</span>,{" "}
-            <span className="font-normal text-gold-gradient">produce</span>, and{" "}
-            <span className="font-normal text-gold-gradient">automate</span> the
+            <span className="gold-flow font-serif text-[1.05em] italic" style={{ animationDelay: "0s" }}>design</span>,{" "}
+            <span className="gold-flow font-serif text-[1.05em] italic" style={{ animationDelay: "0.4s" }}>produce</span>, and{" "}
+            <span className="gold-flow font-serif text-[1.05em] italic" style={{ animationDelay: "0.8s" }}>automate</span> the
             content that gets brands noticed.
           </motion.p>
 
           <motion.div variants={item} className="mt-10 flex flex-wrap items-center gap-3">
-            <Link
-              href="#work"
-              className="group inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.03] px-6 py-3.5 text-sm font-medium text-bone backdrop-blur-sm transition-all duration-300 hover:border-gold-soft hover:bg-white/[0.06]"
-            >
-              <Play className="h-4 w-4 text-gold-300" />
-              See our work
-            </Link>
-            <Link
-              href={CTA.href}
-              className="group inline-flex items-center gap-2 rounded-full bg-gold-500 px-6 py-3.5 text-sm font-medium text-ink-900 transition-all duration-300 hover:bg-gold-300 hover:shadow-[0_0_42px_-8px_rgba(233,185,106,0.7)]"
-            >
-              Start a project
-              <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-            </Link>
+            <Magnetic>
+              <Link
+                href="#work"
+                className="group inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.03] px-6 py-3.5 text-sm font-medium text-bone backdrop-blur-sm transition-all duration-300 ease-out-expo hover:border-gold-soft hover:bg-white/[0.06] active:scale-[0.97]"
+              >
+                <Play className="h-4 w-4 text-gold-300 transition-transform duration-300 group-hover:scale-110" />
+                See our work
+              </Link>
+            </Magnetic>
+            <Magnetic>
+              <Link
+                id="hero-start-cta"
+                href={CTA.href}
+                className="group inline-flex items-center gap-2 rounded-full bg-gold-500 px-6 py-3.5 text-sm font-medium text-ink-900 transition-all duration-300 ease-out-expo hover:bg-gold-300 hover:shadow-[0_0_42px_-8px_rgba(233,185,106,0.7)] active:scale-[0.97]"
+              >
+                Start a project
+                <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              </Link>
+            </Magnetic>
           </motion.div>
         </motion.div>
       </div>
-
-      {/* scroll cue */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.2, duration: 1 }}
-        className="absolute inset-x-0 bottom-7 flex justify-center"
-      >
-        <div className="flex flex-col items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-bone-faint">
-          Scroll
-          <span className="h-10 w-px overflow-hidden bg-white/10">
-            <span className="block h-1/2 w-full animate-pulse-soft bg-gold-400" />
-          </span>
-        </div>
-      </motion.div>
     </section>
   );
 }

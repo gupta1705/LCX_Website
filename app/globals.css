@@ -32,9 +32,10 @@ body {
     @apply mx-auto w-full max-w-container px-5 sm:px-8 lg:px-10;
   }
 
-  /* Mono eyebrow / technical label, Axiom-style */
+  /* Mono eyebrow / technical label, Axiom-style. Fragment Mono is narrower
+     than the old mono, so tracking eases a hair to keep the optical length. */
   .eyebrow {
-    @apply font-mono text-[11px] uppercase tracking-[0.32em] text-gold-300;
+    @apply font-mono text-[11px] uppercase tracking-[0.3em] text-gold-300;
   }
 
   /* Gold gradient text for accent words */
@@ -55,6 +56,50 @@ body {
     @apply animate-shimmer;
   }
 
+  /* Gold light-flow: a concentrated bright sheen sweeps across an accent word
+     and a soft ambient bloom sits under it — a glow that travels. Stagger the
+     per-word animation-delay (inline) so the light cascades through a phrase. */
+  .gold-flow {
+    background-image: linear-gradient(
+      100deg,
+      #c9923d 0%,
+      #c9923d 34%,
+      #fff4d6 50%,
+      #e8b96a 66%,
+      #c9923d 100%
+    );
+    background-size: 250% auto;
+    background-position: 50% 50%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0 7px rgba(241, 208, 138, 0.35));
+    animation: gold-flow 3.6s ease-in-out infinite;
+  }
+
+  /* Text link with an underline that draws in from the left on hover/focus
+     (custom expo easing) instead of a plain colour flip — inherits the link's
+     own colour so it works on gold or bone. */
+  .link-underline {
+    position: relative;
+  }
+  .link-underline::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    height: 1px;
+    width: 100%;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .link-underline:hover::after,
+  .link-underline:focus-visible::after {
+    transform: scaleX(1);
+  }
+
   /* Hairline divider */
   .hairline {
     @apply h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent;
@@ -72,6 +117,19 @@ body {
   }
   .border-gold-soft {
     border-color: rgba(201, 146, 61, 0.22);
+  }
+}
+
+/* The light sweep for .gold-flow — bright band travels across, then rests
+   off-frame so each glint reads as a periodic pulse rather than a constant hue
+   shift. Reverts to the centred base position when motion is reduced. */
+@keyframes gold-flow {
+  0% {
+    background-position: 210% 50%;
+  }
+  55%,
+  100% {
+    background-position: -110% 50%;
   }
 }
 
@@ -99,10 +157,12 @@ body {
    invisible (transparent color + dropped background), so restore a system color. */
 @media (forced-colors: active) {
   .text-gold-gradient,
-  .text-gold-shimmer {
+  .text-gold-shimmer,
+  .gold-flow {
     background: none !important;
     color: CanvasText !important;
     -webkit-text-fill-color: CanvasText !important;
+    filter: none !important;
   }
 }
 

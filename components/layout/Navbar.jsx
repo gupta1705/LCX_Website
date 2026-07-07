@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowUpRight, Instagram, Linkedin, Youtube, Twitter } from "lucide-react";
 import Logo from "./Logo";
+import Magnetic from "@/components/ui/Magnetic";
 import { NAV_LINKS, CTA, SITE } from "@/lib/site";
 
 // All five destinations, numbered — tab names unchanged. Single-page anchors.
@@ -20,9 +21,27 @@ const EASE = [0.76, 0, 0.24, 1];
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [activeId, setActiveId] = useState("home");
+  const [showCta, setShowCta] = useState(false);
   const reduced = useReducedMotion();
   const triggerRef = useRef(null);
   const wasOpen = useRef(false);
+
+  // The top-bar CTA stays hidden while the hero's own "Start a project" button
+  // is on screen, then animates into the top-right once it scrolls away — so
+  // the two never duplicate, and a persistent CTA is always a click away after.
+  useEffect(() => {
+    const heroCta = document.getElementById("hero-start-cta");
+    if (!heroCta) {
+      setShowCta(true); // no hero CTA on this view → keep the nav CTA available
+      return;
+    }
+    const io = new IntersectionObserver(
+      ([entry]) => setShowCta(!entry.isIntersecting),
+      { threshold: 0 },
+    );
+    io.observe(heroCta);
+    return () => io.disconnect();
+  }, []);
 
   // lock scroll + ESC while the menu is open
   useEffect(() => {
@@ -144,23 +163,40 @@ export default function Navbar() {
             <Logo size={open ? "lg" : "base"} />
           </div>
 
-          <a
-            href={CTA.href}
-            onClick={(e) => scrollToHash(e, CTA.href)}
-            className="group hidden items-center gap-1.5 rounded-full bg-gold-500 px-5 py-2.5 text-sm font-medium text-ink-900 backdrop-blur-md transition-all duration-300 hover:bg-gold-300 hover:shadow-[0_0_36px_-8px_rgba(233,185,106,0.7)] sm:inline-flex"
-          >
-            {CTA.label}
-            <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-          </a>
+          <AnimatePresence>
+            {showCta && (
+              <motion.div
+                key="nav-cta"
+                initial={reduced ? { opacity: 0 } : { opacity: 0, x: 26, scale: 0.94 }}
+                animate={{ opacity: 1, x: 0, scale: 1 }}
+                exit={reduced ? { opacity: 0 } : { opacity: 0, x: 26, scale: 0.94 }}
+                transition={{ duration: reduced ? 0.2 : 0.55, ease: EASE }}
+                className="hidden sm:block"
+              >
+                <Magnetic>
+                  <a
+                    href={CTA.href}
+                    onClick={(e) => scrollToHash(e, CTA.href)}
+                    className="group inline-flex items-center gap-1.5 rounded-full bg-gold-500 px-5 py-2.5 text-sm font-medium text-ink-900 backdrop-blur-md transition-all duration-300 ease-out-expo hover:bg-gold-300 hover:shadow-[0_0_36px_-8px_rgba(233,185,106,0.7)] active:scale-[0.96]"
+                  >
+                    {CTA.label}
+                    <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                  </a>
+                </Magnetic>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </header>
 
-      <AnimatePresence mode="wait">
+      <AnimatePresence>
         {open && (
           <CurvedMenu
+            key="menu"
             reduced={reduced}
             activeId={activeId}
             onNavigate={scrollToHash}
+            onClose={() => setOpen(false)}
           />
         )}
       </AnimatePresence>
@@ -168,7 +204,7 @@ export default function Navbar() {
   );
 }
 
-function CurvedMenu({ reduced, activeId, onNavigate }) {
+function CurvedMenu({ reduced, activeId, onNavigate, onClose }) {
   const panelRef = useRef(null);
 
   // move focus into the dialog on open
@@ -204,22 +240,33 @@ function CurvedMenu({ reduced, activeId, onNavigate }) {
   };
 
   return (
-    <motion.div
-      ref={panelRef}
-      id="site-menu"
-      role="dialog"
-      aria-modal="true"
-      aria-label="Site navigation"
-      onKeyDown={trapTab}
-      variants={slide}
-      initial="initial"
-      animate="enter"
-      exit="exit"
-      className="fixed left-0 top-0 z-40 h-[100dvh] w-screen max-w-lg bg-ink-800 shadow-[10px_0_50px_-12px_rgba(0,0,0,0.85)]"
-    >
+    <>
+      {/* dim backdrop — makes the drawer read as intentional and closes on tap */}
+      <motion.div
+        className="fixed inset-0 z-30 bg-ink-900/70 backdrop-blur-[2px]"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: reduced ? 0.2 : 0.5, ease: EASE }}
+        onClick={onClose}
+        aria-hidden="true"
+      />
+      <motion.div
+        ref={panelRef}
+        id="site-menu"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Site navigation"
+        onKeyDown={trapTab}
+        variants={slide}
+        initial="initial"
+        animate="enter"
+        exit="exit"
+        className="fixed left-0 top-0 z-40 h-[100dvh] w-[85%] max-w-[400px] bg-ink-800 shadow-[10px_0_50px_-12px_rgba(0,0,0,0.85)] sm:max-w-lg"
+      >
       <div className="flex h-full flex-col justify-between overflow-y-auto px-8 pb-8 pt-24 sm:px-12">
         <nav>
-          <p className="flex items-center gap-3 border-b border-white/10 pb-3 font-mono text-[11px] uppercase tracking-[0.32em] text-bone-faint">
+          <p className="flex items-center gap-3 border-b border-white/10 pb-3 font-mono text-[11px] uppercase tracking-[0.3em] text-bone-faint">
             Navigation
             <span className="ml-auto text-gold-400">(01 to 0{MENU_ITEMS.length})</span>
           </p>
@@ -230,7 +277,6 @@ function CurvedMenu({ reduced, activeId, onNavigate }) {
                   item={item}
                   index={i + 1}
                   active={activeId === item.href.slice(1)}
-                  reduced={reduced}
                   onNavigate={onNavigate}
                 />
               </li>
@@ -263,50 +309,35 @@ function CurvedMenu({ reduced, activeId, onNavigate }) {
       </div>
 
       <Curve reduced={reduced} />
-    </motion.div>
+      </motion.div>
+    </>
   );
 }
 
-function MenuLink({ item, index, active, reduced, onNavigate }) {
+function MenuLink({ item, index, active, onNavigate }) {
   return (
-    <motion.div
-      initial="initial"
-      whileHover={reduced ? undefined : "hover"}
-      className="group border-b border-white/10"
+    <a
+      href={item.href}
+      onClick={(e) => onNavigate(e, item.href)}
+      aria-current={active ? "true" : undefined}
+      className="group flex items-baseline gap-4 border-b border-white/10 py-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-400 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-800 md:py-6"
     >
-      <a
-        href={item.href}
-        onClick={(e) => onNavigate(e, item.href)}
-        aria-current={active ? "true" : undefined}
-        className="flex items-baseline gap-4 rounded-md py-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-400 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-800 md:py-6"
+      <span
+        className={`shrink-0 font-mono text-base tabular-nums transition-colors duration-300 ${
+          active ? "text-gold-200" : "text-gold-500/70 group-hover:text-gold-300"
+        }`}
       >
-        <span
-          className={`font-mono text-lg font-light tabular-nums transition-colors duration-300 ${
-            active ? "text-gold-200" : "text-gold-500/70 group-hover:text-gold-300"
-          }`}
-        >
-          0{index}
-        </span>
-        <motion.span
-          variants={{ initial: { x: 0 }, hover: { x: -10 } }}
-          transition={{ type: "spring", staggerChildren: 0.02, delayChildren: 0 }}
-          className={`block text-[clamp(1.7rem,6.5vw,2.7rem)] font-light uppercase leading-none tracking-tight transition-colors duration-300 ${
-            active ? "text-gold-200" : "text-bone group-hover:text-gold-100"
-          }`}
-        >
-          {item.label.split("").map((ch, i) => (
-            <motion.span
-              key={i}
-              variants={{ initial: { x: 0 }, hover: { x: 10 } }}
-              transition={{ type: "spring" }}
-              className={ch === " " ? "inline-block w-[0.32em]" : "inline-block"}
-            >
-              {ch === " " ? " " : ch}
-            </motion.span>
-          ))}
-        </motion.span>
-      </a>
-    </motion.div>
+        0{index}
+      </span>
+      {/* plain text so long labels wrap cleanly at spaces, never mid-word */}
+      <span
+        className={`block text-[clamp(1.2rem,5vw,2.4rem)] uppercase leading-[1.05] tracking-tight transition-[color,transform] duration-500 ease-out-expo group-hover:translate-x-2 ${
+          active ? "translate-x-2 text-gold-200" : "text-bone group-hover:text-gold-100"
+        }`}
+      >
+        {item.label}
+      </span>
+    </a>
   );
 }
 
