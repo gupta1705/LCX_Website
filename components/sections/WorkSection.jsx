@@ -83,7 +83,7 @@ function GroupDivider({ index, title, sub }) {
           <span className="h-px w-8 bg-gold-500/40" aria-hidden="true" />
           <span className="font-mono text-[11px] uppercase tracking-[0.3em] text-gold-300">{sub}</span>
         </div>
-        <h3 className="mt-4 font-sans text-[clamp(2rem,4.5vw,4.5rem)] font-medium tracking-tight text-bone">
+        <h3 className="mt-4 font-sans text-[clamp(2rem,4.75vw,4.25rem)] font-medium tracking-tight text-bone">
           {title}
         </h3>
       </div>

@@ -43,7 +43,7 @@ function BrandFace({ brand }) {
             className="max-h-[52%] w-auto select-none object-contain opacity-90"
           />
         ) : (
-          <span className="select-none font-sans text-[clamp(2.25rem,6vw,6rem)] font-semibold tracking-tight text-gold-gradient">
+          <span className="select-none font-sans text-[clamp(2.25rem,5vw,4rem)] font-semibold tracking-tight text-gold-gradient">
             {brand.name}
           </span>
         )}

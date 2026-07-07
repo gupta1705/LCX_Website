@@ -159,7 +159,7 @@ function StaticStack() {
               <span className="font-serif text-3xl italic text-gold-gradient">{item.num}.</span>
               <span className="font-mono text-[11px] uppercase tracking-[0.28em] text-gold-300">{item.tag}</span>
             </div>
-            <h3 className="mt-4 font-sans text-[clamp(2.6rem,6vw,7rem)] font-medium leading-[0.98] tracking-tightest text-bone">
+            <h3 className="mt-4 font-sans text-[clamp(2.6rem,6.5vw,5.75rem)] font-medium leading-[0.98] tracking-tightest text-bone">
               {item.title}
             </h3>
             <div className="relative mt-6 h-[2px] w-full max-w-[26rem] overflow-hidden rounded-full bg-white/12">
@@ -234,7 +234,7 @@ export default function CapabilitiesScroll() {
                   className="font-mono text-[11px] uppercase tracking-[0.28em] text-gold-300"
                 />
               </div>
-              <h3 className="mt-4 font-sans text-[clamp(2.6rem,6vw,7rem)] font-medium leading-[0.98] tracking-tightest text-bone">
+              <h3 className="mt-4 font-sans text-[clamp(2.6rem,6.5vw,5.75rem)] font-medium leading-[0.98] tracking-tightest text-bone">
                 <Scramble text={item.title} />
               </h3>
               <div className="relative mt-6 h-[2px] w-full max-w-[26rem] overflow-hidden rounded-full bg-white/12">

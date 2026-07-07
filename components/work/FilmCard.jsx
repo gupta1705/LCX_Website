@@ -80,7 +80,7 @@ export default function FilmCard({ film, index, flip = false, last = false }) {
 
       {/* the entry */}
       <Cell className={`flex flex-col lg:col-span-4 ${flip ? "lg:order-3" : ""}`} delay={0.18}>
-        <h4 className="font-sans text-[clamp(1.6rem,3.2vw,3.75rem)] font-medium leading-[1.05] tracking-tighter text-bone">
+        <h4 className="font-sans text-[clamp(1.6rem,3vw,2.625rem)] font-medium leading-[1.05] tracking-tighter text-bone">
           <span className="mr-3 font-serif text-[0.8em] italic text-gold-gradient lg:hidden">{num}.</span>
           {title}
         </h4>
