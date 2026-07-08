@@ -47,7 +47,7 @@ module.exports = {
         tighter: "-0.02em",
       },
       maxWidth: {
-        container: "1440px",
+        container: "1600px",
       },
       keyframes: {
         "fade-up": {
