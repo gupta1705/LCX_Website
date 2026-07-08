@@ -87,7 +87,7 @@ export default function FilmCard({ film, index, flip = false, last = false }) {
 
       {/* the entry */}
       <Cell className={`flex flex-col lg:col-span-4 ${flip ? "lg:order-3" : ""}`} delay={0.18}>
-        <h4 className="font-sans text-[clamp(1.6rem,3vw,2.625rem)] font-medium leading-[1.05] tracking-tighter text-bone">
+        <h4 className="font-sans text-[clamp(1.6rem,3vw,3.25rem)] font-medium leading-[1.05] tracking-tighter text-bone">
           <span className="mr-3 font-serif text-[0.8em] italic text-gold-gradient lg:hidden">{num}.</span>
           {title}
         </h4>
@@ -95,7 +95,7 @@ export default function FilmCard({ film, index, flip = false, last = false }) {
           <span className="text-gold-300">{tag}</span>
           {metric && <span className="text-bone-faint"> · {metric}</span>}
         </p>
-        <p className="mt-4 max-w-[44ch] text-[15px] leading-relaxed text-bone-dim">{blurb}</p>
+        <p className="mt-4 max-w-[44ch] text-[15px] leading-relaxed text-bone-dim xl:text-[17px]">{blurb}</p>
         {idea && <p className="mt-2 max-w-[44ch] text-sm leading-relaxed text-bone-faint">{idea}</p>}
         {linkLabel && (
           <a

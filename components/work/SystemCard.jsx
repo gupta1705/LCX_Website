@@ -36,14 +36,14 @@ export default function SystemCard({ system, index, last = false }) {
 
       {/* the entry */}
       <Cell className="flex flex-col lg:col-span-5" delay={0.18}>
-        <h4 className="font-sans text-[clamp(1.9rem,3.25vw,2.875rem)] font-medium leading-[1.05] tracking-tighter text-bone">
+        <h4 className="font-sans text-[clamp(1.9rem,3.25vw,3.5rem)] font-medium leading-[1.05] tracking-tighter text-bone">
           <span className="mr-3 font-serif text-[0.8em] italic text-gold-gradient lg:hidden">{num}.</span>
           {name}
         </h4>
         <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.22em] text-bone-faint">
           TVL / ENGINE / {serial}
         </p>
-        <p className="mt-4 max-w-[44ch] text-[15px] leading-relaxed text-bone-dim">{blurb}</p>
+        <p className="mt-4 max-w-[44ch] text-[15px] leading-relaxed text-bone-dim xl:text-[17px]">{blurb}</p>
       </Cell>
 
       {/* the machine readout */}

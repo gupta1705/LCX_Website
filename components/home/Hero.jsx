@@ -41,7 +41,7 @@ export default function Hero() {
         >
           <motion.h1
             variants={item}
-            className="font-sans text-[clamp(2.6rem,7.5vw,9rem)] font-medium leading-[0.98] tracking-tightest text-bone"
+            className="font-sans text-[clamp(2.6rem,7vw,8rem)] font-medium leading-[0.98] tracking-tightest text-bone"
           >
             {/* one clean sentence for screen readers; the visual cycle is hidden from AT */}
             <span className="sr-only">
@@ -85,7 +85,7 @@ export default function Hero() {
 
           <motion.p
             variants={item}
-            className="mt-8 max-w-xl text-balance font-sans text-lg font-normal leading-[1.75] text-bone-dim md:text-xl"
+            className="mt-8 max-w-xl text-balance font-sans text-lg font-normal leading-[1.75] text-bone-dim md:text-xl xl:max-w-2xl xl:text-2xl"
           >
             From a single brief to a finished campaign, we use AI to{" "}
             <span className="gold-flow font-serif text-[1.05em] italic" style={{ animationDelay: "0s" }}>design</span>,{" "}

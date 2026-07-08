@@ -92,7 +92,7 @@ export default function AboutSection() {
 
             <div className="col-span-12 lg:col-span-8">
               <Reveal>
-                <p className="text-balance font-sans text-[clamp(1.7rem,4vw,3.5rem)] font-normal leading-[1.22] tracking-tighter text-bone">
+                <p className="text-balance font-sans text-[clamp(1.7rem,4vw,4.25rem)] font-normal leading-[1.22] tracking-tighter text-bone">
                   The Viral Labs started with a frustration: the world&apos;s best AI tools were in
                   the hands of people who didn&apos;t understand why some things go viral and most
                   don&apos;t. So we put them in the hands of{" "}
@@ -115,7 +115,7 @@ export default function AboutSection() {
             </div>
             <div className="col-span-12 lg:col-span-8">
               <Reveal>
-                <p className="text-balance font-sans text-[clamp(1.6rem,3.75vw,3.25rem)] font-normal leading-[1.25] tracking-tighter text-bone">
+                <p className="text-balance font-sans text-[clamp(1.6rem,3.75vw,4rem)] font-normal leading-[1.25] tracking-tighter text-bone">
                   We&apos;re a{" "}
                   <span className="font-serif italic text-gold-gradient">
                     studio, not a software vendor.
@@ -144,7 +144,7 @@ export default function AboutSection() {
                   <article className="group relative grid grid-cols-1 gap-x-10 gap-y-4 py-10 lg:grid-cols-12 lg:py-14">
                     <span
                       aria-hidden="true"
-                      className="font-sans text-[clamp(2.5rem,6vw,5.5rem)] font-medium leading-none tracking-tightest text-gold-gradient opacity-90 lg:col-span-2"
+                      className="font-sans text-[clamp(2.5rem,6vw,7rem)] font-medium leading-none tracking-tightest text-gold-gradient opacity-90 lg:col-span-2"
                     >
                       0{i + 1}
                     </span>
@@ -207,7 +207,7 @@ export default function AboutSection() {
       {/* Closing one-liner */}
       <section className="container-px pb-8 pt-4 lg:pb-12">
         <Reveal>
-          <p className="max-w-3xl text-balance font-sans text-[clamp(1.5rem,3.5vw,3rem)] font-normal leading-[1.25] tracking-tighter text-bone">
+          <p className="max-w-3xl text-balance font-sans text-[clamp(1.5rem,3.5vw,3.75rem)] font-normal leading-[1.25] tracking-tighter text-bone">
             The tools get better every week. Knowing{" "}
             <span className="font-serif italic text-gold-gradient">why it works</span> doesn&apos;t
             come in an update.

@@ -61,7 +61,7 @@ export function IndexNumeral({ n }) {
   // so the numeral's on-screen position and footprint are unchanged.
   return (
     <div
-      className="grid select-none font-serif text-[clamp(3.5rem,7.5vw,7rem)] italic leading-[0.8] tracking-[-0.04em] [margin-block:-0.3em]"
+      className="grid select-none font-serif text-[clamp(3.5rem,7.5vw,8.75rem)] italic leading-[0.8] tracking-[-0.04em] [margin-block:-0.3em]"
       aria-hidden="true"
     >
       <span className="[grid-area:1/1] py-[0.3em] text-bone/[0.14] transition-opacity duration-[600ms] ease-out-expo group-hover:opacity-40">

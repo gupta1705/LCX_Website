@@ -15,7 +15,7 @@ export default function SectionHeader({ index, eyebrow, title, accent, blurb }) 
         </div>
       </Reveal>
       <Reveal delay={0.05}>
-        <h2 className="max-w-4xl text-balance font-sans text-[clamp(2.2rem,5.75vw,5.25rem)] font-medium leading-[1.02] tracking-tightest text-bone">
+        <h2 className="max-w-4xl text-balance font-sans text-[clamp(2.2rem,5.75vw,6.75rem)] font-medium leading-[1.02] tracking-tightest text-bone">
           {title}
           {accent && (
             <>
@@ -27,7 +27,7 @@ export default function SectionHeader({ index, eyebrow, title, accent, blurb }) 
       </Reveal>
       {blurb && (
         <Reveal delay={0.12}>
-          <p className="mt-6 max-w-2xl text-balance text-lg leading-relaxed text-bone-dim">
+          <p className="mt-6 max-w-2xl text-balance text-lg leading-relaxed text-bone-dim xl:max-w-3xl xl:text-xl">
             {blurb}
           </p>
         </Reveal>

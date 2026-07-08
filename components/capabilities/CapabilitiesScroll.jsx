@@ -159,13 +159,13 @@ function StaticStack() {
               <span className="font-serif text-3xl italic text-gold-gradient">{item.num}.</span>
               <span className="font-mono text-[11px] uppercase tracking-[0.28em] text-gold-300">{item.tag}</span>
             </div>
-            <h3 className="mt-4 font-sans text-[clamp(2.6rem,6.5vw,5.75rem)] font-medium leading-[0.98] tracking-tightest text-bone">
+            <h3 className="mt-4 font-sans text-[clamp(2.6rem,6.5vw,7.25rem)] font-medium leading-[0.98] tracking-tightest text-bone">
               {item.title}
             </h3>
             <div className="relative mt-6 h-[2px] w-full max-w-[26rem] overflow-hidden rounded-full bg-white/12">
               <div className={BAR_FILL} />
             </div>
-            <p className="mt-6 max-w-md leading-relaxed text-bone-dim">{item.body}</p>
+            <p className="mt-6 max-w-md text-lg leading-relaxed text-bone-dim xl:max-w-lg xl:text-xl">{item.body}</p>
           </div>
           <div className="grid place-items-center lg:col-span-6">
             {/* one card leans left, the other right */}
@@ -234,7 +234,7 @@ export default function CapabilitiesScroll() {
                   className="font-mono text-[11px] uppercase tracking-[0.28em] text-gold-300"
                 />
               </div>
-              <h3 className="mt-4 font-sans text-[clamp(2.6rem,6.5vw,5.75rem)] font-medium leading-[0.98] tracking-tightest text-bone">
+              <h3 className="mt-4 font-sans text-[clamp(2.6rem,6.5vw,7.25rem)] font-medium leading-[0.98] tracking-tightest text-bone">
                 <Scramble text={item.title} />
               </h3>
               <div className="relative mt-6 h-[2px] w-full max-w-[26rem] overflow-hidden rounded-full bg-white/12">
@@ -245,7 +245,7 @@ export default function CapabilitiesScroll() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.35 }}
-                className="mt-6 min-h-[8.5rem] max-w-md leading-relaxed text-bone-dim"
+                className="mt-6 min-h-[8.5rem] max-w-md text-lg leading-relaxed text-bone-dim xl:max-w-lg xl:text-xl"
               >
                 {item.body}
               </motion.p>
