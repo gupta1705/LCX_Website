@@ -198,25 +198,21 @@ export default function PrinciplesOrbit() {
                 opacity: isOpen ? 1 : pos.opacity,
               }}
             >
-              {/* proximity glow */}
+              {/* dark halo — erases the attractor lines right behind the node
+                  so it reads as a solid object cut out of the gold field */}
               <div
-                className={`absolute left-1/2 top-1/2 h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-full ${
-                  isPulsing ? "animate-pulse" : ""
-                }`}
-                style={{
-                  background:
-                    "radial-gradient(circle, rgba(201,146,61,0.30) 0%, rgba(201,146,61,0) 70%)",
-                }}
+                aria-hidden="true"
+                className="pointer-events-none absolute left-1/2 top-1/2 z-0 h-32 w-32 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,#0A0908_0%,#0A0908_42%,rgba(10,9,8,0.72)_60%,rgba(10,9,8,0)_100%)] blur-[3px]"
               />
 
               {/* node */}
               <div
-                className={`relative grid h-14 w-14 place-items-center rounded-full border-2 transition-all duration-300 ${
+                className={`relative z-10 grid h-14 w-14 place-items-center rounded-full border-2 transition-all duration-300 ease-out ${
                   isOpen
-                    ? "scale-150 border-gold-400 bg-gold-400 text-ink-900 shadow-[0_0_22px_-4px_rgba(233,185,106,0.85)]"
+                    ? "scale-150 border-gold-100 bg-[radial-gradient(circle_at_50%_28%,#F7E3B5_0%,#DDA64F_100%)] text-ink-900 shadow-[0_0_0_1.5px_rgba(10,9,8,0.9),0_4px_20px_-2px_rgba(0,0,0,0.7),0_0_34px_-3px_rgba(233,185,106,0.9)]"
                     : isRelated
-                      ? "animate-pulse border-gold-300 bg-gold-500/40 text-ink-900"
-                      : "border-gold-soft bg-ink-800 text-gold-200"
+                      ? "animate-pulse border-gold-200 bg-[radial-gradient(circle_at_50%_30%,rgba(201,146,61,0.32)_0%,#110F0B_75%)] text-gold-100 ring-1 ring-inset ring-gold-400/40 shadow-[0_0_0_1.5px_rgba(10,9,8,0.95),0_3px_12px_-2px_rgba(0,0,0,0.85),0_0_26px_-3px_rgba(241,208,138,0.6)]"
+                      : "border-gold-300 bg-[radial-gradient(circle_at_50%_30%,#231F17_0%,#0C0B09_78%)] text-gold-100 shadow-[0_0_0_1.5px_rgba(10,9,8,0.95),0_3px_12px_-2px_rgba(0,0,0,0.85),0_0_18px_-6px_rgba(232,185,106,0.5)]"
                 }`}
               >
                 <Icon size={20} strokeWidth={1.75} aria-hidden="true" />
@@ -225,7 +221,7 @@ export default function PrinciplesOrbit() {
               {/* label */}
               <div
                 className={`absolute left-1/2 top-16 -translate-x-1/2 whitespace-nowrap font-mono text-[11px] uppercase tracking-[0.22em] transition-all duration-300 ${
-                  isOpen ? "scale-110 text-gold-200" : "text-bone/60"
+                  isOpen ? "scale-110 text-gold-200" : "text-bone/80"
                 }`}
               >
                 {item.label}

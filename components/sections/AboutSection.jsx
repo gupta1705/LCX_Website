@@ -90,19 +90,24 @@ export default function AboutSection() {
         </div>
       </section>
 
-      {/* How we think (numbered manifesto rows) */}
+      {/* How we think (the four principles, in orbit) */}
       <section className="relative py-24 lg:py-32">
         <div className="container-px">
           <Reveal>
             <SectionLabel index="03">How we think</SectionLabel>
           </Reveal>
           <Reveal delay={0.05}>
-            <p className="mt-6 max-w-md font-mono text-[11px] uppercase tracking-[0.28em] text-bone-faint">
-              Four principles in orbit — tap one to open it.
+            <h3 className="mt-6 max-w-3xl text-balance font-sans text-[clamp(2rem,4.5vw,4.75rem)] font-medium leading-[1.05] tracking-tightest text-bone">
+              Four principles, <span className="font-serif italic text-gold-gradient">always in orbit.</span>
+            </h3>
+          </Reveal>
+          <Reveal delay={0.1}>
+            <p className="mt-5 font-mono text-[11px] uppercase tracking-[0.28em] text-bone-faint">
+              Tap a node to open it.
             </p>
           </Reveal>
 
-          <Reveal delay={0.1}>
+          <Reveal delay={0.15}>
             <div className="mt-4">
               <PrinciplesOrbit />
             </div>
