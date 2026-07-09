@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { AdaptiveDpr } from "@react-three/drei";
 import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
 import * as THREE from "three";
 
@@ -244,6 +245,13 @@ function LorenzAttractor() {
     prevPointer.current.y = pointer.y;
     const speed = vel.current;
 
+    // While the cursor is actively moving over the scene, drop to the low end
+    // of the dpr range (AdaptiveDpr) so the bloom passes have fewer pixels to
+    // chew — this keeps the frame budget clear during the eye-parting
+    // interaction (where the position buffer re-uploads each frame) and
+    // sharpens back up ~200ms after the cursor rests.
+    if (speed > 0.15) state.performance.regress();
+
     // --- cursor glow (depth-corrected so it sits exactly under the pointer) ---
     const glowZ = 0.6;
     const dk = (camera.position.z - glowZ) / camera.position.z;
@@ -351,7 +359,14 @@ function LorenzAttractor() {
         drawPos[j + 2] = pz;
       }
     }
-    if (posDirty) line.geometry.attributes.position.needsUpdate = true;
+    // Only re-upload the position buffer when the vertices actually moved this
+    // frame. While the eye is fully open and the cursor is still, the displaced
+    // positions are identical to last frame — skipping the upload avoids a
+    // needless per-frame buffer sync (the real cost on integrated GPUs).
+    const easing = repel.current > 0.001 && repel.current < 0.999;
+    if (posDirty && (easing || speed > 0.004 || (wasRepel.current && !repelOn))) {
+      line.geometry.attributes.position.needsUpdate = true;
+    }
     wasRepel.current = repelOn;
     line.geometry.attributes.color.needsUpdate = true;
   });
@@ -423,6 +438,10 @@ export default function AttractorScene() {
       <fog attach="fog" args={["#0a0908", 9, 22]} />
       <LorenzAttractor />
       <FloatingDust />
+      {/* drops resolution while the scene reports load (cursor movement calls
+          performance.regress), then restores it when idle — smooths the
+          eye-parting interaction on weaker GPUs */}
+      <AdaptiveDpr />
       <EffectComposer multisampling={isMobile ? 0 : 4}>
         <Bloom intensity={1.05} luminanceThreshold={0.14} luminanceSmoothing={0.9} mipmapBlur radius={0.75} />
         <Vignette eskil={false} offset={0.25} darkness={0.85} />
