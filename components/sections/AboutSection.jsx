@@ -1,37 +1,7 @@
 import SectionHeader from "@/components/ui/SectionHeader";
 import Reveal from "@/components/ui/Reveal";
 import SectionLabel from "@/components/ui/SectionLabel";
-
-const PRINCIPLES = [
-  {
-    pre: "",
-    accent: "Story",
-    post: " over spectacle.",
-    blurb:
-      "The idea and the emotion do the work. A flawless render that says nothing never leaves the building.",
-  },
-  {
-    pre: "Speed is a ",
-    accent: "feature",
-    post: ".",
-    blurb:
-      "Momentum is part of the value, not a compromise on it. We move at the speed of the platform, not the agency.",
-  },
-  {
-    pre: "Build ",
-    accent: "machines",
-    post: ", not deliverables.",
-    blurb:
-      "We ship the system that makes the content, not a folder of one-off assets. The engine outlasts the campaign.",
-  },
-  {
-    pre: "Stay on the ",
-    accent: "edge",
-    post: ".",
-    blurb:
-      "We live on the frontier of what these models can do. The edge moves every week, so do we.",
-  },
-];
+import PrinciplesOrbit from "@/components/about/PrinciplesOrbit";
 
 export default function AboutSection() {
   return (
@@ -126,33 +96,17 @@ export default function AboutSection() {
           <Reveal>
             <SectionLabel index="03">How we think</SectionLabel>
           </Reveal>
+          <Reveal delay={0.05}>
+            <p className="mt-6 max-w-md font-mono text-[11px] uppercase tracking-[0.28em] text-bone-faint">
+              Four principles in orbit — tap one to open it.
+            </p>
+          </Reveal>
 
-          <ol className="mt-14 divide-y divide-white/[0.06] border-t border-white/[0.06]">
-            {PRINCIPLES.map((p, i) => (
-              <li key={p.accent}>
-                <Reveal delay={i * 0.07}>
-                  <article className="group relative grid grid-cols-1 gap-x-10 gap-y-4 py-10 lg:grid-cols-12 lg:py-14">
-                    <span
-                      aria-hidden="true"
-                      className="font-sans text-[clamp(2.5rem,6vw,7rem)] font-medium leading-none tracking-tightest text-gold-gradient opacity-90 lg:col-span-2"
-                    >
-                      0{i + 1}
-                    </span>
-                    <h3 className="font-sans text-2xl tracking-tighter text-bone sm:text-3xl lg:col-span-6">
-                      {p.pre}
-                      <span className="font-serif italic text-gold-gradient">{p.accent}</span>
-                      {p.post}
-                    </h3>
-                    <p className="max-w-sm leading-relaxed text-bone-dim lg:col-span-4">{p.blurb}</p>
-                    <span
-                      aria-hidden="true"
-                      className="pointer-events-none absolute bottom-0 left-0 h-px w-full origin-left scale-x-0 bg-gradient-to-r from-gold-500 to-transparent transition-transform duration-700 ease-out-expo group-hover:scale-x-100"
-                    />
-                  </article>
-                </Reveal>
-              </li>
-            ))}
-          </ol>
+          <Reveal delay={0.1}>
+            <div className="mt-4">
+              <PrinciplesOrbit />
+            </div>
+          </Reveal>
         </div>
       </section>
 
