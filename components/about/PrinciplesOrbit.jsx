@@ -70,7 +70,7 @@ export default function PrinciplesOrbit() {
   const [rotation, setRotation] = useState(0);
   const [autoRotate, setAutoRotate] = useState(true);
   const [pulse, setPulse] = useState({});
-  const [radius, setRadius] = useState(190);
+  const [radius, setRadius] = useState(300);
   const containerRef = useRef(null);
   const orbitRef = useRef(null);
 
@@ -79,8 +79,8 @@ export default function PrinciplesOrbit() {
     const measure = () => {
       const el = containerRef.current;
       if (!el) return;
-      const r = Math.min(el.clientWidth, el.clientHeight) / 2 - 62;
-      setRadius(Math.max(92, Math.min(210, r)));
+      const r = Math.min(el.clientWidth, el.clientHeight) / 2 - 68;
+      setRadius(Math.max(120, Math.min(350, r)));
     };
     measure();
     window.addEventListener("resize", measure);
@@ -142,7 +142,7 @@ export default function PrinciplesOrbit() {
     <div
       ref={containerRef}
       onClick={onBackdrop}
-      className="relative mx-auto flex h-[520px] w-full max-w-3xl items-center justify-center overflow-visible sm:h-[580px] lg:h-[640px]"
+      className="relative mx-auto flex h-[560px] w-full max-w-5xl items-center justify-center overflow-visible sm:h-[720px] lg:h-[820px]"
     >
       {/* readability scrim — the orbit reads cleanly over the live attractor */}
       <div
@@ -156,18 +156,18 @@ export default function PrinciplesOrbit() {
         style={{ width: radius * 2, height: radius * 2, perspective: "1000px" }}
       >
         {/* central core */}
-        <div className="absolute left-1/2 top-1/2 z-10 grid h-16 w-16 -translate-x-1/2 -translate-y-1/2 place-items-center">
-          <div className="absolute h-16 w-16 rounded-full bg-gradient-to-br from-gold-200 via-gold-500 to-gold-700 opacity-90 blur-[1px]" />
+        <div className="absolute left-1/2 top-1/2 z-10 grid h-24 w-24 -translate-x-1/2 -translate-y-1/2 place-items-center">
+          <div className="absolute h-24 w-24 rounded-full bg-gradient-to-br from-gold-200 via-gold-500 to-gold-700 opacity-90 blur-[2px]" />
           {!reduce && (
             <>
-              <div className="absolute h-20 w-20 animate-ping rounded-full border border-gold-400/30 opacity-70" />
+              <div className="absolute h-28 w-28 animate-ping rounded-full border border-gold-400/30 opacity-70" />
               <div
-                className="absolute h-24 w-24 animate-ping rounded-full border border-gold-400/15 opacity-40"
+                className="absolute h-36 w-36 animate-ping rounded-full border border-gold-400/15 opacity-40"
                 style={{ animationDelay: "0.6s" }}
               />
             </>
           )}
-          <div className="relative h-7 w-7 rounded-full bg-bone/85" />
+          <div className="relative h-10 w-10 rounded-full bg-bone/85" />
         </div>
 
         {/* orbit ring */}
@@ -200,7 +200,7 @@ export default function PrinciplesOrbit() {
             >
               {/* proximity glow */}
               <div
-                className={`absolute left-1/2 top-1/2 h-14 w-14 -translate-x-1/2 -translate-y-1/2 rounded-full ${
+                className={`absolute left-1/2 top-1/2 h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-full ${
                   isPulsing ? "animate-pulse" : ""
                 }`}
                 style={{
@@ -211,7 +211,7 @@ export default function PrinciplesOrbit() {
 
               {/* node */}
               <div
-                className={`relative grid h-11 w-11 place-items-center rounded-full border-2 transition-all duration-300 ${
+                className={`relative grid h-14 w-14 place-items-center rounded-full border-2 transition-all duration-300 ${
                   isOpen
                     ? "scale-150 border-gold-400 bg-gold-400 text-ink-900 shadow-[0_0_22px_-4px_rgba(233,185,106,0.85)]"
                     : isRelated
@@ -219,12 +219,12 @@ export default function PrinciplesOrbit() {
                       : "border-gold-soft bg-ink-800 text-gold-200"
                 }`}
               >
-                <Icon size={16} strokeWidth={1.75} aria-hidden="true" />
+                <Icon size={20} strokeWidth={1.75} aria-hidden="true" />
               </div>
 
               {/* label */}
               <div
-                className={`absolute left-1/2 top-12 -translate-x-1/2 whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.22em] transition-all duration-300 ${
+                className={`absolute left-1/2 top-16 -translate-x-1/2 whitespace-nowrap font-mono text-[11px] uppercase tracking-[0.22em] transition-all duration-300 ${
                   isOpen ? "scale-110 text-gold-200" : "text-bone/60"
                 }`}
               >
@@ -234,7 +234,7 @@ export default function PrinciplesOrbit() {
               {/* readout — always opens from the top, so it never runs off-frame */}
               {isOpen && (
                 <div
-                  className="absolute left-1/2 top-20 w-64 -translate-x-1/2 overflow-hidden rounded-sm border border-gold-soft bg-ink-900/95 shadow-[0_22px_60px_-24px_rgba(0,0,0,0.9)]"
+                  className="absolute left-1/2 top-24 w-72 -translate-x-1/2 overflow-hidden rounded-sm border border-gold-soft bg-ink-900/95 shadow-[0_22px_60px_-24px_rgba(0,0,0,0.9)]"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <div aria-hidden="true" className="absolute -top-3 left-1/2 h-3 w-px -translate-x-1/2 bg-gold-500/50" />
