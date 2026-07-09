@@ -92,12 +92,18 @@ export default function AboutSection() {
 
             <div className="col-span-12 lg:col-span-8">
               <Reveal>
-                <p className="text-balance font-sans text-[clamp(1.7rem,4vw,4.25rem)] font-normal leading-[1.22] tracking-tighter text-bone">
-                  The Viral Labs started with a frustration: the world&apos;s best AI tools were in
-                  the hands of people who didn&apos;t understand why some things go viral and most
-                  don&apos;t. So we put them in the hands of{" "}
-                  <span className="font-serif italic text-gold-gradient">people who do.</span>
-                </p>
+                <div className="relative isolate">
+                  <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute -inset-x-6 -inset-y-4 -z-10 rounded-[45%] bg-ink-900/70 blur-2xl"
+                  />
+                  <p className="text-balance font-sans text-[clamp(1.7rem,4vw,4.25rem)] font-normal leading-[1.22] tracking-tighter text-bone">
+                    The Viral Labs started with a frustration: the world&apos;s best AI tools were in
+                    the hands of people who didn&apos;t understand why some things go viral and most
+                    don&apos;t. So we put them in the hands of{" "}
+                    <span className="font-serif italic text-gold-gradient">people who do.</span>
+                  </p>
+                </div>
               </Reveal>
             </div>
           </div>
@@ -115,15 +121,21 @@ export default function AboutSection() {
             </div>
             <div className="col-span-12 lg:col-span-8">
               <Reveal>
-                <p className="text-balance font-sans text-[clamp(1.6rem,3.75vw,4rem)] font-normal leading-[1.25] tracking-tighter text-bone">
-                  We&apos;re a{" "}
-                  <span className="font-serif italic text-gold-gradient">
-                    studio, not a software vendor.
-                  </span>{" "}
-                  Storytellers first, technologists second. We obsess over the hook, the craft, the
-                  emotion, then use AI to produce it at a scale and speed that didn&apos;t exist two
-                  years ago.
-                </p>
+                <div className="relative isolate">
+                  <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute -inset-x-6 -inset-y-4 -z-10 rounded-[45%] bg-ink-900/70 blur-2xl"
+                  />
+                  <p className="text-balance font-sans text-[clamp(1.6rem,3.75vw,4rem)] font-normal leading-[1.25] tracking-tighter text-bone">
+                    We&apos;re a{" "}
+                    <span className="font-serif italic text-gold-gradient">
+                      studio, not a software vendor.
+                    </span>{" "}
+                    Storytellers first, technologists second. We obsess over the hook, the craft, the
+                    emotion, then use AI to produce it at a scale and speed that didn&apos;t exist two
+                    years ago.
+                  </p>
+                </div>
               </Reveal>
             </div>
           </div>
@@ -207,11 +219,17 @@ export default function AboutSection() {
       {/* Closing one-liner */}
       <section className="container-px pb-8 pt-4 lg:pb-12">
         <Reveal>
-          <p className="max-w-3xl text-balance font-sans text-[clamp(1.5rem,3.5vw,3.75rem)] font-normal leading-[1.25] tracking-tighter text-bone">
-            The tools get better every week. Knowing{" "}
-            <span className="font-serif italic text-gold-gradient">why it works</span> doesn&apos;t
-            come in an update.
-          </p>
+          <div className="relative isolate max-w-3xl">
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -inset-x-6 -inset-y-4 -z-10 rounded-[45%] bg-ink-900/70 blur-2xl"
+            />
+            <p className="text-balance font-sans text-[clamp(1.5rem,3.5vw,3.75rem)] font-normal leading-[1.25] tracking-tighter text-bone">
+              The tools get better every week. Knowing{" "}
+              <span className="font-serif italic text-gold-gradient">why it works</span> doesn&apos;t
+              come in an update.
+            </p>
+          </div>
         </Reveal>
       </section>
     </div>

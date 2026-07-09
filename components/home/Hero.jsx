@@ -37,8 +37,15 @@ export default function Hero() {
           variants={stagger}
           initial="hidden"
           animate="show"
-          className="col-span-12 lg:col-span-7 xl:col-span-6"
+          className="relative isolate col-span-12 lg:col-span-7 xl:col-span-6"
         >
+          {/* soft scrim — lifts headline/body contrast where they overlap the
+              bright attractor (most visible on mobile, where the rings run
+              under the body copy) */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -inset-x-6 -inset-y-8 -z-10 bg-[radial-gradient(70%_60%_at_35%_45%,rgba(10,9,8,0.7),transparent_72%)]"
+          />
           <motion.h1
             variants={item}
             className="font-sans text-[clamp(2.6rem,7vw,8rem)] font-medium leading-[0.98] tracking-tightest text-bone"

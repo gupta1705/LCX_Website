@@ -27,7 +27,14 @@ export default function ContactSection() {
 
           <aside className="col-span-12 lg:col-span-5">
             <Reveal delay={0.1}>
-              <div className="panel p-8 lg:p-10">
+              <div className="relative overflow-hidden rounded-2xl border border-gold-soft bg-ink-800 p-8 lg:p-10">
+                {/* raking top light — same engraved-plate treatment as the Engine
+                    readouts, replacing the old frosted-glass panel */}
+                <span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-white/[0.05] to-transparent"
+                />
+                <div className="relative">
                 <p className="eyebrow mb-6">What happens next</p>
                 <p className="text-lg leading-relaxed text-bone">
                   We reply within 24 hours with a{" "}
@@ -58,6 +65,7 @@ export default function ContactSection() {
                       </span>
                     ))}
                   </div>
+                </div>
                 </div>
               </div>
             </Reveal>
