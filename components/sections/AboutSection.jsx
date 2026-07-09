@@ -33,29 +33,6 @@ const PRINCIPLES = [
   },
 ];
 
-const TEAM_ROLES = [
-  {
-    monogram: "ST",
-    role: "Storytellers",
-    blurb: "Writers and creative directors who decide what's worth saying before anything gets made.",
-  },
-  {
-    monogram: "AI",
-    role: "AI Engineers",
-    blurb: "They build and tune the production pipeline: models, agents, and the glue that ships at scale.",
-  },
-  {
-    monogram: "PR",
-    role: "Producers",
-    blurb: "They own the timeline: scope, schedule, and the tempo that keeps every project shipping.",
-  },
-  {
-    monogram: "DE",
-    role: "Designers",
-    blurb: "Art direction and the final human eye, taste applied to every frame before it goes out.",
-  },
-];
-
 export default function AboutSection() {
   return (
     <div id="about" className="scroll-mt-24">
@@ -64,7 +41,7 @@ export default function AboutSection() {
         eyebrow="About"
         title="Inside the"
         accent="Lab."
-        blurb="A studio, not a software vendor, built by storytellers. Here's why we exist, how we think, and who does the work."
+        blurb="One team, two disciplines: a studio that directs and an engine that scales. Here's why we exist and how we think."
       />
 
       {/* The origin */}
@@ -77,7 +54,7 @@ export default function AboutSection() {
               </Reveal>
               <Reveal delay={0.05}>
                 <p className="font-serif text-2xl italic leading-snug text-gold-gradient">
-                  Why the studio exists.
+                  Why we exist.
                 </p>
               </Reveal>
               <Reveal delay={0.15} className="mt-10 hidden lg:block">
@@ -101,7 +78,8 @@ export default function AboutSection() {
                     The Viral Labs started with a frustration: the world&apos;s best AI tools were in
                     the hands of people who didn&apos;t understand why some things go viral and most
                     don&apos;t. So we put them in the hands of{" "}
-                    <span className="font-serif italic text-gold-gradient">people who do.</span>
+                    <span className="font-serif italic text-gold-gradient">people who do</span> — then
+                    built the machines to run it at scale.
                   </p>
                 </div>
               </Reveal>
@@ -127,13 +105,13 @@ export default function AboutSection() {
                     className="pointer-events-none absolute -inset-x-6 -inset-y-4 -z-10 rounded-[45%] bg-ink-900/70 blur-2xl"
                   />
                   <p className="text-balance font-sans text-[clamp(1.6rem,3.75vw,4rem)] font-normal leading-[1.25] tracking-tighter text-bone">
-                    We&apos;re a{" "}
+                    We{" "}
                     <span className="font-serif italic text-gold-gradient">
-                      studio, not a software vendor.
+                      direct like a studio and ship like a system.
                     </span>{" "}
-                    Storytellers first, technologists second. We obsess over the hook, the craft, the
-                    emotion, then use AI to produce it at a scale and speed that didn&apos;t exist two
-                    years ago.
+                    Storytellers set the hook, the craft, the emotion; the engine produces it at a
+                    scale and speed that didn&apos;t exist two years ago, and keeps producing long
+                    after the launch.
                   </p>
                 </div>
               </Reveal>
@@ -175,44 +153,6 @@ export default function AboutSection() {
               </li>
             ))}
           </ol>
-        </div>
-      </section>
-
-      {/* The team (role-based placeholders) */}
-      <section className="relative py-24 lg:py-32">
-        <div className="container-px">
-          <Reveal>
-            <SectionLabel index="04">The team</SectionLabel>
-          </Reveal>
-          <Reveal delay={0.05}>
-            <p className="mt-6 max-w-md font-mono text-[11px] uppercase tracking-[0.28em] text-bone-faint">
-              Roles, not names, placeholders the studio will swap for real people.
-            </p>
-          </Reveal>
-
-          <ul className="mt-12 grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-white/[0.07] bg-white/[0.04] sm:grid-cols-2 lg:grid-cols-4">
-            {TEAM_ROLES.map((r, i) => (
-              <li key={r.role} className="bg-ink-900/60">
-                <Reveal delay={i * 0.1} className="h-full">
-                  <article className="group relative flex h-full flex-col gap-6 overflow-hidden p-8 lg:p-10">
-                    <span className="pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full bg-gold-500/0 blur-3xl transition-all duration-700 group-hover:bg-gold-500/15" />
-                    <div className="relative grid h-14 w-14 place-items-center rounded-full border border-gold-soft bg-[radial-gradient(120%_90%_at_30%_0%,rgba(201,146,61,0.18),transparent_60%)]">
-                      <span
-                        aria-hidden="true"
-                        className="font-mono text-sm uppercase tracking-[0.2em] text-gold-300"
-                      >
-                        {r.monogram}
-                      </span>
-                    </div>
-                    <div className="relative">
-                      <h3 className="text-lg font-medium tracking-tight text-bone">{r.role}</h3>
-                      <p className="mt-2 text-sm leading-relaxed text-bone-dim">{r.blurb}</p>
-                    </div>
-                  </article>
-                </Reveal>
-              </li>
-            ))}
-          </ul>
         </div>
       </section>
 
