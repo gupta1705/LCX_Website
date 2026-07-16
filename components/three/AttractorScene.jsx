@@ -146,11 +146,10 @@ const KEYS = [
 
 // Cursor radii in WORLD units — divided by the group scale each frame so the
 // eye and the highlight stay a constant size on screen at any zoom. The eye is
-// carved as a CYLINDER along the cursor's sight-line, so filaments at every
-// depth part around it (a clean hole, not a dent at one depth plane).
+// measured against the cursor's sight-line (a CYLINDER), so filaments at every
+// depth dissolve around it — a clean hole, not a dent at one depth plane.
 const HIGHLIGHT_R = 1.9; // radius the cursor lights up
-const REPEL_R = 1.1; // influence radius — cleared void ≈ R − R²/(4·PUSH) ≈ 0.75
-const REPEL_PUSH = 0.85; // outward push; the primary void-size knob (keep ≤ REPEL_R)
+const VOID_R = 0.95; // radius the filaments dissolve inside (the eye)
 
 // Scroll body language — while the page is actually moving the form spins a
 // touch faster and compresses slightly, relaxing open when the scroll rests
@@ -172,15 +171,13 @@ function LorenzAttractor() {
   const ambient = useRef(0); // accumulated ambient spin, layered over keyframed pose
   const lastScrollY = useRef(0); // last sampled scrollY, for scroll-velocity
   const swirl = useRef(0); // smoothed scroll speed → spin/compression while moving
-  const repel = useRef(0); // eased cursor-repulsion strength
-  const wasRepel = useRef(false); // were positions displaced last frame?
+  const repel = useRef(0); // eased strength of the cursor's dissolved "eye"
   const hasPointer = useRef(false); // set on the first real pointer movement
   const vel = useRef(0); // smoothed pointer velocity (event-decoupled)
   const prevPointer = useRef({ x: 0, y: 0 });
   const { pointer, viewport, camera } = useThree();
 
-  const base = useMemo(buildLorenz, []); // static curve — never rebuilt
-  const drawPos = useMemo(() => base.slice(), [base]); // displaced positions actually drawn
+  const base = useMemo(buildLorenz, []); // static curve — never rebuilt, never displaced
   const baseColors = useMemo(goldColors, []);
   const colors = useMemo(() => baseColors.slice(), [baseColors]); // working (mutated) colors
   const tmp = useMemo(() => new THREE.Vector3(), []);
@@ -195,8 +192,8 @@ function LorenzAttractor() {
 
   const line = useMemo(() => {
     const geo = new THREE.BufferGeometry();
-    // colors mutate every frame, positions while the eye is open — hint the driver
-    geo.setAttribute("position", new THREE.BufferAttribute(drawPos, 3).setUsage(THREE.DynamicDrawUsage));
+    // positions are static (the eye is carved in colour); only colours stream
+    geo.setAttribute("position", new THREE.BufferAttribute(base, 3));
     geo.setAttribute("color", new THREE.BufferAttribute(colors, 3).setUsage(THREE.DynamicDrawUsage));
     geo.frustumCulled = false;
     const mat = new THREE.LineBasicMaterial({
@@ -210,7 +207,7 @@ function LorenzAttractor() {
     const l = new THREE.Line(geo, mat);
     l.frustumCulled = false; // the choreography swings it far off-centre; never cull
     return l;
-  }, [drawPos, colors]);
+  }, [base, colors]);
 
   // Release the imperatively-created buffers/material on unmount or HMR.
   useEffect(() => {
@@ -327,16 +324,14 @@ function LorenzAttractor() {
     // only while the eye is open or closing — the base curve is static.
     const repelTarget = fine && hasPointer.current ? 1 : 0;
     repel.current += (repelTarget - repel.current) * Math.min(delta * 3.5, 1);
-    const repelOn = repel.current > 0.01;
-    const posDirty = repelOn || wasRepel.current;
+    const voidOn = repel.current > 0.01;
 
     // world-space cursor radii → local units (constant size on screen at any zoom)
     const sInv = sNow > 1e-4 ? 1 / sNow : 1;
     const hlR = HIGHLIGHT_R * sInv;
     const hl2 = hlR * hlR;
-    const rpR = REPEL_R * sInv;
-    const rp2 = rpR * rpR;
-    const push = REPEL_PUSH * sInv * repel.current;
+    const vdR = VOID_R * sInv;
+    const vd2 = vdR * vdR;
 
     // colours refresh every frame so the glow can travel — the moving comet
     // arc plus the cursor-proximity highlight, both easing the base gold → cream.
@@ -345,18 +340,16 @@ function LorenzAttractor() {
     // depth-independent and stay centred under the dot.
     const rox = rayO.x, roy = rayO.y, roz = rayO.z;
     const rdx = rayD.x, rdy = rayD.y, rdz = rayD.z;
-    const measure = highlighting || posDirty;
+    const measure = highlighting || voidOn;
     for (let v = 0, j = 0; v < COUNT; v++, j += 3) {
-      const px0 = base[j], py0 = base[j + 1], pz0 = base[j + 2];
-
       // perpendicular offset from the cursor ray
-      let d2 = Infinity, ppx = 0, ppy = 0, ppz = 0;
+      let d2 = Infinity;
       if (measure) {
-        const ox = px0 - rox, oy = py0 - roy, oz = pz0 - roz;
+        const ox = base[j] - rox, oy = base[j + 1] - roy, oz = base[j + 2] - roz;
         const tt = ox * rdx + oy * rdy + oz * rdz;
-        ppx = ox - tt * rdx;
-        ppy = oy - tt * rdy;
-        ppz = oz - tt * rdz;
+        const ppx = ox - tt * rdx;
+        const ppy = oy - tt * rdy;
+        const ppz = oz - tt * rdz;
         d2 = ppx * ppx + ppy * ppy + ppz * ppz;
       }
 
@@ -375,36 +368,27 @@ function LorenzAttractor() {
       }
       let tot = gl + br;
       if (tot > 1) tot = 1;
-      const b0 = baseColors[j], b1 = baseColors[j + 1], b2 = baseColors[j + 2];
-      colors[j] = b0 + (hi.r - b0) * tot;
-      colors[j + 1] = b1 + (hi.g - b1) * tot;
-      colors[j + 2] = b2 + (hi.b - b2) * tot;
 
-      // part the filaments out of the sight-line cylinder (the eye)
-      if (posDirty) {
-        let px = px0, py = py0, pz = pz0;
-        if (repelOn && d2 < rp2) {
-          const rd = Math.sqrt(d2) || 1e-3;
-          const qq = 1 - rd / rpR;
-          const s = (push * qq * qq) / rd;
-          px += ppx * s;
-          py += ppy * s;
-          pz += ppz * s;
-        }
-        drawPos[j] = px;
-        drawPos[j + 1] = py;
-        drawPos[j + 2] = pz;
+      // The eye: DISSOLVE the filaments inside the sight-line rather than
+      // pushing them aside. A radial push tears any curve that crosses the
+      // centre — the vertices either side of it get shoved to opposite rims and
+      // the segment joining them draws as a straight chord across the void.
+      // Fading to black (invisible under additive blending) opens the same hole
+      // with no tearing, and the gradient along each segment softens the rim.
+      let fade = 1;
+      if (voidOn && d2 < vd2) {
+        const q = Math.sqrt(d2) / vdR; // 0 on the ray → 1 at the rim
+        fade = 1 - repel.current * (1 - q * q * (3 - 2 * q)); // smoothstep
       }
+
+      const b0 = baseColors[j], b1 = baseColors[j + 1], b2 = baseColors[j + 2];
+      colors[j] = (b0 + (hi.r - b0) * tot) * fade;
+      colors[j + 1] = (b1 + (hi.g - b1) * tot) * fade;
+      colors[j + 2] = (b2 + (hi.b - b2) * tot) * fade;
     }
-    // Only re-upload the position buffer when the vertices actually moved this
-    // frame. While the eye is fully open and the cursor is still, the displaced
-    // positions are identical to last frame — skipping the upload avoids a
-    // needless per-frame buffer sync (the real cost on integrated GPUs).
-    const easing = repel.current > 0.001 && repel.current < 0.999;
-    if (posDirty && (easing || speed > 0.004 || (wasRepel.current && !repelOn))) {
-      line.geometry.attributes.position.needsUpdate = true;
-    }
-    wasRepel.current = repelOn;
+    // Positions are never touched now — the eye is carved in colour, so only
+    // the colour buffer is re-uploaded (this also removes the per-frame
+    // position sync that used to stutter weaker GPUs during cursor movement).
     line.geometry.attributes.color.needsUpdate = true;
   });
 
