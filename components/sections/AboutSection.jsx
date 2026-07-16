@@ -1,6 +1,7 @@
 import SectionHeader from "@/components/ui/SectionHeader";
 import Reveal from "@/components/ui/Reveal";
 import SectionLabel from "@/components/ui/SectionLabel";
+import NebulaField from "@/components/ui/NebulaField";
 import PrinciplesOrbit from "@/components/about/PrinciplesOrbit";
 
 export default function AboutSection() {
@@ -90,29 +91,34 @@ export default function AboutSection() {
         </div>
       </section>
 
-      {/* How we think — the light plate. The dark page splits above and below
-          this full-bleed bone band (the Axiom-style inversion); the orbit is
-          re-inked for paper inside PrinciplesOrbit. */}
-      <section className="relative border-y border-ink-900/10 bg-bone py-24 text-ink-900 lg:py-32">
-        {/* soft paper vignette so the plate isn't a dead-flat white */}
+      {/* How we think — the nebula band. A full-bleed gold cloud field
+          interrupts the attractor that runs behind the rest of the page, so the
+          section still reads as its own plate; the orbit is inked for it
+          inside PrinciplesOrbit. */}
+      <section className="relative isolate overflow-hidden border-y border-gold-500/15 bg-ink-900 py-24 text-bone lg:py-32">
+        {/* stand-in for the field if WebGL2 is unavailable */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 [background:radial-gradient(90%_70%_at_50%_20%,rgba(201,146,61,0.07),transparent_65%)]"
+          className="pointer-events-none absolute inset-0 -z-10 [background:radial-gradient(120%_90%_at_50%_50%,rgba(169,118,46,0.16),#0A0908_70%)]"
+        />
+        <NebulaField className="absolute inset-0 -z-10 h-full w-full" />
+        {/* scrim — the type and the orbit stay legible over the clouds */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 -z-10 [background:radial-gradient(80%_65%_at_50%_55%,rgba(10,9,8,0.7),rgba(10,9,8,0.3)_68%,transparent)]"
         />
         <div className="container-px relative">
           <Reveal>
-            <SectionLabel index="03" tone="ink">How we think</SectionLabel>
+            <SectionLabel index="03">How we think</SectionLabel>
           </Reveal>
           <Reveal delay={0.05}>
-            <h3 className="mt-6 max-w-3xl text-balance font-sans text-[clamp(2rem,4.5vw,4.75rem)] font-medium leading-[1.05] tracking-tightest text-ink-900">
+            <h3 className="mt-6 max-w-3xl text-balance font-sans text-[clamp(2rem,4.5vw,4.75rem)] font-medium leading-[1.05] tracking-tightest text-bone">
               Four principles,{" "}
-              <span className="bg-[linear-gradient(100deg,#825922_0%,#A9762E_45%,#C9923D_80%,#825922_100%)] bg-clip-text font-serif italic text-transparent">
-                always in orbit.
-              </span>
+              <span className="font-serif italic text-gold-gradient">always in orbit.</span>
             </h3>
           </Reveal>
           <Reveal delay={0.1}>
-            <p className="mt-5 font-mono text-[11px] uppercase tracking-[0.28em] text-ink-900/50">
+            <p className="mt-5 font-mono text-[11px] uppercase tracking-[0.28em] text-bone-faint">
               Tap a node to open it.
             </p>
           </Reveal>

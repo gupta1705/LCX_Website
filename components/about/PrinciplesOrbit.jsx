@@ -5,17 +5,17 @@ import { ArrowRight, Link2, Feather, Zap, Cpu, Radar } from "lucide-react";
 import { useReducedMotion } from "framer-motion";
 
 /**
- * The four principles in a 3D orbit, inked for the LIGHT (bone) plate the
- * section sits on. The nodes ride a TILTED orbital plane: their 3D position is
+ * The four principles in a 3D orbit, inked in gold over the section's nebula
+ * field. The nodes ride a TILTED orbital plane: their 3D position is
  * projected to 2D in JS (x, squashed y, depth), and depth drives scale,
  * opacity, blur and z-order — so nodes genuinely pass in front of and behind
  * the gold core while every label stays crisp (nothing is CSS-3D-skewed). The
  * chart under them is a static engraved SVG — an orrery drawing in the antique
  * astronomy-plate tradition: double-ruled orbit rail (far half behind the
  * core, near half in front), a graduated tick limb, construction cross,
- * dotted inner orbit, radius callout and plate labels — gold ink on paper.
- * Click a node: the orbit glides it to the front docking seat and its readout
- * opens as a dark plate over a paper fog.
+ * dotted inner orbit, radius callout and plate labels. Click a node: the orbit
+ * glides it to the front docking seat and its readout opens as an opaque ink
+ * plate — nothing dims behind it, the clouds just carry on.
  */
 const PRINCIPLES = [
   {
@@ -199,10 +199,10 @@ export default function PrinciplesOrbit() {
       }}
       className="relative mx-auto flex h-[440px] w-full max-w-5xl items-center justify-center overflow-visible sm:h-[520px] lg:h-[560px]"
     >
-      {/* gentle paper shading — a whisper of depth on the light plate */}
+      {/* local scrim — calms the clouds directly under the drawing */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 [background:radial-gradient(closest-side,rgba(10,9,8,0.05),transparent_75%)]"
+        className="pointer-events-none absolute inset-0 [background:radial-gradient(closest-side,rgba(10,9,8,0.55),transparent_78%)]"
       />
 
       <div className="relative" style={{ width: ellipseW, height: ellipseH }}>
@@ -219,12 +219,12 @@ export default function PrinciplesOrbit() {
         >
           <defs>
             <radialGradient id="tvl-core-seat">
-              <stop offset="0%" stopColor="rgba(10,9,8,0.18)" />
-              <stop offset="60%" stopColor="rgba(10,9,8,0.06)" />
+              <stop offset="0%" stopColor="rgba(10,9,8,0.85)" />
+              <stop offset="60%" stopColor="rgba(10,9,8,0.35)" />
               <stop offset="100%" stopColor="rgba(10,9,8,0)" />
             </radialGradient>
           </defs>
-          {/* core ground shadow — the bead floats just above its seat */}
+          {/* core ground pool — clears the clouds so the bead reads */}
           <ellipse
             cx="0"
             cy="5"
@@ -234,27 +234,27 @@ export default function PrinciplesOrbit() {
           />
           {/* guide ring */}
           {!chart.compact && (
-            <ellipse rx={0.33 * radius} ry={0.165 * radius} fill="none" stroke="rgba(10,9,8,0.10)" strokeWidth="0.75" />
+            <ellipse rx={0.33 * radius} ry={0.165 * radius} fill="none" stroke="rgba(244,241,234,0.10)" strokeWidth="0.75" />
           )}
           {/* construction cross — axes stop at the limb, clear the core */}
-          <path d={chart.cross} stroke="rgba(10,9,8,0.18)" strokeWidth="0.75" fill="none" />
+          <path d={chart.cross} stroke="rgba(244,241,234,0.16)" strokeWidth="0.75" fill="none" />
           {/* radius callout */}
           {chart.showDetail && (
             <>
               <path
                 d={`M ${chart.calloutA[0].toFixed(2)} ${chart.calloutA[1].toFixed(2)} L ${chart.calloutB[0].toFixed(2)} ${chart.calloutB[1].toFixed(2)}`}
-                stroke="rgba(10,9,8,0.22)"
+                stroke="rgba(244,241,234,0.2)"
                 strokeWidth="0.75"
                 strokeDasharray="1 3.5"
                 strokeLinecap="round"
                 fill="none"
               />
-              <circle cx={chart.calloutB[0]} cy={chart.calloutB[1]} r="1.75" fill="rgba(130,89,34,0.9)" />
+              <circle cx={chart.calloutB[0]} cy={chart.calloutB[1]} r="1.75" fill="rgba(232,185,106,0.9)" />
               <text
                 x={-0.52 * radius}
                 y={-0.15 * radius - 10}
                 textAnchor="middle"
-                fill="rgba(130,89,34,0.8)"
+                fill="rgba(241,208,138,0.8)"
                 style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 12 }}
               >
                 r
@@ -266,7 +266,7 @@ export default function PrinciplesOrbit() {
             rx={0.62 * radius}
             ry={0.31 * radius}
             fill="none"
-            stroke="rgba(130,89,34,0.35)"
+            stroke="rgba(233,185,106,0.4)"
             strokeWidth="1.2"
             strokeDasharray="0.1 7"
             strokeLinecap="round"
@@ -275,25 +275,25 @@ export default function PrinciplesOrbit() {
           <path
             d={`M ${-radius} 0 A ${radius} ${0.5 * radius} 0 0 1 ${radius} 0`}
             fill="none"
-            stroke="rgba(130,89,34,0.4)"
+            stroke="rgba(233,185,106,0.35)"
             strokeWidth="1.5"
           />
           <path
             d={`M ${-(radius - 4)} 0 A ${radius - 4} ${0.5 * (radius - 4)} 0 0 1 ${radius - 4} 0`}
             fill="none"
-            stroke="rgba(92,62,24,0.22)"
+            stroke="rgba(241,208,138,0.18)"
             strokeWidth="0.75"
           />
           {/* graduated limb bounds */}
-          <ellipse rx={1.06 * radius} ry={0.53 * radius} fill="none" stroke="rgba(130,89,34,0.22)" strokeWidth="0.75" />
-          <ellipse rx={1.12 * radius} ry={0.56 * radius} fill="none" stroke="rgba(130,89,34,0.22)" strokeWidth="0.75" />
+          <ellipse rx={1.06 * radius} ry={0.53 * radius} fill="none" stroke="rgba(233,185,106,0.22)" strokeWidth="0.75" />
+          <ellipse rx={1.12 * radius} ry={0.56 * radius} fill="none" stroke="rgba(233,185,106,0.22)" strokeWidth="0.75" />
           {/* tick band — foreshortened by the same projection as the nodes */}
-          <path d={chart.minors} stroke="rgba(130,89,34,0.4)" strokeWidth="0.75" fill="none" />
-          <path d={chart.majors} stroke="rgba(92,62,24,0.6)" strokeWidth="1.25" fill="none" />
+          <path d={chart.minors} stroke="rgba(233,185,106,0.4)" strokeWidth="0.75" fill="none" />
+          <path d={chart.majors} stroke="rgba(241,208,138,0.6)" strokeWidth="1.25" fill="none" />
           {/* station dots — pin the rail to the crosshair, cover the seams */}
-          <circle cx={radius} cy="0" r="2.25" fill="rgba(130,89,34,0.85)" />
-          <circle cx={-radius} cy="0" r="2.25" fill="rgba(130,89,34,0.85)" />
-          <circle cx="0" cy={-0.5 * radius} r="2" fill="rgba(130,89,34,0.45)" />
+          <circle cx={radius} cy="0" r="2.25" fill="rgba(241,208,138,0.85)" />
+          <circle cx={-radius} cy="0" r="2.25" fill="rgba(241,208,138,0.85)" />
+          <circle cx="0" cy={-0.5 * radius} r="2" fill="rgba(233,185,106,0.4)" />
           {/* plate labels */}
           {chart.showDetail && (
             <>
@@ -302,7 +302,7 @@ export default function PrinciplesOrbit() {
                 y="0"
                 textAnchor="end"
                 dominantBaseline="central"
-                fill="rgba(10,9,8,0.4)"
+                fill="rgba(244,241,234,0.4)"
                 style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.16em" }}
               >
                 FIG. 01
@@ -312,7 +312,7 @@ export default function PrinciplesOrbit() {
                 y="0"
                 textAnchor="start"
                 dominantBaseline="central"
-                fill="rgba(10,9,8,0.4)"
+                fill="rgba(244,241,234,0.4)"
                 style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.16em" }}
               >
                 INCL. 60°
@@ -341,9 +341,9 @@ export default function PrinciplesOrbit() {
         >
           <defs>
             <linearGradient id="tvl-rail-grad" gradientUnits="userSpaceOnUse" x1={-radius} y1="0" x2={radius} y2="0">
-              <stop offset="0%" stopColor="#825922" />
-              <stop offset="50%" stopColor="#C9923D" />
-              <stop offset="100%" stopColor="#825922" />
+              <stop offset="0%" stopColor="#A9762E" />
+              <stop offset="50%" stopColor="#F1D08A" />
+              <stop offset="100%" stopColor="#A9762E" />
             </linearGradient>
           </defs>
           <path
@@ -356,11 +356,11 @@ export default function PrinciplesOrbit() {
           <path
             d={`M ${-(radius - 4)} 0 A ${radius - 4} ${0.5 * (radius - 4)} 0 0 0 ${radius - 4} 0`}
             fill="none"
-            stroke="rgba(92,62,24,0.5)"
+            stroke="rgba(241,208,138,0.4)"
             strokeWidth="0.75"
           />
-          <circle cx="0" cy={0.5 * radius} r="4.5" fill="#F4F1EA" stroke="rgba(169,118,46,0.9)" strokeWidth="1" />
-          <circle cx="0" cy={0.5 * radius} r="1.5" fill="#A9762E" />
+          <circle cx="0" cy={0.5 * radius} r="4.5" fill="#0A0908" stroke="rgba(241,208,138,0.9)" strokeWidth="1" />
+          <circle cx="0" cy={0.5 * radius} r="1.5" fill="#F1D08A" />
         </svg>
 
         {PRINCIPLES.map((item, index) => {
@@ -395,21 +395,20 @@ export default function PrinciplesOrbit() {
                 filter: pos.blur && !isOpen ? `blur(${pos.blur}px)` : undefined,
               }}
             >
-              {/* seat shadow — the coin presses onto the paper (same family
-                  as the core's ground shadow; inherits the wrapper's scale) */}
+              {/* dark halo — clears the cloud field right behind the coin */}
               <div
                 aria-hidden="true"
-                className="pointer-events-none absolute left-1/2 top-[46px] h-2.5 w-10 -translate-x-1/2 rounded-[50%] bg-[radial-gradient(50%_50%_at_center,rgba(10,9,8,0.25),transparent_70%)]"
+                className="pointer-events-none absolute left-1/2 top-1/2 z-0 h-24 w-24 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,#0A0908_0%,#0A0908_42%,rgba(10,9,8,0.7)_60%,rgba(10,9,8,0)_100%)] blur-[3px]"
               />
 
-              {/* minted-plate node — an ink coin on the paper plate */}
+              {/* minted-plate node */}
               <div
                 className={`relative z-10 grid h-14 w-14 place-items-center rounded-full border-2 transition-all duration-300 ease-out ${
                   isOpen
                     ? "scale-125 border-gold-100 bg-[radial-gradient(circle_at_50%_28%,#F7E3B5_0%,#DDA64F_100%)] text-ink-900 shadow-[0_0_0_1.5px_rgba(10,9,8,0.9),0_4px_20px_-2px_rgba(0,0,0,0.7),0_0_34px_-3px_rgba(233,185,106,0.9)]"
                     : isRelated
                       ? "animate-pulse border-gold-200 bg-[radial-gradient(circle_at_50%_30%,rgba(201,146,61,0.32)_0%,#110F0B_75%)] text-gold-100 ring-1 ring-inset ring-gold-400/40 shadow-[0_0_0_1.5px_rgba(10,9,8,0.95),0_3px_12px_-2px_rgba(0,0,0,0.85),0_0_26px_-3px_rgba(241,208,138,0.6)]"
-                      : "border-gold-300 bg-[radial-gradient(circle_at_50%_30%,#231F17_0%,#0C0B09_78%)] text-gold-100 shadow-[0_0_0_1.5px_rgba(10,9,8,0.95),0_3px_12px_-2px_rgba(0,0,0,0.85),0_0_10px_-7px_rgba(232,185,106,0.35)]"
+                      : "border-gold-300 bg-[radial-gradient(circle_at_50%_30%,#231F17_0%,#0C0B09_78%)] text-gold-100 shadow-[0_0_0_1.5px_rgba(10,9,8,0.95),0_3px_12px_-2px_rgba(0,0,0,0.85),0_0_18px_-6px_rgba(232,185,106,0.5)]"
                 }`}
               >
                 <Icon size={20} strokeWidth={1.75} aria-hidden="true" />
@@ -418,7 +417,7 @@ export default function PrinciplesOrbit() {
               {/* label */}
               <div
                 className={`absolute left-1/2 top-16 -translate-x-1/2 whitespace-nowrap font-mono text-[11px] uppercase tracking-[0.22em] transition-all duration-300 ${
-                  isOpen ? "text-gold-700" : "text-ink-900/70"
+                  isOpen ? "text-gold-200" : "text-bone/80"
                 }`}
               >
                 {item.label}
@@ -428,17 +427,14 @@ export default function PrinciplesOrbit() {
         })}
       </div>
 
-      {/* paper fog + centered readout — the orbit softens behind the open card
-          (a light veil: darkening the light plate on click read as murky) */}
+      {/* click-away catcher + centered readout. The catcher is invisible on
+          purpose: washing the whole band on open was the "darkens on click"
+          murk — the card is opaque, so it needs no help. */}
       {openItem && (
         <>
+          <div className="absolute inset-0 z-[140]" onClick={closeAll} aria-hidden="true" />
           <div
-            className="absolute inset-0 z-[140] bg-bone/70 transition-opacity duration-300"
-            onClick={closeAll}
-            aria-hidden="true"
-          />
-          <div
-            className="absolute left-1/2 top-1/2 z-[150] w-[19rem] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-sm border border-gold-soft bg-ink-900/95 shadow-[0_22px_60px_-24px_rgba(0,0,0,0.9)] sm:w-80"
+            className="absolute left-1/2 top-1/2 z-[150] w-[19rem] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-sm border border-gold-soft bg-ink-900 shadow-[0_22px_60px_-24px_rgba(0,0,0,0.95),0_0_0_1px_rgba(10,9,8,0.6)] sm:w-80"
             role="dialog"
             aria-label={`Principle ${String(openItem.id).padStart(2, "0")}`}
             onClick={(e) => e.stopPropagation()}
