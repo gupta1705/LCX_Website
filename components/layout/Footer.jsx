@@ -9,9 +9,9 @@ export default function Footer() {
       <div className="container-px py-16 lg:py-20">
         {/* Big CTA strip */}
         <div className="flex flex-col items-start justify-between gap-8 border-b border-white/[0.06] pb-14 md:flex-row md:items-end">
-          <div className="max-w-xl">
+          <div className="max-w-2xl">
             <p className="eyebrow mb-4">Have something worth seeing?</p>
-            <h2 className="text-balance font-sans text-3xl font-medium tracking-tighter text-bone sm:text-4xl lg:text-5xl">
+            <h2 className="text-balance font-sans text-[clamp(2rem,5vw,5.5rem)] font-medium leading-[1.05] tracking-tightest text-bone">
               Let&apos;s make your brand{" "}
               <span className="font-serif italic text-gold-gradient">
                 impossible to ignore.
