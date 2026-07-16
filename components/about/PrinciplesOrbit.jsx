@@ -5,17 +5,16 @@ import { ArrowRight, Link2, Feather, Zap, Cpu, Radar } from "lucide-react";
 import { useReducedMotion } from "framer-motion";
 
 /**
- * The four principles in a 3D orbit, inked in gold over the section's nebula
+ * The four principles in a 3D orbit, inked in gold over the section's contour
  * field. The nodes ride a TILTED orbital plane: their 3D position is
  * projected to 2D in JS (x, squashed y, depth), and depth drives scale,
  * opacity, blur and z-order — so nodes genuinely pass in front of and behind
  * the gold core while every label stays crisp (nothing is CSS-3D-skewed). The
  * chart under them is a static engraved SVG — an orrery drawing in the antique
- * astronomy-plate tradition: double-ruled orbit rail (far half behind the
- * core, near half in front), a graduated tick limb, construction cross,
- * dotted inner orbit, radius callout and plate labels. Click a node: the orbit
- * glides it to the front docking seat and its readout opens as an opaque ink
- * plate — nothing dims behind it, the clouds just carry on.
+ * astronomy-plate tradition: the orbit rail (far half behind the core, near
+ * half in front), a graduated tick limb, dotted inner orbit and plate labels.
+ * Click a node: the orbit glides it to the front docking seat and its readout
+ * opens as an opaque ink plate — nothing dims behind it, the field carries on.
  */
 const PRINCIPLES = [
   {
@@ -147,7 +146,7 @@ export default function PrinciplesOrbit() {
       x,
       y,
       scale: 0.72 + near * 0.46, // 0.72 far → 1.18 near
-      opacity: 0.45 + near * 0.55,
+      opacity: 0.55 + near * 0.45,
       blur: depth < 0 ? -depth * 1.4 : 0, // up to 1.4px on the far side
       z: depth >= 0 ? Math.round(56 + depth * 40) : Math.round(46 + depth * 40),
     };
@@ -177,18 +176,7 @@ export default function PrinciplesOrbit() {
     }
     let majors = "";
     for (let t = 0; t < 360; t += 30) majors += seg(P(1.06 * R, t), P(1.15 * R, t));
-    const r0 = Math.max(56, 0.18 * R);
-    let cross = "";
-    for (const t of [0, 90, 180, 270]) cross += seg(P(r0, t), P(1.06 * R, t));
-    return {
-      compact,
-      minors,
-      majors,
-      cross,
-      calloutA: P(0.22 * R, 210),
-      calloutB: P(R, 210),
-      showDetail: R >= 200,
-    };
+    return { minors, majors, showDetail: R >= 200 };
   }, [radius]);
 
   return (
@@ -199,17 +187,18 @@ export default function PrinciplesOrbit() {
       }}
       className="relative mx-auto flex h-[440px] w-full max-w-5xl items-center justify-center overflow-visible sm:h-[520px] lg:h-[560px]"
     >
-      {/* local scrim — calms the clouds directly under the drawing */}
+      {/* local scrim — a clean pocket in the line field, no visible blob edge */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 [background:radial-gradient(closest-side,rgba(10,9,8,0.55),transparent_78%)]"
+        className="pointer-events-none absolute inset-0 [background:radial-gradient(72%_60%_at_50%_50%,rgba(10,9,8,0.5),rgba(10,9,8,0.18)_55%,transparent_88%)]"
       />
 
       <div className="relative" style={{ width: ellipseW, height: ellipseH }}>
         {/* THE CHART — one static engraved SVG under everything: core seat
-            shadow, guide ring, construction cross, radius callout, dotted
-            inner orbit, the FAR half of the double-ruled rail, graduated
-            limb + tick band, station dots, plate labels. */}
+            pool, dotted inner orbit, the FAR half of the rail, graduated
+            limb + tick band, station dots, plate labels. Fewer, stronger
+            strokes than the paper version — on a dark band over a live line
+            field, every faint hairline is camouflage. */}
         <svg
           aria-hidden="true"
           className="pointer-events-none absolute left-1/2 top-1/2 z-[2] -translate-x-1/2 -translate-y-1/2 overflow-visible"
@@ -219,12 +208,12 @@ export default function PrinciplesOrbit() {
         >
           <defs>
             <radialGradient id="tvl-core-seat">
-              <stop offset="0%" stopColor="rgba(10,9,8,0.85)" />
-              <stop offset="60%" stopColor="rgba(10,9,8,0.35)" />
+              <stop offset="0%" stopColor="rgba(10,9,8,0.9)" />
+              <stop offset="60%" stopColor="rgba(10,9,8,0.4)" />
               <stop offset="100%" stopColor="rgba(10,9,8,0)" />
             </radialGradient>
           </defs>
-          {/* core ground pool — clears the clouds so the bead reads */}
+          {/* core ground pool — clears the field so the bead reads */}
           <ellipse
             cx="0"
             cy="5"
@@ -232,68 +221,32 @@ export default function PrinciplesOrbit() {
             ry={Math.max(13, 0.07 * radius)}
             fill="url(#tvl-core-seat)"
           />
-          {/* guide ring */}
-          {!chart.compact && (
-            <ellipse rx={0.33 * radius} ry={0.165 * radius} fill="none" stroke="rgba(244,241,234,0.10)" strokeWidth="0.75" />
-          )}
-          {/* construction cross — axes stop at the limb, clear the core */}
-          <path d={chart.cross} stroke="rgba(244,241,234,0.16)" strokeWidth="0.75" fill="none" />
-          {/* radius callout */}
-          {chart.showDetail && (
-            <>
-              <path
-                d={`M ${chart.calloutA[0].toFixed(2)} ${chart.calloutA[1].toFixed(2)} L ${chart.calloutB[0].toFixed(2)} ${chart.calloutB[1].toFixed(2)}`}
-                stroke="rgba(244,241,234,0.2)"
-                strokeWidth="0.75"
-                strokeDasharray="1 3.5"
-                strokeLinecap="round"
-                fill="none"
-              />
-              <circle cx={chart.calloutB[0]} cy={chart.calloutB[1]} r="1.75" fill="rgba(232,185,106,0.9)" />
-              <text
-                x={-0.52 * radius}
-                y={-0.15 * radius - 10}
-                textAnchor="middle"
-                fill="rgba(241,208,138,0.8)"
-                style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 12 }}
-              >
-                r
-              </text>
-            </>
-          )}
           {/* dotted inner orbit */}
           <ellipse
             rx={0.62 * radius}
             ry={0.31 * radius}
             fill="none"
-            stroke="rgba(233,185,106,0.4)"
-            strokeWidth="1.2"
-            strokeDasharray="0.1 7"
+            stroke="rgba(232,185,106,0.55)"
+            strokeWidth="1.5"
+            strokeDasharray="0.1 8"
             strokeLinecap="round"
           />
-          {/* far half of the main rail — double-ruled */}
+          {/* far half of the main rail */}
           <path
             d={`M ${-radius} 0 A ${radius} ${0.5 * radius} 0 0 1 ${radius} 0`}
             fill="none"
-            stroke="rgba(233,185,106,0.35)"
+            stroke="rgba(232,185,106,0.5)"
             strokeWidth="1.5"
           />
-          <path
-            d={`M ${-(radius - 4)} 0 A ${radius - 4} ${0.5 * (radius - 4)} 0 0 1 ${radius - 4} 0`}
-            fill="none"
-            stroke="rgba(241,208,138,0.18)"
-            strokeWidth="0.75"
-          />
-          {/* graduated limb bounds */}
-          <ellipse rx={1.06 * radius} ry={0.53 * radius} fill="none" stroke="rgba(233,185,106,0.22)" strokeWidth="0.75" />
-          <ellipse rx={1.12 * radius} ry={0.56 * radius} fill="none" stroke="rgba(233,185,106,0.22)" strokeWidth="0.75" />
+          {/* graduated limb bound */}
+          <ellipse rx={1.06 * radius} ry={0.53 * radius} fill="none" stroke="rgba(232,185,106,0.3)" strokeWidth="1" />
           {/* tick band — foreshortened by the same projection as the nodes */}
-          <path d={chart.minors} stroke="rgba(233,185,106,0.4)" strokeWidth="0.75" fill="none" />
-          <path d={chart.majors} stroke="rgba(241,208,138,0.6)" strokeWidth="1.25" fill="none" />
-          {/* station dots — pin the rail to the crosshair, cover the seams */}
-          <circle cx={radius} cy="0" r="2.25" fill="rgba(241,208,138,0.85)" />
-          <circle cx={-radius} cy="0" r="2.25" fill="rgba(241,208,138,0.85)" />
-          <circle cx="0" cy={-0.5 * radius} r="2" fill="rgba(233,185,106,0.4)" />
+          <path d={chart.minors} stroke="rgba(232,185,106,0.45)" strokeWidth="1" fill="none" />
+          <path d={chart.majors} stroke="rgba(241,208,138,0.75)" strokeWidth="1.5" fill="none" />
+          {/* station dots — pin the rail to the limb, cover the seams */}
+          <circle cx={radius} cy="0" r="2.5" fill="rgba(241,208,138,0.95)" />
+          <circle cx={-radius} cy="0" r="2.5" fill="rgba(241,208,138,0.95)" />
+          <circle cx="0" cy={-0.5 * radius} r="2" fill="rgba(232,185,106,0.55)" />
           {/* plate labels */}
           {chart.showDetail && (
             <>
@@ -302,7 +255,11 @@ export default function PrinciplesOrbit() {
                 y="0"
                 textAnchor="end"
                 dominantBaseline="central"
-                fill="rgba(244,241,234,0.4)"
+                fill="rgba(241,208,138,0.6)"
+                paintOrder="stroke"
+                stroke="#0A0908"
+                strokeWidth="3"
+                strokeLinejoin="round"
                 style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.16em" }}
               >
                 FIG. 01
@@ -312,7 +269,11 @@ export default function PrinciplesOrbit() {
                 y="0"
                 textAnchor="start"
                 dominantBaseline="central"
-                fill="rgba(244,241,234,0.4)"
+                fill="rgba(241,208,138,0.6)"
+                paintOrder="stroke"
+                stroke="#0A0908"
+                strokeWidth="3"
+                strokeLinejoin="round"
                 style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.16em" }}
               >
                 INCL. 60°
@@ -326,7 +287,7 @@ export default function PrinciplesOrbit() {
           {!reduce && (
             <div className="absolute h-14 w-14 animate-pulse-soft rounded-full bg-[radial-gradient(circle,rgba(201,146,61,0.30),transparent_66%)]" />
           )}
-          <div className="absolute h-9 w-9 rounded-full bg-[radial-gradient(circle_at_38%_30%,#f7e3b5_0%,#dda64f_48%,#6e4513_100%)] shadow-[inset_0_-3px_7px_-2px_rgba(0,0,0,0.55),0_0_0_1px_rgba(10,9,8,0.5),0_0_16px_-4px_rgba(233,185,106,0.6)]" />
+          <div className="absolute h-9 w-9 rounded-full bg-[radial-gradient(circle_at_38%_30%,#f7e3b5_0%,#dda64f_48%,#6e4513_100%)] shadow-[inset_0_-3px_7px_-2px_rgba(0,0,0,0.55),0_0_0_1px_rgba(10,9,8,0.5),0_0_16px_-4px_rgba(232,185,106,0.6)]" />
           <div className="relative h-2.5 w-2.5 rounded-full bg-bone/90" />
         </div>
 
@@ -350,13 +311,13 @@ export default function PrinciplesOrbit() {
             d={`M ${-radius} 0 A ${radius} ${0.5 * radius} 0 0 0 ${radius} 0`}
             fill="none"
             stroke="url(#tvl-rail-grad)"
-            strokeOpacity="0.95"
-            strokeWidth="2"
+            strokeOpacity="1"
+            strokeWidth="2.25"
           />
           <path
             d={`M ${-(radius - 4)} 0 A ${radius - 4} ${0.5 * (radius - 4)} 0 0 0 ${radius - 4} 0`}
             fill="none"
-            stroke="rgba(241,208,138,0.4)"
+            stroke="rgba(247,227,181,0.35)"
             strokeWidth="0.75"
           />
           <circle cx="0" cy={0.5 * radius} r="4.5" fill="#0A0908" stroke="rgba(241,208,138,0.9)" strokeWidth="1" />
@@ -395,17 +356,17 @@ export default function PrinciplesOrbit() {
                 filter: pos.blur && !isOpen ? `blur(${pos.blur}px)` : undefined,
               }}
             >
-              {/* dark halo — clears the cloud field right behind the coin */}
+              {/* dark halo — clears the line field right behind the coin */}
               <div
                 aria-hidden="true"
-                className="pointer-events-none absolute left-1/2 top-1/2 z-0 h-24 w-24 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,#0A0908_0%,#0A0908_42%,rgba(10,9,8,0.7)_60%,rgba(10,9,8,0)_100%)] blur-[3px]"
+                className="pointer-events-none absolute left-1/2 top-1/2 z-0 h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(10,9,8,0.9)_0%,rgba(10,9,8,0.55)_48%,rgba(10,9,8,0)_75%)]"
               />
 
               {/* minted-plate node */}
               <div
                 className={`relative z-10 grid h-14 w-14 place-items-center rounded-full border-2 transition-all duration-300 ease-out ${
                   isOpen
-                    ? "scale-125 border-gold-100 bg-[radial-gradient(circle_at_50%_28%,#F7E3B5_0%,#DDA64F_100%)] text-ink-900 shadow-[0_0_0_1.5px_rgba(10,9,8,0.9),0_4px_20px_-2px_rgba(0,0,0,0.7),0_0_34px_-3px_rgba(233,185,106,0.9)]"
+                    ? "scale-125 border-gold-100 bg-[radial-gradient(circle_at_50%_28%,#F7E3B5_0%,#DDA64F_100%)] text-ink-900 shadow-[0_0_0_1.5px_rgba(10,9,8,0.9),0_4px_20px_-2px_rgba(0,0,0,0.7),0_0_34px_-3px_rgba(232,185,106,0.9)]"
                     : isRelated
                       ? "animate-pulse border-gold-200 bg-[radial-gradient(circle_at_50%_30%,rgba(201,146,61,0.32)_0%,#110F0B_75%)] text-gold-100 ring-1 ring-inset ring-gold-400/40 shadow-[0_0_0_1.5px_rgba(10,9,8,0.95),0_3px_12px_-2px_rgba(0,0,0,0.85),0_0_26px_-3px_rgba(241,208,138,0.6)]"
                       : "border-gold-300 bg-[radial-gradient(circle_at_50%_30%,#231F17_0%,#0C0B09_78%)] text-gold-100 shadow-[0_0_0_1.5px_rgba(10,9,8,0.95),0_3px_12px_-2px_rgba(0,0,0,0.85),0_0_18px_-6px_rgba(232,185,106,0.5)]"
@@ -416,8 +377,8 @@ export default function PrinciplesOrbit() {
 
               {/* label */}
               <div
-                className={`absolute left-1/2 top-16 -translate-x-1/2 whitespace-nowrap font-mono text-[11px] uppercase tracking-[0.22em] transition-all duration-300 ${
-                  isOpen ? "text-gold-200" : "text-bone/80"
+                className={`absolute left-1/2 top-16 -translate-x-1/2 whitespace-nowrap font-mono text-[11px] uppercase tracking-[0.22em] transition-all duration-300 [text-shadow:0_1px_2px_rgba(10,9,8,0.95),0_0_8px_rgba(10,9,8,0.85)] ${
+                  isOpen ? "text-gold-200" : "text-bone/90"
                 }`}
               >
                 {item.label}

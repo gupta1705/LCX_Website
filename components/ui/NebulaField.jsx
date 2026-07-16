@@ -3,18 +3,21 @@
 import { useEffect, useRef } from "react";
 
 /**
- * Gold nebula field — a WebGL2 fragment shader painted behind a section band.
+ * Gold contour field — a WebGL2 fragment shader painted behind a section band.
  *
- * Adapted from the flowing-cloud shader by Matthias Hurrle (@atzedent): relit
- * from its original orange/rainbow palette onto our gold scale over ink black,
- * and stripped of the pointer plumbing the fragment source never read (it
- * declares only `resolution` and `time`).
+ * Antialiased iso-lines of a slowly domain-warped fbm: engraved topographic
+ * strokes that morph like a living survey chart, kin to the Lorenz filaments
+ * and the orrery drawing rather than a foreign visual language. The noise/fbm
+ * helpers descend from the flowing-cloud shader by Matthias Hurrle
+ * (@atzedent); the contour rendering is ours. The field is deliberately
+ * calmest in a pocket where the orbit sits and densest toward the band edges.
  *
  * The site already runs a WebGL canvas full-time (the Lorenz attractor), so
  * this one is disciplined about when it draws: it paints only while its band is
- * on screen, stops when the tab is hidden, renders at most 1x device pixels
- * (a soft nebula gains nothing from retina), and holds a single static frame
- * when the visitor prefers reduced motion.
+ * on screen, stops when the tab is hidden, renders at most 1.5x device pixels
+ * (enough that the ~1px engraved strokes stay crisp on retina — affordable
+ * because the fragment is cheap: 3 fbm evaluations per pixel), and holds a
+ * single static frame when the visitor prefers reduced motion.
  */
 
 const VERT = `#version 300 es
@@ -54,38 +57,55 @@ float fbm(vec2 p) {
   }
   return t;
 }
-float clouds(vec2 p) {
-  float d=1., t=.0;
-  for (float i=.0; i<3.; i++) {
-    float a=d*fbm(i*10.+p.x*.2+.2*(1.+i)*p.y+d+i*i+p);
-    t=mix(t,d,a);
-    d=a;
-    p*=2./(i+1.);
-  }
-  return t;
-}
 void main(void) {
-  // Brand palette: the filaments run gold-600 -> gold-200, the haze is a deep
-  // gold-brown, and the floor is ink-900 (#0A0908) rather than pure black so
-  // the band's darkest pixels match the page around it.
-  const vec3 GOLD_HI = vec3(.945,.816,.541);
-  const vec3 GOLD_LO = vec3(.663,.463,.180);
-  const vec3 CLOUD   = vec3(.26,.19,.08);
-  const vec3 INK     = vec3(.039,.035,.031);
-  vec2 uv=(FC-.5*R)/MN,st=uv*vec2(2,1);
-  vec3 col=vec3(0);
-  float bg=clouds(vec2(st.x+T*.5,-st.y));
-  uv*=1.-.3*(sin(T*.2)*.5+.5);
-  for (float i=1.; i<12.; i++) {
-    uv+=.1*cos(i*vec2(.1+.01*i, .8)+i*i+T*.5+.1*uv.x);
-    vec2 p=uv;
-    float d=length(p);
-    col+=.0022/d*mix(GOLD_LO,GOLD_HI,.5+.5*sin(i));
-    float b=noise(i+p+bg*1.731);
-    col+=.0024*b/length(max(p,vec2(b*p.x*.02,p.y)))*GOLD_HI;
-    col=mix(col,CLOUD*bg,d);
-  }
-  O=vec4(col+INK,1);
+  // Engraved contour field: antialiased iso-lines of a slowly domain-warped
+  // fbm, inked in the gold scale over ink-900. No fills, no glow -- fine
+  // plate-engraving strokes that morph like a living topographic chart.
+  const vec3 INK  = vec3(.039,.035,.031); // ink-900 #0A0908
+  const vec3 G700 = vec3(.510,.349,.133); // gold-700 #825922
+  const vec3 G600 = vec3(.663,.463,.180); // gold-600 #A9762E
+  const vec3 G300 = vec3(.910,.725,.416); // gold-300 #E8B96A
+  const vec3 G200 = vec3(.945,.816,.541); // gold-200 #F1D08A
+
+  vec2 uv=(FC-.5*R)/MN;            // centered, aspect-true
+  vec2 p=uv*vec2(1.4,1.)*.8;       // low frequency: long, unhurried curves
+  float t=T*.045;                  // slow, stately drift
+
+  // Domain warp: one fbm pair bends the lattice of a third (3 fbm total).
+  vec2 w=vec2(
+    fbm(p+vec2(t,-.7*t)),
+    fbm(p+vec2(-.6*t,t)+3.7)
+  );
+  float f=fbm(p+1.1*(w-.5)+vec2(.3*t,-.2*t));
+
+  // Field -> contour space. A faint radial term crowds the rings outward
+  // so the pocket -- where the orbit lives -- stays quiet.
+  float r=length(uv+vec2(0.,.08)); // pocket center ~58% down the band, where the orbit sits
+  float v=f*4.5+r*1.2;             // major contours
+  float vm=v*3.;                   // minor contours between them
+
+  // fwidth-based iso-lines: ~1px strokes at any resolution. Where contours
+  // crowd below pixel scale the strokes fade out instead of aliasing.
+  float aw=fwidth(v)+1e-5;
+  float awm=fwidth(vm)+1e-5;
+  float major=(1.-smoothstep(.35*aw,1.4*aw,abs(fract(v)-.5)))*(1.-smoothstep(.2,.45,aw));
+  float minor=(1.-smoothstep(.3*awm,1.1*awm,abs(fract(vm)-.5)))*(1.-smoothstep(.2,.45,awm));
+
+  // Brightness breathes along each line; a rare contour is promoted to a
+  // bright crest -- the "index line" of an engraved survey chart.
+  float flow=.45+.55*smoothstep(.25,.85,w.y);
+  float crest=smoothstep(.82,.97,noise(vec2(floor(v)*3.7,floor(v)*1.3)+t));
+
+  // Soft center vignette: calm pocket (~30%), full weight at the edges.
+  vec2 q=FC/R-vec2(.5,.42); // vignette follows the orbit, not the canvas center
+  float vig=mix(.3,1.,smoothstep(.1,.52,length(q*vec2(1.,1.35))));
+
+  vec3 inkline=mix(G700,G600,flow);
+  vec3 hiline=mix(G300,G200,flow);
+  vec3 col=INK;
+  col+=minor*.3*flow*vig*inkline;
+  col+=major*flow*vig*mix(inkline,hiline,crest)*(.55+.45*crest);
+  O=vec4(col,1.);
 }`;
 
 export default function NebulaField({ className = "" }) {
@@ -146,7 +166,7 @@ export default function NebulaField({ className = "" }) {
 
     const resize = () => {
       const rect = canvas.getBoundingClientRect();
-      const dpr = Math.min(1, window.devicePixelRatio || 1);
+      const dpr = Math.min(1.5, window.devicePixelRatio || 1);
       const w = Math.max(1, Math.round(rect.width * dpr));
       const h = Math.max(1, Math.round(rect.height * dpr));
       if (canvas.width !== w || canvas.height !== h) {

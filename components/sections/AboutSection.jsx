@@ -91,21 +91,21 @@ export default function AboutSection() {
         </div>
       </section>
 
-      {/* How we think — the nebula band. A full-bleed gold cloud field
-          interrupts the attractor that runs behind the rest of the page, so the
-          section still reads as its own plate; the orbit is inked for it
-          inside PrinciplesOrbit. */}
+      {/* How we think — the contour band. A full-bleed engraved gold line
+          field (slow-morphing topographic iso-lines, kin to the attractor's
+          filaments) interrupts the page, so the section still reads as its own
+          plate; the orbit is inked for it inside PrinciplesOrbit. */}
       <section className="relative isolate overflow-hidden border-y border-gold-500/15 bg-ink-900 py-24 text-bone lg:py-32">
         {/* stand-in for the field if WebGL2 is unavailable */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 -z-10 [background:radial-gradient(120%_90%_at_50%_50%,rgba(169,118,46,0.16),#0A0908_70%)]"
+          className="pointer-events-none absolute inset-0 -z-10 [background:radial-gradient(120%_90%_at_50%_50%,rgba(169,118,46,0.07),#0A0908_72%)]"
         />
         <NebulaField className="absolute inset-0 -z-10 h-full w-full" />
-        {/* scrim — the type and the orbit stay legible over the clouds */}
+        {/* edge fades — headline landing top, plate fade-out bottom */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 -z-10 [background:radial-gradient(80%_65%_at_50%_55%,rgba(10,9,8,0.7),rgba(10,9,8,0.3)_68%,transparent)]"
+          className="pointer-events-none absolute inset-0 -z-10 [background:linear-gradient(180deg,rgba(10,9,8,0.62),rgba(10,9,8,0.18)_28%,transparent_48%),linear-gradient(0deg,rgba(10,9,8,0.55),transparent_16%)]"
         />
         <div className="container-px relative">
           <Reveal>
