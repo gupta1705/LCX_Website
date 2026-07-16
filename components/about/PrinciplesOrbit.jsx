@@ -155,21 +155,44 @@ export default function PrinciplesOrbit() {
         className="relative"
         style={{ width: radius * 2, height: radius * 2, perspective: "1000px" }}
       >
-        {/* central core — a lit gold sphere with one soft breathing glow,
-            not the stock pulsing-orb-with-expanding-ping-rings */}
-        <div className="absolute left-1/2 top-1/2 z-10 grid h-24 w-24 -translate-x-1/2 -translate-y-1/2 place-items-center">
+        {/* central core — a small lit gold bead with one soft breathing glow */}
+        <div className="absolute left-1/2 top-1/2 z-10 grid h-16 w-16 -translate-x-1/2 -translate-y-1/2 place-items-center">
           {!reduce && (
-            <div className="absolute h-36 w-36 animate-pulse-soft rounded-full bg-[radial-gradient(circle,rgba(201,146,61,0.4),transparent_68%)]" />
+            <div className="absolute h-16 w-16 animate-pulse-soft rounded-full bg-[radial-gradient(circle,rgba(201,146,61,0.45),transparent_66%)]" />
           )}
-          <div className="absolute h-28 w-28 rounded-full border border-gold-400/20" />
-          <div className="absolute h-24 w-24 rounded-full bg-[radial-gradient(circle_at_38%_30%,#f7e3b5_0%,#dda64f_46%,#6e4513_100%)] shadow-[inset_0_-7px_16px_-5px_rgba(0,0,0,0.55),0_0_0_1px_rgba(10,9,8,0.5)]" />
-          <div className="relative h-9 w-9 rounded-full bg-bone/90 shadow-[0_1px_5px_rgba(0,0,0,0.45)]" />
+          <div className="absolute h-9 w-9 rounded-full bg-[radial-gradient(circle_at_38%_30%,#f7e3b5_0%,#dda64f_48%,#6e4513_100%)] shadow-[inset_0_-3px_7px_-2px_rgba(0,0,0,0.55),0_0_0_1px_rgba(10,9,8,0.5),0_0_16px_-4px_rgba(233,185,106,0.6)]" />
+          <div className="relative h-2.5 w-2.5 rounded-full bg-bone/90" />
         </div>
 
-        {/* orbit ring */}
+        {/* orbit ring — a lit gold track that catches light around its
+            circumference (conic gradient masked to a thin ring), so it reads
+            as an orbit rather than a flat faint circle */}
         <div
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/10"
-          style={{ width: radius * 2, height: radius * 2 }}
+          aria-hidden="true"
+          className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
+          style={{
+            width: radius * 2,
+            height: radius * 2,
+            background:
+              "conic-gradient(from 210deg, rgba(241,208,138,0.6) 0deg, rgba(201,146,61,0.10) 95deg, rgba(201,146,61,0.04) 200deg, rgba(233,185,106,0.4) 315deg, rgba(241,208,138,0.6) 360deg)",
+            WebkitMask:
+              "radial-gradient(farthest-side, transparent calc(100% - 1.5px), #000 calc(100% - 1.5px))",
+            mask: "radial-gradient(farthest-side, transparent calc(100% - 1.5px), #000 calc(100% - 1.5px))",
+          }}
+        />
+        {/* soft glow under the track */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full opacity-60 blur-[6px]"
+          style={{
+            width: radius * 2,
+            height: radius * 2,
+            background:
+              "conic-gradient(from 210deg, rgba(233,185,106,0.35) 0deg, transparent 110deg, transparent 300deg, rgba(233,185,106,0.25) 360deg)",
+            WebkitMask:
+              "radial-gradient(farthest-side, transparent calc(100% - 4px), #000 calc(100% - 4px))",
+            mask: "radial-gradient(farthest-side, transparent calc(100% - 4px), #000 calc(100% - 4px))",
+          }}
         />
 
         {PRINCIPLES.map((item, index) => {
