@@ -90,19 +90,29 @@ export default function AboutSection() {
         </div>
       </section>
 
-      {/* How we think (the four principles, in orbit) */}
-      <section className="relative py-24 lg:py-32">
-        <div className="container-px">
+      {/* How we think — the light plate. The dark page splits above and below
+          this full-bleed bone band (the Axiom-style inversion); the orbit is
+          re-inked for paper inside PrinciplesOrbit. */}
+      <section className="relative border-y border-ink-900/10 bg-bone py-24 text-ink-900 lg:py-32">
+        {/* soft paper vignette so the plate isn't a dead-flat white */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 [background:radial-gradient(90%_70%_at_50%_20%,rgba(201,146,61,0.07),transparent_65%)]"
+        />
+        <div className="container-px relative">
           <Reveal>
-            <SectionLabel index="03">How we think</SectionLabel>
+            <SectionLabel index="03" tone="ink">How we think</SectionLabel>
           </Reveal>
           <Reveal delay={0.05}>
-            <h3 className="mt-6 max-w-3xl text-balance font-sans text-[clamp(2rem,4.5vw,4.75rem)] font-medium leading-[1.05] tracking-tightest text-bone">
-              Four principles, <span className="font-serif italic text-gold-gradient">always in orbit.</span>
+            <h3 className="mt-6 max-w-3xl text-balance font-sans text-[clamp(2rem,4.5vw,4.75rem)] font-medium leading-[1.05] tracking-tightest text-ink-900">
+              Four principles,{" "}
+              <span className="bg-[linear-gradient(100deg,#825922_0%,#A9762E_45%,#C9923D_80%,#825922_100%)] bg-clip-text font-serif italic text-transparent">
+                always in orbit.
+              </span>
             </h3>
           </Reveal>
           <Reveal delay={0.1}>
-            <p className="mt-5 font-mono text-[11px] uppercase tracking-[0.28em] text-bone-faint">
+            <p className="mt-5 font-mono text-[11px] uppercase tracking-[0.28em] text-ink-900/50">
               Tap a node to open it.
             </p>
           </Reveal>

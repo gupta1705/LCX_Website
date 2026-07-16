@@ -5,14 +5,15 @@ import { ArrowRight, Link2, Feather, Zap, Cpu, Radar } from "lucide-react";
 import { useReducedMotion } from "framer-motion";
 
 /**
- * The four principles in a 3D orbit. The nodes ride a TILTED orbital plane:
- * their 3D position is projected to 2D in JS (x, squashed y, depth), and depth
- * drives scale, opacity, blur and z-order — so nodes genuinely pass in front
- * of and behind the gold core while every label stays crisp (nothing is
- * CSS-3D-skewed). The lit track is split into a dim far arc (behind the core)
- * and a bright near arc (in front of it); two faint crossing rings add the
- * gyroscope depth. Click a node: the orbit glides it to the front and its
- * readout opens as a centered overlay while the orbit dims behind.
+ * The four principles in a 3D orbit, inked for the LIGHT (bone) plate the
+ * section sits on. The nodes ride a TILTED orbital plane: their 3D position is
+ * projected to 2D in JS (x, squashed y, depth), and depth drives scale,
+ * opacity, blur and z-order — so nodes genuinely pass in front of and behind
+ * the gold core while every label stays crisp (nothing is CSS-3D-skewed). The
+ * deep-gold track is split into a faint far arc (behind the core) and a strong
+ * near arc (in front of it); two crossing rings add the gyroscope depth. Click
+ * a node: the orbit glides it to the front and its readout opens as a dark
+ * plate over a paper fog (not a dark veil — this is the light section).
  */
 const PRINCIPLES = [
   {
@@ -169,8 +170,8 @@ export default function PrinciplesOrbit() {
         transform: `translate(-50%, -50%) rotate(${rot}deg)`,
         filter: blurPx ? `blur(${blurPx}px)` : undefined,
         background: light
-          ? "conic-gradient(from 210deg, rgba(241,208,138,0.65) 0deg, rgba(201,146,61,0.12) 95deg, rgba(201,146,61,0.05) 200deg, rgba(233,185,106,0.45) 315deg, rgba(241,208,138,0.65) 360deg)"
-          : "rgba(201,146,61,0.16)",
+          ? "conic-gradient(from 210deg, rgba(130,89,34,0.75) 0deg, rgba(169,118,46,0.18) 95deg, rgba(169,118,46,0.08) 200deg, rgba(130,89,34,0.55) 315deg, rgba(130,89,34,0.75) 360deg)"
+          : "rgba(130,89,34,0.18)",
         WebkitMask:
           "radial-gradient(farthest-side, transparent calc(100% - 1.6px), #000 calc(100% - 1.6px))",
         mask: "radial-gradient(farthest-side, transparent calc(100% - 1.6px), #000 calc(100% - 1.6px))",
@@ -187,10 +188,10 @@ export default function PrinciplesOrbit() {
       }}
       className="relative mx-auto flex h-[440px] w-full max-w-5xl items-center justify-center overflow-visible sm:h-[520px] lg:h-[560px]"
     >
-      {/* readability scrim — the orbit reads cleanly over the live attractor */}
+      {/* gentle paper shading — a whisper of depth on the light plate */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 [background:radial-gradient(closest-side,rgba(10,9,8,0.8),transparent_78%)]"
+        className="pointer-events-none absolute inset-0 [background:radial-gradient(closest-side,rgba(10,9,8,0.05),transparent_75%)]"
       />
 
       <div className="relative" style={{ width: ellipseW, height: ellipseH }}>
@@ -245,13 +246,7 @@ export default function PrinciplesOrbit() {
                 filter: pos.blur && !isOpen ? `blur(${pos.blur}px)` : undefined,
               }}
             >
-              {/* dark halo — erases the attractor lines right behind the node */}
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute left-1/2 top-1/2 z-0 h-24 w-24 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,#0A0908_0%,#0A0908_45%,rgba(10,9,8,0.72)_62%,rgba(10,9,8,0)_100%)] blur-[3px]"
-              />
-
-              {/* minted-plate node */}
+              {/* minted-plate node — an ink coin on the paper plate */}
               <div
                 className={`relative z-10 grid h-14 w-14 place-items-center rounded-full border-2 transition-all duration-300 ease-out ${
                   isOpen
@@ -267,7 +262,7 @@ export default function PrinciplesOrbit() {
               {/* label */}
               <div
                 className={`absolute left-1/2 top-16 -translate-x-1/2 whitespace-nowrap font-mono text-[11px] uppercase tracking-[0.22em] transition-all duration-300 ${
-                  isOpen ? "text-gold-200" : "text-bone/80"
+                  isOpen ? "text-gold-700" : "text-ink-900/70"
                 }`}
               >
                 {item.label}
@@ -277,11 +272,12 @@ export default function PrinciplesOrbit() {
         })}
       </div>
 
-      {/* focus veil + centered readout — the orbit dims behind the open card */}
+      {/* paper fog + centered readout — the orbit softens behind the open card
+          (a light veil: darkening the light plate on click read as murky) */}
       {openItem && (
         <>
           <div
-            className="absolute inset-0 z-[140] bg-ink-900/60 transition-opacity duration-300"
+            className="absolute inset-0 z-[140] bg-bone/70 transition-opacity duration-300"
             onClick={closeAll}
             aria-hidden="true"
           />
