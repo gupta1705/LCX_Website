@@ -87,7 +87,7 @@ const smoothstep = (f) => f * f * (3 - 2 * f);
 // monotonically so scrolling always reads as continuous rotation.
 const KEYS = [
   { p: [2.4, 0.2, 0], s: 1.35, r: [0.5, 0.0, 0.2] }, // hero: butterfly face-on, right of centre
-  { p: [1.2, -0.3, 0.4], s: 1.95, r: [0.75, 0.7, -0.1] }, // quick punch-in off the hero: zoom + tip
+  { p: [0.5, -0.1, 0.35], s: 1.6, r: [1.0, 1.15, -0.2] }, // off the hero: swing to an angled three-quarter view (omits the flat face-on butterfly)
   { p: [-0.6, 0.6, -0.3], s: 1.5, r: [0.35, 1.4, 0.15] }, // pull back out, drift across centre
   { p: [-2.4, 0.6, -0.3], s: 1.4, r: [0.2, 2.2, -0.15] }, // left, swing edge-on
   { p: [-1.4, -0.3, 0.5], s: 2.6, r: [0.85, 3.0, 0.3] }, // dive into a wing: rings fill the left flank
@@ -253,9 +253,9 @@ function LorenzAttractor() {
       cursor.current.position.set(cx, cy, glowZ);
       const targetScale = 1 + Math.min(speed * 0.4, 2.2);
       cursor.current.scale.setScalar(cursor.current.scale.x + (targetScale - cursor.current.scale.x) * 0.15);
-      // cursor interaction removed — the dot stays hidden (the parting "eye"
-      // it centred read as an ugly angular void over the filaments)
-      const targetOp = 0;
+      // solid focal dot whenever a fine pointer is on the page (the centre of
+      // the parted "eye"), swelling slightly with movement
+      const targetOp = fine && hasPointer.current ? Math.min(0.8 + speed * 0.05, 0.95) : 0;
       cursor.current.material.opacity += (targetOp - cursor.current.material.opacity) * 0.15;
     }
 
@@ -268,7 +268,7 @@ function LorenzAttractor() {
     tmp.set(cx, cy, glowZ);
     g.worldToLocal(tmp);
     rayD.copy(tmp).sub(rayO).normalize();
-    const boost = 0; // cursor proximity highlight removed
+    const boost = Math.min(speed * 0.7, 1);
     const highlighting = boost > 0.02;
 
     // advance the travelling glow head; it runs past the end of the OPEN
@@ -277,9 +277,10 @@ function LorenzAttractor() {
     const headPos = headIndex.current;
     const headRamp = Math.min(headPos / GLOW_TAIL, 1); // fade in at birth, no pop
 
-    // cursor repulsion removed — no filament-parting "eye" (it carved an ugly
-    // angular void). The curve stays intact; positions never re-upload.
-    const repelTarget = 0;
+    // cursor repulsion: filaments part around the pointer, opening an "eye"
+    // that eases closed when the pointer leaves. Positions are re-uploaded
+    // only while the eye is open or closing — the base curve is static.
+    const repelTarget = fine && hasPointer.current ? 1 : 0;
     repel.current += (repelTarget - repel.current) * Math.min(delta * 3.5, 1);
     const repelOn = repel.current > 0.01;
     const posDirty = repelOn || wasRepel.current;
