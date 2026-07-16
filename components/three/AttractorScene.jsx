@@ -161,6 +161,13 @@ const KEYS = [
 // depth dissolve around it — a clean hole, not a dent at one depth plane.
 const HIGHLIGHT_R = 1.9; // radius the cursor lights up
 const VOID_R = 0.95; // radius the filaments dissolve inside (the eye)
+// The rim is what makes the eye read as a circle: dissolving alone only removes
+// light, which is invisible against a black page. Lighting the filaments just
+// outside the void draws the bright edge the old push used to get by crowding
+// them there — without moving a single vertex.
+const RIM_AT = 1.06; // rim band centre, in units of VOID_R (just outside the hole)
+const RIM_W = 0.32; // rim band half-width, same units
+const RIM_GAIN = 0.95; // how hard the rim lights up
 
 // Scroll body language — while the page is actually moving the form spins a
 // touch faster and compresses slightly, relaxing open when the scroll rests
@@ -342,7 +349,8 @@ function LorenzAttractor() {
     const hlR = HIGHLIGHT_R * sInv;
     const hl2 = hlR * hlR;
     const vdR = VOID_R * sInv;
-    const vd2 = vdR * vdR;
+    const rimOut = vdR * (RIM_AT + RIM_W); // outer gate: void + rim band
+    const rimOut2 = rimOut * rimOut;
 
     // colours refresh every frame so the glow can travel — the moving comet
     // arc plus the cursor-proximity highlight, both easing the base gold → cream.
@@ -377,20 +385,24 @@ function LorenzAttractor() {
         const dd = 1 - Math.sqrt(d2) / hlR;
         br = dd * dd * boost;
       }
-      let tot = gl + br;
-      if (tot > 1) tot = 1;
-
-      // The eye: DISSOLVE the filaments inside the sight-line rather than
-      // pushing them aside. A radial push tears any curve that crosses the
-      // centre — the vertices either side of it get shoved to opposite rims and
-      // the segment joining them draws as a straight chord across the void.
-      // Fading to black (invisible under additive blending) opens the same hole
-      // with no tearing, and the gradient along each segment softens the rim.
+      // The eye, carved in LIGHT rather than geometry: dissolve the filaments
+      // inside the sight-line, and light up the ones just outside it. A radial
+      // push tears any curve crossing the centre — the vertices either side get
+      // shoved to opposite rims and the segment joining them draws as a straight
+      // chord across the void. Fading to black (invisible under additive
+      // blending) opens the same hole with no tearing, and the lit rim gives it
+      // the bright edge the push used to get by crowding filaments there.
       let fade = 1;
-      if (voidOn && d2 < vd2) {
-        const q = Math.sqrt(d2) / vdR; // 0 on the ray → 1 at the rim
-        fade = 1 - repel.current * (1 - q * q * (3 - 2 * q)); // smoothstep
+      let rim = 0;
+      if (voidOn && d2 < rimOut2) {
+        const q = Math.sqrt(d2) / vdR; // 0 on the ray → 1 at the hole's edge
+        if (q < 1) fade = 1 - repel.current * (1 - q * q * (3 - 2 * q)); // smoothstep
+        const rq = Math.abs(q - RIM_AT) / RIM_W; // 0 at the rim band's centre
+        if (rq < 1) rim = (1 - rq) * (1 - rq) * RIM_GAIN * repel.current;
       }
+
+      let tot = gl + br + rim;
+      if (tot > 1) tot = 1;
 
       const b0 = baseColors[j], b1 = baseColors[j + 1], b2 = baseColors[j + 2];
       colors[j] = (b0 + (hi.r - b0) * tot) * fade;
