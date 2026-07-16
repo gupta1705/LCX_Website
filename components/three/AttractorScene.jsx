@@ -19,17 +19,57 @@ function lorenzStep(x, y, z, dt) {
   return [x + s * (y - x) * dt, y + (x * (r - z) - y) * dt, z + (x * y - b * z) * dt];
 }
 
-function integrate(step, seed, dt, warmup = 400) {
-  const out = new Float32Array(COUNT * 3);
+function integrate(step, seed, dt, warmup = 400, steps = COUNT) {
+  const out = new Float32Array(steps * 3);
   let { x, y, z } = seed;
   for (let i = 0; i < warmup; i++) {
     [x, y, z] = step(x, y, z, dt);
   }
-  for (let i = 0; i < COUNT; i++) {
+  for (let i = 0; i < steps; i++) {
     [x, y, z] = step(x, y, z, dt);
     out[i * 3] = x;
     out[i * 3 + 1] = y;
     out[i * 3 + 2] = z;
+  }
+  return out;
+}
+
+/**
+ * Resample a polyline to `count` points spaced evenly by ARC LENGTH.
+ *
+ * The integrator samples by TIME, so vertices bunch up where the attractor
+ * crawls and stretch far apart where it races. Those long segments are the
+ * reason the cursor repulsion looked jarring: one segment could span the whole
+ * cleared zone, so the parted line read as a straight chord / angular kink
+ * instead of a curve. Even spacing gives every segment the same short length,
+ * so there are always plenty of vertices to bend smoothly around the cursor.
+ * It also makes the travelling glow move at a constant speed along the curve.
+ */
+function resampleUniform(src, count) {
+  const n = src.length / 3;
+  const cum = new Float64Array(n);
+  let total = 0;
+  for (let i = 1; i < n; i++) {
+    const dx = src[i * 3] - src[(i - 1) * 3];
+    const dy = src[i * 3 + 1] - src[(i - 1) * 3 + 1];
+    const dz = src[i * 3 + 2] - src[(i - 1) * 3 + 2];
+    total += Math.hypot(dx, dy, dz);
+    cum[i] = total;
+  }
+  const out = new Float32Array(count * 3);
+  const stepLen = total / (count - 1);
+  let seg = 1;
+  for (let i = 0; i < count; i++) {
+    const target = i * stepLen;
+    while (seg < n - 1 && cum[seg] < target) seg++;
+    const t0 = cum[seg - 1];
+    const t1 = cum[seg];
+    const f = t1 > t0 ? (target - t0) / (t1 - t0) : 0;
+    const a = (seg - 1) * 3;
+    const b = seg * 3;
+    out[i * 3] = src[a] + (src[b] - src[a]) * f;
+    out[i * 3 + 1] = src[a + 1] + (src[b + 1] - src[a + 1]) * f;
+    out[i * 3 + 2] = src[a + 2] + (src[b + 2] - src[a + 2]) * f;
   }
   return out;
 }
@@ -60,7 +100,12 @@ function normalize(arr, radius = 3.7) {
 }
 
 function buildLorenz() {
-  return normalize(integrate(lorenzStep, { x: 0.1, y: 0, z: 0 }, 0.006));
+  // Trace the SAME trajectory (dt x steps is unchanged at 54 time units) but at
+  // 5x the temporal resolution, then resample to COUNT points at uniform arc
+  // length: identical shape, evenly spaced short segments. One-time cost at
+  // mount; the drawn buffer stays COUNT vertices.
+  const dense = integrate(lorenzStep, { x: 0.1, y: 0, z: 0 }, 0.0012, 2000, COUNT * 5);
+  return normalize(resampleUniform(dense, COUNT));
 }
 
 function goldColors() {
