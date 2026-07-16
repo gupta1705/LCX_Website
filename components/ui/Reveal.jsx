@@ -1,29 +1,6 @@
-"use client";
-
-import { motion, useReducedMotion } from "framer-motion";
-
-const EASE = [0.16, 1, 0.3, 1];
-
-export default function Reveal({
-  children,
-  className = "",
-  delay = 0,
-  y = 22,
-  once = true,
-}) {
-  // framer-motion isn't covered by the global CSS reduced-motion block, so gate
-  // the entrance here — reduced-motion users mount directly in the resting state.
-  const reduce = useReducedMotion();
-
-  return (
-    <motion.div
-      className={className}
-      initial={reduce ? false : { opacity: 0, y }}
-      whileInView={reduce ? undefined : { opacity: 1, y: 0 }}
-      viewport={{ once, margin: "-80px" }}
-      transition={reduce ? { duration: 0 } : { duration: 0.75, delay, ease: EASE }}
-    >
-      {children}
-    </motion.div>
-  );
+// Content is present on mount — no scroll-triggered fade-up (that "everything
+// eases in as you scroll" pattern reads as generic/AI). Kept as a thin wrapper
+// so every call site (className, and the now-ignored delay/y/once) still works.
+export default function Reveal({ children, className = "" }) {
+  return <div className={className}>{children}</div>;
 }

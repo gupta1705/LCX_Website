@@ -253,9 +253,9 @@ function LorenzAttractor() {
       cursor.current.position.set(cx, cy, glowZ);
       const targetScale = 1 + Math.min(speed * 0.4, 2.2);
       cursor.current.scale.setScalar(cursor.current.scale.x + (targetScale - cursor.current.scale.x) * 0.15);
-      // solid focal dot whenever a fine pointer is on the page (the centre of
-      // the parted "eye"), swelling slightly with movement
-      const targetOp = fine && hasPointer.current ? Math.min(0.8 + speed * 0.05, 0.95) : 0;
+      // cursor interaction removed — the dot stays hidden (the parting "eye"
+      // it centred read as an ugly angular void over the filaments)
+      const targetOp = 0;
       cursor.current.material.opacity += (targetOp - cursor.current.material.opacity) * 0.15;
     }
 
@@ -268,7 +268,7 @@ function LorenzAttractor() {
     tmp.set(cx, cy, glowZ);
     g.worldToLocal(tmp);
     rayD.copy(tmp).sub(rayO).normalize();
-    const boost = Math.min(speed * 0.7, 1);
+    const boost = 0; // cursor proximity highlight removed
     const highlighting = boost > 0.02;
 
     // advance the travelling glow head; it runs past the end of the OPEN
@@ -277,10 +277,9 @@ function LorenzAttractor() {
     const headPos = headIndex.current;
     const headRamp = Math.min(headPos / GLOW_TAIL, 1); // fade in at birth, no pop
 
-    // cursor repulsion: filaments part around the pointer, opening an "eye"
-    // that eases closed when the pointer leaves. Positions are re-uploaded
-    // only while the eye is open or closing — the base curve is static.
-    const repelTarget = fine && hasPointer.current ? 1 : 0;
+    // cursor repulsion removed — no filament-parting "eye" (it carved an ugly
+    // angular void). The curve stays intact; positions never re-upload.
+    const repelTarget = 0;
     repel.current += (repelTarget - repel.current) * Math.min(delta * 3.5, 1);
     const repelOn = repel.current > 0.01;
     const posDirty = repelOn || wasRepel.current;

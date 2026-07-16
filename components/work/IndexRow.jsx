@@ -1,21 +1,11 @@
-"use client";
+// Index-row primitives. Entrance is static now — no scroll fade-up / rule-draw
+// (that "everything eases in as you scroll" pattern reads as generic/AI). The
+// hover effects (row wash, numeral ignite) stay; they're intent, not entrance.
 
-import { motion, useReducedMotion } from "framer-motion";
-
-export const EASE = [0.16, 1, 0.3, 1];
-
-/** Animated top hairline — each index row "typesets" its own rule on scroll. */
+/** Top hairline for each index row. */
 export function RuleDraw() {
-  const reduce = useReducedMotion();
   return (
-    <motion.span
-      aria-hidden="true"
-      className="absolute inset-x-0 top-0 h-px origin-left bg-white/[0.08]"
-      initial={reduce ? false : { scaleX: 0 }}
-      whileInView={{ scaleX: 1 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={reduce ? { duration: 0 } : { duration: 0.9, ease: EASE }}
-    />
+    <span aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-white/[0.08]" />
   );
 }
 
@@ -29,20 +19,9 @@ export function RowWash() {
   );
 }
 
-/** One grid cell of an index row, printed in after the rule draws. */
-export function Cell({ className = "", delay = 0, children }) {
-  const reduce = useReducedMotion();
-  return (
-    <motion.div
-      className={className}
-      initial={reduce ? false : { opacity: 0, y: 22 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={reduce ? { duration: 0 } : { duration: 0.75, delay, ease: EASE }}
-    >
-      {children}
-    </motion.div>
-  );
+/** One grid cell of an index row. `delay` is accepted but ignored (static). */
+export function Cell({ className = "", children }) {
+  return <div className={className}>{children}</div>;
 }
 
 /**
