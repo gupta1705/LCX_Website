@@ -117,7 +117,7 @@ export default function BrandStack() {
                 exit={reduced ? undefined : index === 0 ? EXIT : undefined}
                 transition={reduced ? { duration: 0 } : { type: "spring", duration: 0.65, bounce: 0 }}
                 style={{ zIndex, left: "50%", x: "-50%", bottom: 0 }}
-                className="absolute flex h-[360px] w-[300px] items-center justify-center overflow-hidden rounded-t-2xl border-x border-t border-gold-soft bg-ink-800/90 p-1 shadow-[0_-12px_50px_-24px_rgba(0,0,0,0.95)] backdrop-blur-sm will-change-transform sm:w-[560px]"
+                className="absolute flex h-[360px] w-[300px] items-center justify-center overflow-hidden rounded-t-2xl border-x border-t border-gold-soft bg-ink-800 p-1 shadow-[0_-12px_50px_-24px_rgba(0,0,0,0.95)] will-change-transform sm:w-[560px]"
               >
                 <BrandFace brand={card.brand} />
               </motion.div>

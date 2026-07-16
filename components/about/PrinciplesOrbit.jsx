@@ -155,19 +155,15 @@ export default function PrinciplesOrbit() {
         className="relative"
         style={{ width: radius * 2, height: radius * 2, perspective: "1000px" }}
       >
-        {/* central core */}
+        {/* central core — a lit gold sphere with one soft breathing glow,
+            not the stock pulsing-orb-with-expanding-ping-rings */}
         <div className="absolute left-1/2 top-1/2 z-10 grid h-24 w-24 -translate-x-1/2 -translate-y-1/2 place-items-center">
-          <div className="absolute h-24 w-24 rounded-full bg-gradient-to-br from-gold-200 via-gold-500 to-gold-700 opacity-90 blur-[2px]" />
           {!reduce && (
-            <>
-              <div className="absolute h-28 w-28 animate-ping rounded-full border border-gold-400/30 opacity-70" />
-              <div
-                className="absolute h-36 w-36 animate-ping rounded-full border border-gold-400/15 opacity-40"
-                style={{ animationDelay: "0.6s" }}
-              />
-            </>
+            <div className="absolute h-36 w-36 animate-pulse-soft rounded-full bg-[radial-gradient(circle,rgba(201,146,61,0.4),transparent_68%)]" />
           )}
-          <div className="relative h-10 w-10 rounded-full bg-bone/85" />
+          <div className="absolute h-28 w-28 rounded-full border border-gold-400/20" />
+          <div className="absolute h-24 w-24 rounded-full bg-[radial-gradient(circle_at_38%_30%,#f7e3b5_0%,#dda64f_46%,#6e4513_100%)] shadow-[inset_0_-7px_16px_-5px_rgba(0,0,0,0.55),0_0_0_1px_rgba(10,9,8,0.5)]" />
+          <div className="relative h-9 w-9 rounded-full bg-bone/90 shadow-[0_1px_5px_rgba(0,0,0,0.45)]" />
         </div>
 
         {/* orbit ring */}
@@ -202,7 +198,7 @@ export default function PrinciplesOrbit() {
                   so it reads as a solid object cut out of the gold field */}
               <div
                 aria-hidden="true"
-                className="pointer-events-none absolute left-1/2 top-1/2 z-0 h-32 w-32 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,#0A0908_0%,#0A0908_42%,rgba(10,9,8,0.72)_60%,rgba(10,9,8,0)_100%)] blur-[3px]"
+                className="pointer-events-none absolute left-1/2 top-1/2 z-0 h-24 w-24 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,#0A0908_0%,#0A0908_45%,rgba(10,9,8,0.72)_62%,rgba(10,9,8,0)_100%)] blur-[3px]"
               />
 
               {/* node */}

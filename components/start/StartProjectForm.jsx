@@ -9,7 +9,7 @@ const NEEDS = ["Marketing", "Video", "Images", "Automation", "Not sure"];
 const BUDGETS = ["< $10k", "$10k – $25k", "$25k – $50k", "$50k+", "Not sure yet"];
 
 const field =
-  "w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3.5 text-bone placeholder:text-bone-faint outline-none transition-colors duration-200 focus:border-gold-400 focus:ring-2 focus:ring-gold-400";
+  "w-full rounded-xl border border-white/10 bg-ink-800/50 px-4 py-3.5 text-bone placeholder:text-bone-faint outline-none transition-colors duration-200 focus:border-gold-400 focus:ring-2 focus:ring-gold-400";
 
 export default function StartProjectForm() {
   const [sent, setSent] = useState(false);
@@ -32,7 +32,7 @@ export default function StartProjectForm() {
         ref={successRef}
         tabIndex={-1}
         role="status"
-        className="flex flex-col items-start gap-5 rounded-2xl border border-gold-soft bg-white/[0.03] p-10 outline-none"
+        className="flex flex-col items-start gap-5 rounded-2xl border border-gold-soft bg-ink-800/50 p-10 outline-none"
       >
         <span className="grid h-12 w-12 place-items-center rounded-full bg-gold-500 text-ink-900">
           <Check className="h-6 w-6" />

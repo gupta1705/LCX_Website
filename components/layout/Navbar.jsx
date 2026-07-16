@@ -127,7 +127,7 @@ export default function Navbar() {
           }`}
         >
           <div
-            className={`flex items-center rounded-full border border-white/[0.07] bg-ink-900/40 backdrop-blur-md transition-all duration-300 ${
+            className={`flex items-center rounded-full border border-white/[0.07] bg-ink-900/90 transition-all duration-300 ${
               open ? "gap-2 p-1.5 pr-4" : "gap-1.5 p-1 pr-3"
             }`}
           >
@@ -177,7 +177,7 @@ export default function Navbar() {
                   <a
                     href={CTA.href}
                     onClick={(e) => scrollToHash(e, CTA.href)}
-                    className="group inline-flex items-center gap-1.5 rounded-full bg-gold-500 px-5 py-2.5 text-sm font-medium text-ink-900 backdrop-blur-md transition-all duration-300 ease-out-expo hover:bg-gold-300 hover:shadow-[0_0_36px_-8px_rgba(233,185,106,0.7)] active:scale-[0.96]"
+                    className="group inline-flex items-center gap-1.5 rounded-full bg-gold-500 px-5 py-2.5 text-sm font-medium text-ink-900 transition-all duration-300 ease-out-expo hover:bg-gold-300 active:scale-[0.96]"
                   >
                     {CTA.label}
                     <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -243,7 +243,7 @@ function CurvedMenu({ reduced, activeId, onNavigate, onClose }) {
     <>
       {/* dim backdrop — makes the drawer read as intentional and closes on tap */}
       <motion.div
-        className="fixed inset-0 z-30 bg-ink-900/70 backdrop-blur-[2px]"
+        className="fixed inset-0 z-30 bg-ink-900/80"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}

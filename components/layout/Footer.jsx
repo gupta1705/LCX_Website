@@ -5,7 +5,7 @@ import { NAV_LINKS, CTA, SITE } from "@/lib/site";
 
 export default function Footer() {
   return (
-    <footer className="relative border-t border-white/[0.06] bg-ink-900/60 backdrop-blur-sm">
+    <footer className="relative border-t border-white/[0.06] bg-ink-900">
       <div className="container-px py-16 lg:py-20">
         {/* Big CTA strip */}
         <div className="flex flex-col items-start justify-between gap-8 border-b border-white/[0.06] pb-14 md:flex-row md:items-end">

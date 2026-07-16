@@ -105,7 +105,7 @@ export default function Hero() {
             <Magnetic>
               <Link
                 href="#work"
-                className="group inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.03] px-6 py-3.5 text-sm font-medium text-bone backdrop-blur-sm transition-all duration-300 ease-out-expo hover:border-gold-soft hover:bg-white/[0.06] active:scale-[0.97]"
+                className="group inline-flex items-center gap-2 rounded-full border border-gold-soft bg-ink-800 px-6 py-3.5 text-sm font-medium text-bone transition-all duration-300 ease-out-expo hover:border-gold-400 hover:bg-ink-700 active:scale-[0.97]"
               >
                 <Play className="h-4 w-4 text-gold-300 transition-transform duration-300 group-hover:scale-110" />
                 See our work
