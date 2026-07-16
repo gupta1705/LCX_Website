@@ -130,18 +130,29 @@ const smoothstep = (f) => f * f * (3 - 2 * f);
 // Scroll choreography — the SAME shape presented like a camera subject.
 // p = position, s = scale (zoom), r = base rotation (rad). rotY climbs
 // monotonically so scrolling always reads as continuous rotation.
+// Reviewed as a set. Two rules keep every pose sculptural rather than flat:
+//  1. TILT — rX stays in ~0.6–1.15 so we always read the lobes at an angle.
+//     Low tilt (the old 0.2/0.35/0.4 poses) flattens the form to a disc.
+//  2. DON'T DIVE INSIDE A LOBE — the camera sees viewH/(2*3.7*s) of the form,
+//     so past s≈2.05 less than half of it is in frame: you're within one wing
+//     and its spiral fills the screen as concentric rings (a bullseye with no
+//     form — the old s2.6 "rings fill the flank" and s2.9 poses). Capped at
+//     2.05, i.e. >=51% of the form always in frame.
+// Net: the baseline is bigger (min 1.35 → 1.7, typical ~1.8–2.0) while the
+// deep dives that produced the flat targets are gone. rotY still climbs
+// monotonically so scrolling always reads as one continuous rotation.
 const KEYS = [
-  { p: [2.4, 0.2, 0], s: 1.35, r: [0.5, 0.0, 0.2] }, // hero: butterfly face-on, right of centre
-  { p: [0.5, -0.1, 0.35], s: 1.6, r: [1.0, 1.15, -0.2] }, // off the hero: swing to an angled three-quarter view (omits the flat face-on butterfly)
-  { p: [-0.6, 0.6, -0.3], s: 1.5, r: [0.35, 1.4, 0.15] }, // pull back out, drift across centre
-  { p: [-2.4, 0.6, -0.3], s: 1.4, r: [0.2, 2.2, -0.15] }, // left, swing edge-on
-  { p: [-1.4, -0.3, 0.5], s: 2.6, r: [0.85, 3.0, 0.3] }, // dive into a wing: rings fill the left flank
-  { p: [0.8, 0.3, 0.2], s: 1.75, r: [0.55, 3.8, -0.1] }, // pull out through the centre
-  { p: [2.3, -0.5, -0.3], s: 1.65, r: [0.4, 4.6, -0.2] }, // wide on the right
-  { p: [-0.9, 0.4, 0.4], s: 2.9, r: [1.15, 5.5, 0.1] }, // second dive: bands sweep the edges
-  { p: [-2.1, -0.2, -0.2], s: 1.5, r: [0.7, 6.4, -0.15] }, // pull back, far left
-  { p: [0.6, 0.6, 0.3], s: 2.05, r: [0.95, 7.3, 0.15] }, // swoop back in, mid-close
-  { p: [1.2, -0.4, 0], s: 1.55, r: [0.5, 8.2, 0.2] }, // settle centre-right, face-on again
+  { p: [2.2, 0.15, 0], s: 1.7, r: [0.62, 0.6, 0.18] }, // hero: three-quarter, right of centre
+  { p: [1.2, -0.2, 0.3], s: 1.9, r: [0.95, 1.2, -0.2] }, // off the hero: tilt in, angled
+  { p: [-0.4, 0.5, -0.2], s: 1.75, r: [0.72, 1.9, 0.22] }, // drift across centre, turning
+  { p: [-2.1, 0.5, -0.3], s: 1.8, r: [0.88, 2.6, -0.2] }, // left: edge-on blade
+  { p: [-1.1, -0.25, 0.4], s: 2.0, r: [1.1, 3.3, 0.3] }, // closer on the left flank, steeply tilted
+  { p: [0.9, 0.25, 0.2], s: 1.85, r: [0.68, 4.0, -0.15] }, // sweep back through the centre
+  { p: [2.1, -0.4, -0.3], s: 1.75, r: [0.82, 4.7, -0.26] }, // wide on the right, angled
+  { p: [-0.8, 0.35, 0.35], s: 2.05, r: [1.15, 5.5, 0.16] }, // second close pass: bands sweep, not rings
+  { p: [-1.9, -0.15, -0.2], s: 1.8, r: [0.75, 6.3, -0.18] }, // pull back, far left
+  { p: [0.7, 0.5, 0.3], s: 2.0, r: [1.0, 7.2, 0.2] }, // swoop back in, mid-close
+  { p: [1.3, -0.3, 0], s: 1.8, r: [0.7, 8.1, 0.22] }, // settle centre-right, three-quarter
 ];
 
 // Cursor radii in WORLD units — divided by the group scale each frame so the
