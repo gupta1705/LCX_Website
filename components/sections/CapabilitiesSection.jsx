@@ -22,13 +22,7 @@ export default function CapabilitiesSection() {
         <Reveal>
           <div className="grid gap-10 lg:grid-cols-12 lg:items-center lg:gap-16">
             <div className="lg:col-span-5">
-              <div className="flex items-center gap-3">
-                <span className="h-px w-8 bg-gold-500/40" />
-                <span className="font-mono text-[11px] uppercase tracking-[0.3em] text-gold-300">
-                  Brands we have worked with
-                </span>
-              </div>
-              <h3 className="mt-6 max-w-lg text-balance text-[clamp(1.75rem,3.25vw,3.25rem)] font-medium leading-[1.15] tracking-tighter text-bone">
+              <h3 className="max-w-lg text-balance text-[clamp(1.75rem,3.25vw,3.25rem)] font-medium leading-[1.15] tracking-tighter text-bone">
                 Films directed by the <span className="text-gold-gradient">Studio</span>, content scaled
                 by the <span className="text-gold-gradient">Engine</span>, for brands across sectors.
               </h3>

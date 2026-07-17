@@ -77,19 +77,19 @@ const SYSTEMS = [
   },
 ];
 
-/** Chapter divider — sub-indexed in the SectionLabel grammar, sat on a rule. */
-function GroupDivider({ index, title, sub }) {
+/**
+ * Chapter divider — a rule, the chapter's name at heading scale, and what's in
+ * it as a deck beneath. The sub used to run above the title as an 11px tracked
+ * mark, which put the chapter's smallest type in charge of its biggest.
+ */
+function GroupDivider({ title, sub }) {
   return (
     <Reveal>
       <div className="border-t border-white/[0.12] pt-6">
-        <div className="flex items-center gap-3">
-          <span className="font-mono text-[11px] text-gold-400">( {index} )</span>
-          <span className="h-px w-8 bg-gold-500/40" aria-hidden="true" />
-          <span className="font-mono text-[11px] uppercase tracking-[0.3em] text-gold-300">{sub}</span>
-        </div>
-        <h3 className="mt-4 font-sans text-[clamp(2rem,4.75vw,5.5rem)] font-medium tracking-tight text-bone">
+        <h3 className="font-sans text-[clamp(2rem,4.75vw,5.5rem)] font-medium tracking-tight text-bone">
           {title}
         </h3>
+        <p className="mt-3 text-lg leading-relaxed text-bone-dim">{sub}.</p>
       </div>
     </Reveal>
   );
@@ -108,7 +108,7 @@ export default function WorkSection() {
 
       {/* The Studio — index entries 01-04 */}
       <section className="container-px py-14 lg:py-20">
-        <GroupDivider index="03.1" title="The Studio" sub="Things we directed" />
+        <GroupDivider title="The Studio" sub="Things we directed" />
         <div className="mt-10">
           {FILMS.map((film, i) => (
             <FilmCard key={film.title} film={film} index={i} flip={i % 2 === 1} />
@@ -118,7 +118,7 @@ export default function WorkSection() {
 
       {/* The Engine — index entries 05-06 */}
       <section className="container-px py-14 lg:py-20">
-        <GroupDivider index="03.2" title="The Engine" sub="Systems we built" />
+        <GroupDivider title="The Engine" sub="Systems we built" />
         <div className="mt-10">
           {SYSTEMS.map((system, i) => (
             <SystemCard

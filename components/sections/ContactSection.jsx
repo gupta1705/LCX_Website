@@ -35,7 +35,6 @@ export default function ContactSection() {
                   className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-white/[0.05] to-transparent"
                 />
                 <div className="relative">
-                <p className="eyebrow mb-6">What happens next</p>
                 <h4 className="text-balance text-[clamp(1.25rem,1.75vw,1.75rem)] font-medium leading-[1.15] tracking-tight text-bone">
                   We reply within 24 hours with a{" "}
                   <span className="font-serif italic text-gold-gradient">point of view</span>, not a

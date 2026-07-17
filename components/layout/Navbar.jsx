@@ -2,9 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ArrowUpRight, Instagram, Linkedin, Youtube, Twitter } from "lucide-react";
+import { Instagram, Linkedin, Youtube, Twitter } from "lucide-react";
 import Logo from "./Logo";
 import Magnetic from "@/components/ui/Magnetic";
+import ActionButton from "@/components/ui/ActionButton";
 import { NAV_LINKS, CTA, SITE } from "@/lib/site";
 
 // All five destinations, numbered — tab names unchanged. Single-page anchors.
@@ -174,14 +175,15 @@ export default function Navbar() {
                 className="hidden sm:block"
               >
                 <Magnetic>
-                  <a
+                  <ActionButton
+                    as="a"
                     href={CTA.href}
                     onClick={(e) => scrollToHash(e, CTA.href)}
-                    className="group inline-flex items-center gap-1.5 rounded-full bg-gold-500 px-5 py-2.5 text-sm font-medium text-ink-900 transition-all duration-300 ease-out-expo hover:bg-gold-300 active:scale-[0.96]"
+                    tone="primary"
+                    size="sm"
                   >
                     {CTA.label}
-                    <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                  </a>
+                  </ActionButton>
                 </Magnetic>
               </motion.div>
             )}

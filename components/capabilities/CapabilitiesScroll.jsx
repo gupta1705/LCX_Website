@@ -155,13 +155,10 @@ function StaticStack() {
       {ITEMS.map((item, i) => (
         <div key={item.num} className="grid items-center gap-10 lg:grid-cols-12 lg:gap-16">
           <div className={`lg:col-span-6 ${i % 2 ? "lg:order-last" : ""}`}>
-            <div className="flex items-baseline gap-3">
-              <span className="font-serif text-3xl italic text-gold-gradient">{item.num}.</span>
-              <span className="font-mono text-[11px] uppercase tracking-[0.28em] text-gold-300">{item.tag}</span>
-            </div>
-            <h3 className="mt-4 font-sans text-[clamp(2.6rem,6.5vw,7.25rem)] font-medium leading-[0.98] tracking-tightest text-bone">
+            <h3 className="font-sans text-[clamp(2.6rem,6.5vw,7.25rem)] font-medium leading-[0.98] tracking-tightest text-bone">
               {item.title}
             </h3>
+            <p className="mt-3 text-lg leading-relaxed text-bone-dim">{item.tag}.</p>
             <div className="relative mt-6 h-[2px] w-full max-w-[26rem] overflow-hidden rounded-full bg-white/12">
               <div className={BAR_FILL} />
             </div>
@@ -226,17 +223,12 @@ export default function CapabilitiesScroll() {
           <div className="container-px grid w-full grid-cols-12 items-center gap-y-12">
             {/* LEFT — scramble on change */}
             <div className="col-span-6">
-              <div className="flex items-baseline gap-3">
-                <span className="font-serif text-3xl italic text-gold-gradient">{item.num}.</span>
-                <Scramble
-                  text={item.tag}
-                  duration={720}
-                  className="font-mono text-[11px] uppercase tracking-[0.28em] text-gold-300"
-                />
-              </div>
-              <h3 className="mt-4 font-sans text-[clamp(2.6rem,6.5vw,7.25rem)] font-medium leading-[0.98] tracking-tightest text-bone">
+              <h3 className="font-sans text-[clamp(2.6rem,6.5vw,7.25rem)] font-medium leading-[0.98] tracking-tightest text-bone">
                 <Scramble text={item.title} />
               </h3>
+              <p className="mt-3 text-lg leading-relaxed text-bone-dim">
+                <Scramble text={item.tag} duration={720} />.
+              </p>
               <div className="relative mt-6 h-[2px] w-full max-w-[26rem] overflow-hidden rounded-full bg-white/12">
                 <motion.div style={{ scaleX: activeIdx === 0 ? fillA : fillB }} className={BAR_FILL} />
               </div>

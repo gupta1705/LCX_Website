@@ -43,6 +43,8 @@ const TONES = {
 // `px-*` would collide with the base one and CSS order — not class order —
 // would pick the winner.
 const SIZES = {
+  // left padding always clears the bead at left-4 (centre 16px, so it ends at 19)
+  sm: "px-7 py-2.5 text-sm",
   md: "px-8 py-3.5 text-sm",
   lg: "px-9 py-4 text-sm",
 };
