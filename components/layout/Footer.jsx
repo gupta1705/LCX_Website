@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
 import Magnetic from "@/components/ui/Magnetic";
+import ActionButton from "@/components/ui/ActionButton";
 import { NAV_LINKS, CTA, SITE } from "@/lib/site";
 
 export default function Footer() {
@@ -19,13 +19,9 @@ export default function Footer() {
             </h2>
           </div>
           <Magnetic className="shrink-0">
-            <Link
-              href={CTA.href}
-              className="group inline-flex items-center gap-2 rounded-full bg-gold-500 px-7 py-4 text-sm font-medium text-ink-900 transition-all duration-300 ease-out-expo hover:bg-gold-300 hover:shadow-[0_0_46px_-8px_rgba(233,185,106,0.7)] active:scale-[0.97]"
-            >
+            <ActionButton as={Link} href={CTA.href} tone="primary" size="lg">
               {CTA.label}
-              <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-            </Link>
+            </ActionButton>
           </Magnetic>
         </div>
 

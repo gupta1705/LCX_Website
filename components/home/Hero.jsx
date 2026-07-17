@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowUpRight, Play } from "lucide-react";
+import { Play } from "lucide-react";
 import Magnetic from "@/components/ui/Magnetic";
+import ActionButton from "@/components/ui/ActionButton";
 import { CTA } from "@/lib/site";
 
 const EASE = [0.16, 1, 0.3, 1];
@@ -103,23 +104,14 @@ export default function Hero() {
 
           <motion.div variants={item} className="mt-10 flex flex-wrap items-center gap-3">
             <Magnetic>
-              <Link
-                href="#work"
-                className="group inline-flex items-center gap-2 rounded-full border border-gold-soft bg-ink-800 px-6 py-3.5 text-sm font-medium text-bone transition-all duration-300 ease-out-expo hover:border-gold-400 hover:bg-ink-700 active:scale-[0.97]"
-              >
-                <Play className="h-4 w-4 text-gold-300 transition-transform duration-300 group-hover:scale-110" />
+              <ActionButton as={Link} href="#work" tone="secondary" icon={Play}>
                 See our work
-              </Link>
+              </ActionButton>
             </Magnetic>
             <Magnetic>
-              <Link
-                id="hero-start-cta"
-                href={CTA.href}
-                className="group inline-flex items-center gap-2 rounded-full bg-gold-500 px-6 py-3.5 text-sm font-medium text-ink-900 transition-all duration-300 ease-out-expo hover:bg-gold-300 hover:shadow-[0_0_42px_-8px_rgba(233,185,106,0.7)] active:scale-[0.97]"
-              >
-                Start a project
-                <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-              </Link>
+              <ActionButton as={Link} id="hero-start-cta" href={CTA.href} tone="primary">
+                {CTA.label}
+              </ActionButton>
             </Magnetic>
           </motion.div>
         </motion.div>
