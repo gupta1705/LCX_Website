@@ -134,7 +134,7 @@ export default function WorkSection() {
       {/* Closing */}
       <section className="container-px pb-16 lg:pb-24">
         <Reveal>
-          <p className="mx-auto max-w-5xl text-balance text-center font-serif text-[clamp(1.75rem,4.5vw,5rem)] leading-[1.15] tracking-tight text-bone">
+          <p className="mx-auto max-w-5xl text-balance text-center font-serif text-[clamp(1.5rem,3.5vw,3.75rem)] leading-[1.12] tracking-tight text-bone">
             Whatever you&apos;re launching, we&apos;ve either{" "}
             <span className="gold-flow italic">directed something like it</span> or{" "}
             <span className="gold-flow italic" style={{ animationDelay: "0.5s" }}>

@@ -17,15 +17,10 @@ export default function AboutSection() {
       {/* The origin */}
       <section className="relative py-24 lg:py-32">
         <div className="container-px">
-          <div className="grid grid-cols-12 gap-y-12 lg:gap-x-16">
+          <div className="grid grid-cols-12 gap-y-6 lg:gap-x-16">
             <div className="col-span-12 lg:col-span-3">
-              <Reveal className="mb-8">
+              <Reveal>
                 <SectionLabel index="01">The origin</SectionLabel>
-              </Reveal>
-              <Reveal delay={0.05}>
-                <p className="font-serif text-2xl italic leading-snug text-gold-gradient">
-                  Why we exist.
-                </p>
               </Reveal>
               <Reveal delay={0.15} className="mt-10 hidden lg:block">
                 <svg viewBox="0 0 120 120" className="h-28 w-28 text-gold-500/60" fill="none" aria-hidden="true">
@@ -44,10 +39,14 @@ export default function AboutSection() {
                     aria-hidden="true"
                     className="pointer-events-none absolute -inset-x-6 -inset-y-4 -z-10 rounded-[45%] bg-ink-900/70 blur-2xl"
                   />
-                  <p className="text-balance font-sans text-[clamp(1.7rem,4vw,4.25rem)] font-normal leading-[1.22] tracking-tighter text-bone">
-                    The Viral Labs started with a frustration: the world&apos;s best AI tools were in
-                    the hands of people who didn&apos;t understand why some things go viral and most
-                    don&apos;t. So we put them in the hands of{" "}
+                  <h3 className="max-w-3xl text-balance font-sans text-[clamp(1.75rem,4.5vw,4.75rem)] font-medium leading-[1.05] tracking-tightest text-bone">
+                    The Viral Labs started with{" "}
+                    <span className="font-serif italic text-gold-gradient">a frustration.</span>
+                  </h3>
+                  <p className="mt-6 max-w-[38rem] text-lg leading-relaxed text-bone-dim xl:max-w-2xl xl:text-xl">
+                    The world&apos;s best AI tools were in the hands of people who didn&apos;t
+                    understand why some things go viral and most don&apos;t. So we put them in the
+                    hands of{" "}
                     <span className="font-serif italic text-gold-gradient">people who do</span> — then
                     built the machines to run it at scale.
                   </p>
@@ -61,7 +60,7 @@ export default function AboutSection() {
       {/* The approach (the wedge, expanded) */}
       <section className="relative py-24 lg:py-32">
         <div className="container-px">
-          <div className="grid grid-cols-12 gap-y-12 lg:gap-x-16">
+          <div className="grid grid-cols-12 gap-y-6 lg:gap-x-16">
             <div className="col-span-12 lg:col-span-3">
               <Reveal>
                 <SectionLabel index="02">The approach</SectionLabel>
@@ -74,11 +73,13 @@ export default function AboutSection() {
                     aria-hidden="true"
                     className="pointer-events-none absolute -inset-x-6 -inset-y-4 -z-10 rounded-[45%] bg-ink-900/70 blur-2xl"
                   />
-                  <p className="text-balance font-sans text-[clamp(1.6rem,3.75vw,4rem)] font-normal leading-[1.25] tracking-tighter text-bone">
+                  <h3 className="max-w-3xl text-balance font-sans text-[clamp(1.75rem,4.5vw,4.75rem)] font-medium leading-[1.05] tracking-tightest text-bone">
                     We{" "}
                     <span className="font-serif italic text-gold-gradient">
                       direct like a studio and ship like a system.
-                    </span>{" "}
+                    </span>
+                  </h3>
+                  <p className="mt-6 max-w-[38rem] text-lg leading-relaxed text-bone-dim xl:max-w-2xl xl:text-xl">
                     Storytellers set the hook, the craft, the emotion; the engine produces it at a
                     scale and speed that didn&apos;t exist two years ago, and keeps producing long
                     after the launch.

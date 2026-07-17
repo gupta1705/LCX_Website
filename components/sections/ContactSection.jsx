@@ -36,12 +36,12 @@ export default function ContactSection() {
                 />
                 <div className="relative">
                 <p className="eyebrow mb-6">What happens next</p>
-                <p className="text-lg leading-relaxed text-bone">
+                <h4 className="text-balance text-[clamp(1.25rem,1.75vw,1.75rem)] font-medium leading-[1.15] tracking-tight text-bone">
                   We reply within 24 hours with a{" "}
                   <span className="font-serif italic text-gold-gradient">point of view</span>, not a
                   sales pitch.
-                </p>
-                <p className="mt-4 text-sm leading-relaxed text-bone-dim">
+                </h4>
+                <p className="mt-4 text-base leading-relaxed text-bone-dim">
                   Every brief gets an answer from a human: how we&apos;d approach it, what it would
                   take, and whether we&apos;re the studio for it.
                 </p>

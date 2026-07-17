@@ -28,10 +28,10 @@ export default function CapabilitiesSection() {
                   Brands we have worked with
                 </span>
               </div>
-              <p className="mt-6 max-w-lg text-balance text-[clamp(1.5rem,2.8vw,3.25rem)] font-medium leading-[1.15] tracking-tighter text-bone">
+              <h3 className="mt-6 max-w-lg text-balance text-[clamp(1.75rem,3.25vw,3.25rem)] font-medium leading-[1.15] tracking-tighter text-bone">
                 Films directed by the <span className="text-gold-gradient">Studio</span>, content scaled
                 by the <span className="text-gold-gradient">Engine</span>, for brands across sectors.
-              </p>
+              </h3>
             </div>
             <div className="lg:col-span-7">
               <BrandStack />
@@ -41,7 +41,7 @@ export default function CapabilitiesSection() {
 
         {/* Closing — big centered impact line */}
         <Reveal className="mt-20 lg:mt-36">
-          <p className="mx-auto max-w-5xl text-balance text-center font-serif text-[clamp(1.9rem,4.5vw,5rem)] leading-[1.12] tracking-tight text-bone">
+          <p className="mx-auto max-w-5xl text-balance text-center font-serif text-[clamp(1.5rem,3.5vw,3.75rem)] leading-[1.12] tracking-tight text-bone">
             Whatever you&apos;re launching, we can{" "}
             <span className="gold-flow italic" style={{ animationDelay: "0s" }}>
               direct it or scale it
