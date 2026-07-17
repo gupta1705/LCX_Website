@@ -18,7 +18,7 @@ export default function AboutSection() {
       <section className="relative py-24 lg:py-32">
         <div className="container-px">
           <div className="grid grid-cols-12 gap-y-12 lg:gap-x-16">
-            <div className="col-span-12 lg:col-span-4">
+            <div className="col-span-12 lg:col-span-3">
               <Reveal className="mb-8">
                 <SectionLabel index="01">The origin</SectionLabel>
               </Reveal>
@@ -37,7 +37,7 @@ export default function AboutSection() {
               </Reveal>
             </div>
 
-            <div className="col-span-12 lg:col-span-8">
+            <div className="col-span-12 lg:col-span-9">
               <Reveal>
                 <div className="relative isolate">
                   <div
@@ -62,12 +62,12 @@ export default function AboutSection() {
       <section className="relative py-24 lg:py-32">
         <div className="container-px">
           <div className="grid grid-cols-12 gap-y-12 lg:gap-x-16">
-            <div className="col-span-12 lg:col-span-4">
+            <div className="col-span-12 lg:col-span-3">
               <Reveal>
                 <SectionLabel index="02">The approach</SectionLabel>
               </Reveal>
             </div>
-            <div className="col-span-12 lg:col-span-8">
+            <div className="col-span-12 lg:col-span-9">
               <Reveal>
                 <div className="relative isolate">
                   <div
@@ -95,23 +95,31 @@ export default function AboutSection() {
           is the section's visual — it doesn't need a stage built under it. */}
       <section className="relative py-24 lg:py-32">
         <div className="container-px relative">
-          <Reveal>
-            <SectionLabel index="03">How we think</SectionLabel>
-          </Reveal>
-          <Reveal delay={0.05}>
-            <h3 className="mt-6 max-w-3xl text-balance font-sans text-[clamp(2rem,4.5vw,4.75rem)] font-medium leading-[1.05] tracking-tightest text-bone">
-              Four principles,{" "}
-              <span className="font-serif italic text-gold-gradient">always in orbit.</span>
-            </h3>
-          </Reveal>
-          <Reveal delay={0.1}>
-            <p className="mt-5 font-mono text-[11px] uppercase tracking-[0.28em] text-bone-faint">
-              Tap a node to open it.
-            </p>
-          </Reveal>
+          <div className="grid grid-cols-12 gap-y-6 lg:gap-x-16">
+            <div className="col-span-12 lg:col-span-3">
+              <Reveal>
+                <SectionLabel index="03">How we think</SectionLabel>
+              </Reveal>
+              {/* the affordance cue lives in the margin, next to the mark that
+                  names the section — not stacked under the headline */}
+              <Reveal>
+                <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.28em] text-bone-faint">
+                  Tap a node to open it.
+                </p>
+              </Reveal>
+            </div>
+            <div className="col-span-12 lg:col-span-9">
+              <Reveal>
+                <h3 className="max-w-3xl text-balance font-sans text-[clamp(2rem,4.5vw,4.75rem)] font-medium leading-[1.05] tracking-tightest text-bone">
+                  Four principles,{" "}
+                  <span className="font-serif italic text-gold-gradient">always in orbit.</span>
+                </h3>
+              </Reveal>
+            </div>
+          </div>
 
-          <Reveal delay={0.15}>
-            <div className="mt-4">
+          <Reveal>
+            <div className="mt-10">
               <PrinciplesOrbit />
             </div>
           </Reveal>
