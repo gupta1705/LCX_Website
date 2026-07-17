@@ -1,20 +1,23 @@
 "use client";
 
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ArrowRight, Link2, Feather, Zap, Cpu, Radar } from "lucide-react";
 import { useReducedMotion } from "framer-motion";
 
 /**
- * The four principles in a 3D orbit, inked in gold over the section's contour
- * field. The nodes ride a TILTED orbital plane: their 3D position is
- * projected to 2D in JS (x, squashed y, depth), and depth drives scale,
- * opacity, blur and z-order — so nodes genuinely pass in front of and behind
- * the gold core while every label stays crisp (nothing is CSS-3D-skewed). The
- * chart under them is a static engraved SVG — an orrery drawing in the antique
- * astronomy-plate tradition: the orbit rail (far half behind the core, near
- * half in front), a graduated tick limb, dotted inner orbit and plate labels.
- * Click a node: the orbit glides it to the front docking seat and its readout
- * opens as an opaque ink plate — nothing dims behind it, the field carries on.
+ * The four principles in a 3D orbit, in gold over the page's own attractor.
+ *
+ * The nodes ride a TILTED orbital plane: their 3D position is projected to 2D
+ * in JS (x, squashed y, depth), and depth drives scale, opacity, blur and
+ * z-order — so nodes genuinely pass in front of and behind the gold core while
+ * every label stays crisp (nothing is CSS-3D-skewed). The ring is drawn as two
+ * halves, dim behind the core and lit in front of it; that crossing is what
+ * sells the depth, and it is the whole drawing. An earlier version added an
+ * engraved orrery around it (tick limb, plate labels, callouts) — at this size
+ * the instrumentation read as clutter, so the ring carries it alone.
+ *
+ * Click a node: the orbit glides it to the front and its readout opens as an
+ * opaque ink plate — nothing dims behind it.
  */
 const PRINCIPLES = [
   {
@@ -156,29 +159,6 @@ export default function PrinciplesOrbit() {
   const ellipseH = radius * 2 * COS_T;
   const openItem = openId ? PRINCIPLES.find((p) => p.id === openId) : null;
 
-  // Engraved chart geometry — static per radius, so memoised. All points sit
-  // on the tilted plane via P(r, θ) = (r·cosθ, r·sinθ·cos60°), the same
-  // projection the nodes use; the tick lengths foreshorten automatically,
-  // which is what makes the flat drawing read as one inclined plate.
-  const chart = useMemo(() => {
-    const R = radius;
-    const P = (r, deg) => {
-      const a = (deg * Math.PI) / 180;
-      return [r * Math.cos(a), 0.5 * r * Math.sin(a)];
-    };
-    const seg = ([x1, y1], [x2, y2]) =>
-      `M ${x1.toFixed(2)} ${y1.toFixed(2)} L ${x2.toFixed(2)} ${y2.toFixed(2)} `;
-    const compact = R < 180;
-    let minors = "";
-    for (let t = 0, step = compact ? 10 : 5; t < 360; t += step) {
-      if (t % 30 === 0) continue;
-      minors += seg(P(1.06 * R, t), P(1.095 * R, t));
-    }
-    let majors = "";
-    for (let t = 0; t < 360; t += 30) majors += seg(P(1.06 * R, t), P(1.15 * R, t));
-    return { minors, majors, showDetail: R >= 200 };
-  }, [radius]);
-
   return (
     <div
       ref={containerRef}
@@ -194,17 +174,14 @@ export default function PrinciplesOrbit() {
       />
 
       <div className="relative" style={{ width: ellipseW, height: ellipseH }}>
-        {/* THE CHART — one static engraved SVG under everything: core seat
-            pool, dotted inner orbit, the FAR half of the rail, graduated
-            limb + tick band, station dots, plate labels. Fewer, stronger
-            strokes than the paper version — on a dark band over a live line
-            field, every faint hairline is camouflage. */}
+        {/* FAR half of the orbit — behind the core, dim because it's the far
+            side of a tilted ring. One stroke; the depth does the talking. */}
         <svg
           aria-hidden="true"
           className="pointer-events-none absolute left-1/2 top-1/2 z-[2] -translate-x-1/2 -translate-y-1/2 overflow-visible"
-          width={2.8 * radius}
-          height={1.44 * radius}
-          viewBox={`${-1.4 * radius} ${-0.72 * radius} ${2.8 * radius} ${1.44 * radius}`}
+          width={2.4 * radius}
+          height={1.24 * radius}
+          viewBox={`${-1.2 * radius} ${-0.62 * radius} ${2.4 * radius} ${1.24 * radius}`}
         >
           <defs>
             <radialGradient id="tvl-core-seat">
@@ -213,7 +190,6 @@ export default function PrinciplesOrbit() {
               <stop offset="100%" stopColor="rgba(10,9,8,0)" />
             </radialGradient>
           </defs>
-          {/* core ground pool — clears the field so the bead reads */}
           <ellipse
             cx="0"
             cy="5"
@@ -221,65 +197,12 @@ export default function PrinciplesOrbit() {
             ry={Math.max(13, 0.07 * radius)}
             fill="url(#tvl-core-seat)"
           />
-          {/* dotted inner orbit */}
-          <ellipse
-            rx={0.62 * radius}
-            ry={0.31 * radius}
-            fill="none"
-            stroke="rgba(232,185,106,0.55)"
-            strokeWidth="1.5"
-            strokeDasharray="0.1 8"
-            strokeLinecap="round"
-          />
-          {/* far half of the main rail */}
           <path
             d={`M ${-radius} 0 A ${radius} ${0.5 * radius} 0 0 1 ${radius} 0`}
             fill="none"
-            stroke="rgba(232,185,106,0.5)"
-            strokeWidth="1.5"
+            stroke="rgba(232,185,106,0.3)"
+            strokeWidth="1.25"
           />
-          {/* graduated limb bound */}
-          <ellipse rx={1.06 * radius} ry={0.53 * radius} fill="none" stroke="rgba(232,185,106,0.3)" strokeWidth="1" />
-          {/* tick band — foreshortened by the same projection as the nodes */}
-          <path d={chart.minors} stroke="rgba(232,185,106,0.45)" strokeWidth="1" fill="none" />
-          <path d={chart.majors} stroke="rgba(241,208,138,0.75)" strokeWidth="1.5" fill="none" />
-          {/* station dots — pin the rail to the limb, cover the seams */}
-          <circle cx={radius} cy="0" r="2.5" fill="rgba(241,208,138,0.95)" />
-          <circle cx={-radius} cy="0" r="2.5" fill="rgba(241,208,138,0.95)" />
-          <circle cx="0" cy={-0.5 * radius} r="2" fill="rgba(232,185,106,0.55)" />
-          {/* plate labels */}
-          {chart.showDetail && (
-            <>
-              <text
-                x={-1.15 * radius - 10}
-                y="0"
-                textAnchor="end"
-                dominantBaseline="central"
-                fill="rgba(241,208,138,0.6)"
-                paintOrder="stroke"
-                stroke="#0A0908"
-                strokeWidth="3"
-                strokeLinejoin="round"
-                style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.16em" }}
-              >
-                FIG. 01
-              </text>
-              <text
-                x={1.15 * radius + 10}
-                y="0"
-                textAnchor="start"
-                dominantBaseline="central"
-                fill="rgba(241,208,138,0.6)"
-                paintOrder="stroke"
-                stroke="#0A0908"
-                strokeWidth="3"
-                strokeLinejoin="round"
-                style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.16em" }}
-              >
-                INCL. 60°
-              </text>
-            </>
-          )}
         </svg>
 
         {/* central core — a small lit gold bead with one soft breathing glow */}
@@ -291,14 +214,14 @@ export default function PrinciplesOrbit() {
           <div className="relative h-2.5 w-2.5 rounded-full bg-bone/90" />
         </div>
 
-        {/* NEAR half of the rail — in front of the core, behind near nodes —
-            plus the docking seat the clicked node glides onto */}
+        {/* NEAR half of the orbit — in front of the core, behind near nodes.
+            Lit, so the ring reads as passing over the bead. */}
         <svg
           aria-hidden="true"
           className="pointer-events-none absolute left-1/2 top-1/2 z-[52] -translate-x-1/2 -translate-y-1/2 overflow-visible"
-          width={2.8 * radius}
-          height={1.44 * radius}
-          viewBox={`${-1.4 * radius} ${-0.72 * radius} ${2.8 * radius} ${1.44 * radius}`}
+          width={2.4 * radius}
+          height={1.24 * radius}
+          viewBox={`${-1.2 * radius} ${-0.62 * radius} ${2.4 * radius} ${1.24 * radius}`}
         >
           <defs>
             <linearGradient id="tvl-rail-grad" gradientUnits="userSpaceOnUse" x1={-radius} y1="0" x2={radius} y2="0">
@@ -312,16 +235,8 @@ export default function PrinciplesOrbit() {
             fill="none"
             stroke="url(#tvl-rail-grad)"
             strokeOpacity="1"
-            strokeWidth="2.25"
+            strokeWidth="1.75"
           />
-          <path
-            d={`M ${-(radius - 4)} 0 A ${radius - 4} ${0.5 * (radius - 4)} 0 0 0 ${radius - 4} 0`}
-            fill="none"
-            stroke="rgba(247,227,181,0.35)"
-            strokeWidth="0.75"
-          />
-          <circle cx="0" cy={0.5 * radius} r="4.5" fill="#0A0908" stroke="rgba(241,208,138,0.9)" strokeWidth="1" />
-          <circle cx="0" cy={0.5 * radius} r="1.5" fill="#F1D08A" />
         </svg>
 
         {PRINCIPLES.map((item, index) => {

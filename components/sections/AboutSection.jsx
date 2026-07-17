@@ -1,7 +1,6 @@
 import SectionHeader from "@/components/ui/SectionHeader";
 import Reveal from "@/components/ui/Reveal";
 import SectionLabel from "@/components/ui/SectionLabel";
-import NebulaField from "@/components/ui/NebulaField";
 import PrinciplesOrbit from "@/components/about/PrinciplesOrbit";
 
 export default function AboutSection() {
@@ -91,22 +90,10 @@ export default function AboutSection() {
         </div>
       </section>
 
-      {/* How we think — the contour band. A full-bleed engraved gold line
-          field (slow-morphing topographic iso-lines, kin to the attractor's
-          filaments) interrupts the page, so the section still reads as its own
-          plate; the orbit is inked for it inside PrinciplesOrbit. */}
-      <section className="relative isolate overflow-hidden border-y border-gold-500/15 bg-ink-900 py-24 text-bone lg:py-32">
-        {/* stand-in for the field if WebGL2 is unavailable */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 -z-10 [background:radial-gradient(120%_90%_at_50%_50%,rgba(169,118,46,0.07),#0A0908_72%)]"
-        />
-        <NebulaField className="absolute inset-0 -z-10 h-full w-full" />
-        {/* edge fades — headline landing top, plate fade-out bottom */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 -z-10 [background:linear-gradient(180deg,rgba(10,9,8,0.62),rgba(10,9,8,0.18)_28%,transparent_48%),linear-gradient(0deg,rgba(10,9,8,0.55),transparent_16%)]"
-        />
+      {/* How we think. No background of its own: the page's attractor IS the
+          theme, and a second full-bleed field only ever fought it. The orbit
+          is the section's visual — it doesn't need a stage built under it. */}
+      <section className="relative py-24 lg:py-32">
         <div className="container-px relative">
           <Reveal>
             <SectionLabel index="03">How we think</SectionLabel>
