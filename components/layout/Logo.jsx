@@ -1,11 +1,16 @@
 import Link from "next/link";
 
 /**
- * The Viral Labs wordmark — lowercase "the viral labs" with a gold thermometer
- * standing in for the "i" in "viral". The thermometer is an inline SVG using the
- * default baseline alignment (its bulb sits at the bottom of the viewBox, so it
- * lands on the text baseline like the letter it replaces). Mercury brightens on
- * hover — a quiet nod to going viral / heating up.
+ * Lights Camera Experiments (LCX) wordmark. A small gold cue triangle — the
+ * "action" the name points at — sits ahead of the compact "LCX" mark; there's
+ * no room at nav scale to spell out the full name, so that lives in the
+ * aria-label instead.
+ *
+ * Rebuilt in the site's own type system (Schibsted Grotesk, gold-on-bone)
+ * rather than importing the submitted logo's black-and-white geometric
+ * treatment — the design system stays, only the name changes. Both icon and
+ * text sit inside one sized span so they scale together when the nav grows
+ * the mark on open (`size="lg"`).
  */
 export default function Logo({ className = "", size = "base" }) {
   const textSize =
@@ -15,28 +20,21 @@ export default function Logo({ className = "", size = "base" }) {
   return (
     <Link
       href="/"
-      aria-label="The Viral Labs, home"
+      aria-label="Lights Camera Experiments, home"
       className={`group inline-flex items-center rounded-md ${className}`}
     >
-      <span className={`font-semibold lowercase tracking-tight text-bone transition-[font-size] duration-300 ${textSize}`}>
-        the&nbsp;v
+      <span
+        className={`inline-flex items-center gap-[0.35em] font-semibold uppercase tracking-tight text-bone transition-[font-size] duration-300 ${textSize}`}
+      >
         <svg
-          viewBox="0 0 11 33"
-          className="mx-[0.5px] inline h-[0.8em] w-auto text-gold-400 transition-colors duration-300 group-hover:text-gold-300"
-          fill="none"
+          viewBox="0 0 12 12"
+          className="h-[0.6em] w-[0.6em] shrink-0 text-gold-400 transition-colors duration-300 group-hover:text-gold-300"
+          fill="currentColor"
           aria-hidden="true"
         >
-          <rect x="2.6" y="1.4" width="5.8" height="21.4" rx="2.9" stroke="currentColor" strokeWidth="1.6" />
-          <path
-            d="M5.5 8v11"
-            className="text-gold-200"
-            stroke="currentColor"
-            strokeWidth="2.6"
-            strokeLinecap="round"
-          />
-          <circle cx="5.5" cy="27.9" r="4.9" className="fill-gold-200" />
+          <path d="M1 1 L11 6 L1 11 Z" />
         </svg>
-        ral&nbsp;labs
+        LCX
       </span>
     </Link>
   );

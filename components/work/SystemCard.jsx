@@ -45,7 +45,7 @@ export default function SystemCard({ system, index, last = false }) {
           {name}
         </h4>
         <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.22em] text-bone-faint">
-          TVL / ENGINE / {serial}
+          LCX / ENGINE / {serial}
         </p>
         <p className="mt-4 max-w-[44ch] text-[15px] leading-relaxed text-bone-dim xl:text-[17px]">{blurb}</p>
       </Cell>

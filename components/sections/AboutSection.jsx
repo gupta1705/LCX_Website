@@ -23,7 +23,7 @@ export default function AboutSection() {
                 className="pointer-events-none absolute -inset-x-6 -inset-y-4 -z-10 rounded-[45%] bg-ink-900/70 blur-2xl"
               />
               <h3 className="max-w-4xl text-balance font-serif text-[clamp(1.75rem,4.5vw,4.75rem)] font-medium leading-[1.08] tracking-tight text-bone">
-                The Viral Labs started with{" "}
+                Lights Camera Experiments started with{" "}
                 <span className="italic text-gold-gradient">a frustration.</span>
               </h3>
               <p className="mt-6 max-w-[38rem] text-lg leading-relaxed text-bone-dim xl:max-w-2xl xl:text-xl">

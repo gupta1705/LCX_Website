@@ -1,6 +1,6 @@
-# The Viral Labs — Tech Stack & Architecture
+# Lights Camera Experiments (LCX) — Tech Stack & Architecture
 
-**Project:** The Viral Labs — an AI-native creative studio
+**Project:** Lights Camera Experiments (LCX) — an AI-native creative studio
 **Type:** Single-page marketing site (5 anchored sections)
 **Stack:** Next.js 14 (App Router) · React 18 · Tailwind CSS 3.4 · Three.js / R3F · Framer Motion
 **Language:** JavaScript (JSX) — no TypeScript
@@ -247,7 +247,8 @@ Headlines use `clamp(min, VWvw, max)` so they grow with the viewport and settle 
 - **StartProjectForm** is front-end only — it doesn't submit anywhere yet (needs an email/back-end wire-up).
 - **Placeholder content** remains in BrandStack (NOVA/HELIO/…) and the team roles.
 - `WorkCard.jsx` / `WorkGallery.jsx` are dead code and can be deleted.
-- `lib/site.js` email (`hello@thevirallabs.com`) and the account email (`aitools@theviralfever.com`) differ — pick one before launch.
+- `lib/site.js` email (`hello@lightscameraexperiments.com`) is a placeholder on a domain that isn't registered yet, and differs from the account email (`aitools@theviralfever.com`) — needs a real inbox on the real domain before launch.
+- `metadataBase` in `app/layout.jsx` points at the same placeholder domain — update once the real one is decided.
 
 ---
 

@@ -39,23 +39,26 @@ const mono = Fragment_Mono({
 });
 
 export const metadata = {
-  metadataBase: new URL("https://thevirallabs.com"),
+  // Placeholder domain until the real one is registered/pointed — flagging
+  // rather than guessing at a domain that may or may not exist.
+  metadataBase: new URL("https://lightscameraexperiments.com"),
   title: {
-    default: "The Viral Labs | An AI-native creative studio",
-    template: "%s | The Viral Labs",
+    default: "Lights Camera Experiments | An AI-native creative studio",
+    template: "%s | LCX",
   },
   description:
-    "The Viral Labs builds AI-driven marketing, video, images, and automation for companies that want to move fast and look incredible doing it.",
+    "Lights Camera Experiments builds AI-driven marketing, video, images, and automation for companies that want to move fast and look incredible doing it.",
   keywords: [
     "AI creative studio",
     "AI marketing",
     "AI video",
     "AI images",
     "automation",
-    "The Viral Labs",
+    "Lights Camera Experiments",
+    "LCX",
   ],
   openGraph: {
-    title: "The Viral Labs | An AI-native creative studio",
+    title: "Lights Camera Experiments | An AI-native creative studio",
     description:
       "Story-first. AI-powered. Built to go viral. AI-driven marketing, video, images and automation.",
     type: "website",

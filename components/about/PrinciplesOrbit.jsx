@@ -184,7 +184,7 @@ export default function PrinciplesOrbit() {
           viewBox={`${-1.2 * radius} ${-0.62 * radius} ${2.4 * radius} ${1.24 * radius}`}
         >
           <defs>
-            <radialGradient id="tvl-core-seat">
+            <radialGradient id="lcx-core-seat">
               <stop offset="0%" stopColor="rgba(10,9,8,0.9)" />
               <stop offset="60%" stopColor="rgba(10,9,8,0.4)" />
               <stop offset="100%" stopColor="rgba(10,9,8,0)" />
@@ -195,7 +195,7 @@ export default function PrinciplesOrbit() {
             cy="5"
             rx={Math.max(26, 0.14 * radius)}
             ry={Math.max(13, 0.07 * radius)}
-            fill="url(#tvl-core-seat)"
+            fill="url(#lcx-core-seat)"
           />
           <path
             d={`M ${-radius} 0 A ${radius} ${0.5 * radius} 0 0 1 ${radius} 0`}
@@ -224,7 +224,7 @@ export default function PrinciplesOrbit() {
           viewBox={`${-1.2 * radius} ${-0.62 * radius} ${2.4 * radius} ${1.24 * radius}`}
         >
           <defs>
-            <linearGradient id="tvl-rail-grad" gradientUnits="userSpaceOnUse" x1={-radius} y1="0" x2={radius} y2="0">
+            <linearGradient id="lcx-rail-grad" gradientUnits="userSpaceOnUse" x1={-radius} y1="0" x2={radius} y2="0">
               <stop offset="0%" stopColor="#A9762E" />
               <stop offset="50%" stopColor="#F1D08A" />
               <stop offset="100%" stopColor="#A9762E" />
@@ -233,7 +233,7 @@ export default function PrinciplesOrbit() {
           <path
             d={`M ${-radius} 0 A ${radius} ${0.5 * radius} 0 0 0 ${radius} 0`}
             fill="none"
-            stroke="url(#tvl-rail-grad)"
+            stroke="url(#lcx-rail-grad)"
             strokeOpacity="1"
             strokeWidth="1.75"
           />
