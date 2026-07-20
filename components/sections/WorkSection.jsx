@@ -87,14 +87,28 @@ const SYSTEMS = [
  * Chapter divider — a rule, the chapter's name at heading scale, and what's in
  * it as a deck beneath. The sub used to run above the title as an 11px tracked
  * mark, which put the chapter's smallest type in charge of its biggest.
+ *
+ * Carries the same ghost-numeral counterweight as SectionHeader, one level
+ * down ("03.1" under section "03") — without it the row is just text hugging
+ * the left edge with nothing balancing the rest of the line.
  */
-function GroupDivider({ title, sub }) {
+function GroupDivider({ index, title, sub }) {
   return (
     <Reveal>
       <div className="border-t border-white/[0.12] pt-6">
-        <h3 className="font-sans text-[clamp(2rem,4.75vw,5.5rem)] font-medium tracking-tight text-bone">
-          {title}
-        </h3>
+        <div className="flex items-end justify-between gap-10">
+          <h3 className="font-sans text-[clamp(2rem,4.75vw,5.5rem)] font-medium tracking-tight text-bone">
+            {title}
+          </h3>
+          {index && (
+            <span
+              aria-hidden="true"
+              className="hidden shrink-0 select-none font-serif text-[clamp(5rem,9vw,9rem)] italic leading-[0.72] tracking-[-0.04em] text-bone/[0.08] md:block"
+            >
+              {index}
+            </span>
+          )}
+        </div>
         <p className="mt-3 text-lg leading-relaxed text-bone-dim">{sub}.</p>
       </div>
     </Reveal>
@@ -114,7 +128,7 @@ export default function WorkSection() {
 
       {/* The Studio — index entries 01-04 */}
       <section className="container-px py-14 lg:py-20">
-        <GroupDivider title="The Studio" sub="Things we directed" />
+        <GroupDivider index="03.1" title="The Studio" sub="Things we directed" />
         <div className="mt-10">
           {FILMS.map((film, i) => (
             <FilmCard key={film.title} film={film} index={i} flip={i % 2 === 1} />
@@ -124,7 +138,7 @@ export default function WorkSection() {
 
       {/* The Engine — index entries 05-06 */}
       <section className="container-px py-14 lg:py-20">
-        <GroupDivider title="The Engine" sub="Systems we built" />
+        <GroupDivider index="03.2" title="The Engine" sub="Systems we built" />
         <div className="mt-10">
           {SYSTEMS.map((system, i) => (
             <SystemCard

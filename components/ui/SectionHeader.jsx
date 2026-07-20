@@ -35,7 +35,7 @@ export default function SectionHeader({ index, title, accent, blurb }) {
             {index && (
               <span
                 aria-hidden="true"
-                className="hidden shrink-0 select-none font-serif text-[clamp(7rem,12vw,13rem)] italic leading-[0.72] tracking-[-0.04em] text-bone/[0.08] lg:block"
+                className="hidden shrink-0 select-none font-serif text-[clamp(7rem,12vw,13rem)] italic leading-[0.72] tracking-[-0.04em] text-bone/[0.08] md:block"
               >
                 {index}
               </span>
