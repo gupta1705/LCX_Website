@@ -22,9 +22,9 @@ export default function AboutSection() {
                 aria-hidden="true"
                 className="pointer-events-none absolute -inset-x-6 -inset-y-4 -z-10 rounded-[45%] bg-ink-900/70 blur-2xl"
               />
-              <h3 className="max-w-4xl text-balance font-sans text-[clamp(1.75rem,4.5vw,4.75rem)] font-medium leading-[1.05] tracking-tightest text-bone">
+              <h3 className="max-w-4xl text-balance font-serif text-[clamp(1.75rem,4.5vw,4.75rem)] font-medium leading-[1.08] tracking-tight text-bone">
                 The Viral Labs started with{" "}
-                <span className="font-serif italic text-gold-gradient">a frustration.</span>
+                <span className="italic text-gold-gradient">a frustration.</span>
               </h3>
               <p className="mt-6 max-w-[38rem] text-lg leading-relaxed text-bone-dim xl:max-w-2xl xl:text-xl">
                 The world&apos;s best AI tools were in the hands of people who didn&apos;t
@@ -47,9 +47,9 @@ export default function AboutSection() {
                 aria-hidden="true"
                 className="pointer-events-none absolute -inset-x-6 -inset-y-4 -z-10 rounded-[45%] bg-ink-900/70 blur-2xl"
               />
-              <h3 className="max-w-4xl text-balance font-sans text-[clamp(1.75rem,4.5vw,4.75rem)] font-medium leading-[1.05] tracking-tightest text-bone">
+              <h3 className="max-w-4xl text-balance font-serif text-[clamp(1.75rem,4.5vw,4.75rem)] font-medium leading-[1.08] tracking-tight text-bone">
                 We{" "}
-                <span className="font-serif italic text-gold-gradient">
+                <span className="italic text-gold-gradient">
                   direct like a studio and ship like a system.
                 </span>
               </h3>
@@ -69,9 +69,9 @@ export default function AboutSection() {
       <section className="relative py-24 lg:py-32">
         <div className="container-px relative">
           <Reveal>
-            <h3 className="max-w-4xl text-balance font-sans text-[clamp(2rem,4.5vw,4.75rem)] font-medium leading-[1.05] tracking-tightest text-bone">
+            <h3 className="max-w-4xl text-balance font-serif text-[clamp(2rem,4.5vw,4.75rem)] font-medium leading-[1.08] tracking-tight text-bone">
               Four principles,{" "}
-              <span className="font-serif italic text-gold-gradient">always in orbit.</span>
+              <span className="italic text-gold-gradient">always in orbit.</span>
             </h3>
           </Reveal>
           <Reveal>

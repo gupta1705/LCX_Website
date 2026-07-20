@@ -35,10 +35,10 @@ export default function ContactSection() {
                   className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-white/[0.05] to-transparent"
                 />
                 <div className="relative">
-                <h4 className="text-balance text-[clamp(1.25rem,1.75vw,1.75rem)] font-medium leading-[1.15] tracking-tight text-bone">
+                <h4 className="text-balance font-serif text-[clamp(1.25rem,1.75vw,1.75rem)] font-medium leading-[1.2] tracking-tight text-bone">
                   We reply within 24 hours with a{" "}
-                  <span className="font-serif italic text-gold-gradient">point of view</span>, not a
-                  sales pitch.
+                  <span className="italic text-gold-gradient">point of view</span>, not a sales
+                  pitch.
                 </h4>
                 <p className="mt-4 text-base leading-relaxed text-bone-dim">
                   Every brief gets an answer from a human: how we&apos;d approach it, what it would
