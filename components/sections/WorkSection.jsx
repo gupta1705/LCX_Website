@@ -60,18 +60,24 @@ const FILMS = [
 const SYSTEMS = [
   {
     name: "ReelForge",
-    status: "In production",
     blurb:
       "Feed it one long-form video; it cuts the sharpest short-form moments and mass-publishes across accounts, automatically. The content pipeline we sell, running in our own house first.",
-    pipeline: "[1 video → N clips → M channels]",
+    specs: [
+      { k: "Input", v: "One long-form video" },
+      { k: "Output", v: "Cut for every channel it runs on" },
+      { k: "Runs", v: "On every new upload" },
+    ],
   },
   {
     name: "ParsecDaily",
-    status: "Fully autonomous",
     live: true,
     blurb:
       "A daily Instagram channel that runs with zero human input, sourced, produced, and posted by the machine.",
-    pipeline: "[X posts · Y followers · 0 manual uploads]",
+    specs: [
+      { k: "Sourcing", v: "Automatic" },
+      { k: "Publishing", v: "Daily" },
+      { k: "Manual uploads", v: "Zero" },
+    ],
     linkLabel: "See it live",
     // href: "https://instagram.com/...",
   },

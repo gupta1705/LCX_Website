@@ -2,21 +2,25 @@
 
 import { ArrowUpRight } from "lucide-react";
 import Magnetic from "@/components/ui/Magnetic";
-import PipelineDiagram from "@/components/work/PipelineDiagram";
 import { Cell, IndexNumeral, RowWash, RuleDraw } from "./IndexRow";
 import { CTA } from "@/lib/site";
 
 /**
  * One system we built (The Engine), on the same index-row spine as the films.
  * The media rail is replaced by the one boxed object in the section: a
- * gold-bordered machine readout with a pipeline schematic that draws itself
- * on scroll. Gold border means "machine". A scanline runs only when `live`.
+ * gold-bordered machine readout. It used to carry an abstract pipeline
+ * schematic — circle/diamond/square nodes joined by arrows — the generic
+ * "workflow automation" icon set every AI-tool landing page reaches for, over
+ * bracket-placeholder copy ("[X posts · Y followers]") that read as an
+ * unfilled template. Both are gone: the readout is now a spec plate, real
+ * key/value rows in the mono instrument-plate voice the rest of the site
+ * already speaks. Gold border means "machine". A scanline runs only when `live`.
  */
 
 const TICKS = ["left-0 top-0", "right-0 top-0 rotate-90", "right-0 bottom-0 rotate-180", "left-0 bottom-0 -rotate-90"];
 
 export default function SystemCard({ system, index, last = false }) {
-  const { name, live, blurb, pipeline, href, linkLabel } = system;
+  const { name, live, blurb, specs, href, linkLabel } = system;
   const num = String(index + 1).padStart(2, "0");
   const serial = String(index - 3).padStart(2, "0");
 
@@ -83,13 +87,15 @@ export default function SystemCard({ system, index, last = false }) {
             />
           )}
 
-          {/* content sits above the etched grid */}
-          <div className="relative">
-            <PipelineDiagram variant={live ? "loop" : "fanout"} gid={`pipe-${index}`} />
-            <p className="mt-3 font-mono text-[clamp(0.68rem,1.1vw,0.8rem)] uppercase tracking-[0.14em] text-gold-200">
-              {pipeline}
-            </p>
-          </div>
+          {/* content sits above the etched grid — a spec plate, real values */}
+          <dl className="relative divide-y divide-white/[0.07]">
+            {specs.map(({ k, v }) => (
+              <div key={k} className="flex items-baseline justify-between gap-6 py-2 first:pt-0 last:pb-0">
+                <dt className="shrink-0 font-mono text-[10px] uppercase tracking-[0.18em] text-bone-faint">{k}</dt>
+                <dd className="text-right font-mono text-[12px] leading-snug text-gold-100">{v}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
 
         {linkLabel && (
