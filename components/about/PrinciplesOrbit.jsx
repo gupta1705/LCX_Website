@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { ArrowRight, Link2, Feather, Zap, Cpu, Radar } from "lucide-react";
+import { Feather, Zap, Cpu, Radar } from "lucide-react";
 import { useReducedMotion } from "framer-motion";
 
 /**
@@ -315,44 +315,52 @@ export default function PrinciplesOrbit() {
             aria-label={`Principle ${String(openItem.id).padStart(2, "0")}`}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="border-b border-white/[0.07] px-5 py-3">
-              <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.22em]">
-                <span className="text-gold-300">Principle {String(openItem.id).padStart(2, "0")}</span>
-                <span className="text-bone-faint">{openItem.category}</span>
+            {/* An entry, not a dashboard card: a ledger numeral leads the line
+                (the same serif-italic voice as the work index), the category
+                sits beside it as a quiet word, and the headline is a
+                STATEMENT — so it takes the site's serif voice, not the sans
+                one. No opposite-corner metadata row, no icon+label chip. */}
+            <div className="border-b border-white/[0.07] px-5 pb-4 pt-5">
+              <div className="flex items-baseline gap-2.5">
+                <span className="font-serif text-2xl italic text-gold-gradient">
+                  {String(openItem.id).padStart(2, "0")}.
+                </span>
+                <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-bone-faint">
+                  {openItem.category}
+                </span>
               </div>
-              <h4 className="mt-2 font-sans text-lg font-medium leading-tight tracking-tight text-bone">
+              <h4 className="mt-3 font-serif text-lg font-medium leading-snug text-bone">
                 {openItem.pre}
-                <span className="font-serif italic text-gold-gradient">{openItem.accent}</span>
+                <span className="italic text-gold-gradient">{openItem.accent}</span>
                 {openItem.post}
               </h4>
             </div>
             <div className="px-5 py-4">
               <p className="text-[13px] leading-relaxed text-bone-dim">{openItem.blurb}</p>
-              <div className="mt-4 border-t border-white/[0.07] pt-3">
-                <div className="mb-2 flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-bone-faint">
-                  <Link2 size={10} className="text-gold-400" aria-hidden="true" />
-                  Connected
-                </div>
-                <div className="flex flex-wrap gap-1.5">
-                  {openItem.relatedIds.map((rid) => {
-                    const rel = PRINCIPLES.find((p) => p.id === rid);
-                    return (
+              {/* cross-reference as a sentence, the way an index refers to its
+                  own entries — not tag chips borrowed from a component kit */}
+              <p className="mt-4 border-t border-white/[0.07] pt-3 text-[13px] leading-relaxed text-bone-faint">
+                See also{" "}
+                {openItem.relatedIds.map((rid, i) => {
+                  const rel = PRINCIPLES.find((p) => p.id === rid);
+                  const isLast = i === openItem.relatedIds.length - 1;
+                  return (
+                    <span key={rid}>
                       <button
-                        key={rid}
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation();
                           toggle(rid);
                         }}
-                        className="inline-flex items-center gap-1 rounded-sm border border-gold-soft bg-transparent px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-gold-200 transition-colors hover:bg-gold-500/10 hover:text-gold-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-400"
+                        className="rounded-sm text-gold-200 underline decoration-gold-500/40 underline-offset-2 transition-colors hover:text-gold-100 hover:decoration-gold-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-400"
                       >
                         {rel?.label}
-                        <ArrowRight size={9} className="text-gold-400" aria-hidden="true" />
                       </button>
-                    );
-                  })}
-                </div>
-              </div>
+                      {isLast ? "." : " and "}
+                    </span>
+                  );
+                })}
+              </p>
             </div>
           </div>
         </>
