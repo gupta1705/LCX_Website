@@ -143,7 +143,7 @@ export default function StartProjectForm() {
           name="message"
           rows={5}
           required
-          placeholder="One film or a content engine? Tell us what you're building, the timeline, and what 'viral' looks like for you…"
+          placeholder="One film or a content engine? Tell us what you're building, the timeline, and what success looks like for you…"
           className={`${field} resize-none`}
         />
       </div>

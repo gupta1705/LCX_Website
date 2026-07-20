@@ -28,7 +28,7 @@ export default function AboutSection() {
               </h3>
               <p className="mt-6 max-w-[38rem] text-lg leading-relaxed text-bone-dim xl:max-w-2xl xl:text-xl">
                 The world&apos;s best AI tools were in the hands of people who didn&apos;t
-                understand why some things go viral and most don&apos;t. So we put them in the hands
+                understand why some things catch on and most don&apos;t. So we put them in the hands
                 of{" "}
                 <span className="font-serif italic text-gold-gradient">people who do</span> — then
                 built the machines to run it at scale.

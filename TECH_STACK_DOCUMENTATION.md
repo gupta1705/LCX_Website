@@ -80,7 +80,7 @@ TVF - AI Website/
 │   │   └── Footer.jsx      # Tagline, email, socials
 │   │
 │   ├── home/
-│   │   └── Hero.jsx        # #home — "We make [word] that go viral." + rotating word + CTAs
+│   │   └── Hero.jsx        # #home — "We make [word] that resonate." + rotating word + CTAs
 │   │
 │   ├── sections/
 │   │   ├── CapabilitiesSection.jsx  # #capabilities — header + pinned Studio/Engine + BrandStack

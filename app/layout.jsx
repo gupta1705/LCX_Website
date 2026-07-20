@@ -60,7 +60,7 @@ export const metadata = {
   openGraph: {
     title: "Lights Camera Experiments | An AI-native creative studio",
     description:
-      "Story-first. AI-powered. Built to go viral. AI-driven marketing, video, images and automation.",
+      "Story-first. AI-powered. Made to resonate. AI-driven marketing, video, images and automation.",
     type: "website",
   },
 };

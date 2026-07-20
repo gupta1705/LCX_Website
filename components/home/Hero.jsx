@@ -53,7 +53,7 @@ export default function Hero() {
           >
             {/* one clean sentence for screen readers; the visual cycle is hidden from AT */}
             <span className="sr-only">
-              We make films, campaigns, visuals, and systems that go viral.
+              We make films, campaigns, visuals, and systems that resonate.
             </span>
             <span aria-hidden="true">
               We make
@@ -61,7 +61,7 @@ export default function Hero() {
               {/* Outer span sets the visible line gap (tight); the inner span
                   is taller and does the actual clipping, so Besley's deep
                   descenders (campaigns, systems) have room without stretching
-                  the layout gap between "We make" and "that go viral." */}
+                  the layout gap between "We make" and "that resonate." */}
               <span className="relative block h-[1.08em]">
                 <span className="absolute inset-x-0 -top-[0.36em] -bottom-[0.36em] overflow-hidden">
                   {WORDS.map((word, i) => (
@@ -87,7 +87,7 @@ export default function Hero() {
                   ))}
                 </span>
               </span>
-              that go viral.
+              that resonate.
             </span>
           </motion.h1>
 
