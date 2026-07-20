@@ -161,7 +161,7 @@ export default function Navbar() {
                 />
               </span>
             </button>
-            <Logo size={open ? "lg" : "base"} />
+            <Logo size={open ? "lg" : "base"} expanded={open} />
           </div>
 
           <AnimatePresence>
