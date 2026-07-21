@@ -124,7 +124,7 @@ export default function PrinciplesPanels() {
   // the only thing that should bound this, so the row spans the same width as
   // the heading above it and the gaps either side are equal.
   return (
-    <div className="relative isolate mt-12 w-full lg:mt-16">
+    <div className="relative isolate mt-20 w-full lg:mt-36">
       {/* ————— desktop: the expanding row ————— */}
       <ul className="hidden items-end gap-2 md:flex" style={{ height: OPEN_H }}>
         {PRINCIPLES.map((p, i) => {

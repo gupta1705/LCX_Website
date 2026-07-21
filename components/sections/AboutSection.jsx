@@ -60,7 +60,7 @@ export default function AboutSection() {
       </section>
 
       {/* Closing one-liner */}
-      <section className="container-px pb-8 pt-4 lg:pb-12">
+      <section className="container-px pb-8 pt-16 lg:pb-12 lg:pt-24">
         <Reveal>
           <div className="relative isolate max-w-3xl">
             <div
