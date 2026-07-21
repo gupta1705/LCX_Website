@@ -1,6 +1,6 @@
 import SectionHeader from "@/components/ui/SectionHeader";
 import Reveal from "@/components/ui/Reveal";
-import PrinciplesOrbit from "@/components/about/PrinciplesOrbit";
+import PrinciplesForme from "@/components/about/PrinciplesForme";
 
 export default function AboutSection() {
   return (
@@ -40,27 +40,22 @@ export default function AboutSection() {
         </div>
       </section>
 
-      {/* How we think. No background of its own: the page's attractor IS the
-          theme, and a second full-bleed field only ever fought it. The orbit
-          is the section's visual — it doesn't need a stage built under it. */}
+      {/* How we think. The forme is an opaque slab that OCCLUDES the attractor
+          rather than floating in it — the previous orbit was thin gold curves
+          drawn on a background of thin gold curves, and dissolved into it. No
+          stage, scrim or backdrop is needed here: the plate handles itself by
+          being solid. */}
       <section className="relative py-24 lg:py-32">
         <div className="container-px relative">
           <Reveal>
             <h3 className="max-w-4xl text-balance font-serif text-[clamp(2rem,4.5vw,4.75rem)] font-medium leading-[1.08] tracking-tight text-bone">
               Four principles,{" "}
-              <span className="italic text-gold-gradient">always in orbit.</span>
+              <span className="italic text-gold-gradient">locked in one frame.</span>
             </h3>
-          </Reveal>
-          <Reveal>
-            {/* the affordance cue, in sentence case at body scale — a hint, not
-                a tracked-caps mark impersonating a title */}
-            <p className="mt-5 text-base text-bone-faint">Tap a node to open it.</p>
           </Reveal>
 
           <Reveal>
-            <div className="mt-10">
-              <PrinciplesOrbit />
-            </div>
+            <PrinciplesForme />
           </Reveal>
         </div>
       </section>
