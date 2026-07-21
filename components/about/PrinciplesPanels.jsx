@@ -34,7 +34,7 @@ const GRAIN =
 const PRINCIPLES = [
   {
     id: 1,
-    share: "40%",
+    share: "37%",
     label: "Story",
     pre: "",
     accent: "Story",
@@ -46,7 +46,7 @@ const PRINCIPLES = [
   },
   {
     id: 2,
-    share: "20%",
+    share: "23%",
     label: "Speed",
     pre: "Speed is a ",
     accent: "feature",
@@ -58,7 +58,7 @@ const PRINCIPLES = [
   },
   {
     id: 3,
-    share: "25%",
+    share: "27%",
     label: "Machines",
     pre: "Build ",
     accent: "machines",
@@ -70,7 +70,7 @@ const PRINCIPLES = [
   },
   {
     id: 4,
-    share: "15%",
+    share: "13%",
     label: "Edge",
     pre: "Stay on the ",
     accent: "edge",
@@ -118,8 +118,13 @@ export default function PrinciplesPanels() {
 
   const spring = reduce ? { duration: 0 } : { type: "spring", stiffness: 220, damping: 28 };
 
+  // No max-width of its own: an inner 1280px cap left the row stopping 280px
+  // short of the content column's right edge while still aligning left, which
+  // read as lopsided on wide screens. The page container (max-w-container) is
+  // the only thing that should bound this, so the row spans the same width as
+  // the heading above it and the gaps either side are equal.
   return (
-    <div className="relative isolate mt-12 w-full max-w-[1280px] lg:mt-16">
+    <div className="relative isolate mt-12 w-full lg:mt-16">
       {/* ————— desktop: the expanding row ————— */}
       <ul className="hidden items-end gap-2 md:flex" style={{ height: OPEN_H }}>
         {PRINCIPLES.map((p, i) => {
