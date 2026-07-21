@@ -140,7 +140,7 @@ export default function WorkSection() {
       </section>
 
       {/* Closing */}
-      <section className="container-px pb-16 lg:pb-24">
+      <section className="container-px pb-16 pt-16 lg:pb-24 lg:pt-24">
         <Reveal>
           <p className="mx-auto max-w-5xl text-balance text-center font-serif text-[clamp(1.5rem,3.5vw,3.75rem)] leading-[1.12] tracking-tight text-bone">
             Whatever you&apos;re launching, we&apos;ve either{" "}

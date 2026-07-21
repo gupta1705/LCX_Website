@@ -17,7 +17,7 @@ export default function ContactSection() {
       />
 
       {/* Form + info */}
-      <section className="container-px pb-24 pt-10 lg:pb-32">
+      <section className="container-px pb-24 pt-12 lg:pb-32 lg:pt-20">
         <div className="grid grid-cols-12 gap-y-12 lg:gap-x-16">
           <div className="col-span-12 lg:col-span-7">
             <Reveal>
