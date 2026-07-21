@@ -1,6 +1,6 @@
 import SectionHeader from "@/components/ui/SectionHeader";
 import Reveal from "@/components/ui/Reveal";
-import PrinciplesCircuit from "@/components/about/PrinciplesCircuit";
+import PrinciplesPanels from "@/components/about/PrinciplesPanels";
 
 export default function AboutSection() {
   return (
@@ -40,22 +40,21 @@ export default function AboutSection() {
         </div>
       </section>
 
-      {/* How we think. The circuit: four opaque station-plates wired in series
-          by straight-segment traces, each trace riding its own dark channel so
-          gold only ever appears on calmed ground — while the attractor stays at
-          full energy everywhere else. Straight lines are the one linear
-          material the curved background cannot produce. */}
+      {/* How we think. Four opaque plates at staggered heights, one open at a
+          time — hovering widens it and narrows the rest to spines. The plates
+          occlude the attractor outright, so separation is z-order fact rather
+          than contrast tuning. */}
       <section className="relative py-24 lg:py-32">
         <div className="container-px relative">
           <Reveal>
             <h3 className="max-w-4xl text-balance font-serif text-[clamp(2rem,4.5vw,4.75rem)] font-medium leading-[1.08] tracking-tight text-bone">
               Four principles,{" "}
-              <span className="italic text-gold-gradient">wired in series.</span>
+              <span className="italic text-gold-gradient">one at a time.</span>
             </h3>
           </Reveal>
 
           <Reveal>
-            <PrinciplesCircuit />
+            <PrinciplesPanels />
           </Reveal>
         </div>
       </section>
