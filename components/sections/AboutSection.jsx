@@ -13,50 +13,27 @@ export default function AboutSection() {
         blurb="One team, two disciplines: a studio that directs and an engine that scales. Here's why we exist and how we think."
       />
 
-      {/* The origin */}
+      {/* The origin — centered, the sole statement in this slot now that
+          "The approach" is gone. Matches the centered-coda convention already
+          used in Work/Capabilities rather than staying left-column alone. */}
       <section className="relative py-24 lg:py-32">
         <div className="container-px">
           <Reveal>
-            <div className="relative isolate">
+            <div className="relative isolate mx-auto max-w-3xl text-center">
               <div
                 aria-hidden="true"
                 className="pointer-events-none absolute -inset-x-6 -inset-y-4 -z-10 rounded-[45%] bg-ink-900/70 blur-2xl"
               />
-              <h3 className="max-w-4xl text-balance font-serif text-[clamp(1.75rem,4.5vw,4.75rem)] font-medium leading-[1.08] tracking-tight text-bone">
+              <h3 className="text-balance font-serif text-[clamp(1.75rem,4.5vw,4.75rem)] font-medium leading-[1.08] tracking-tight text-bone">
                 Lights Camera Experiments started with{" "}
                 <span className="italic text-gold-gradient">a frustration.</span>
               </h3>
-              <p className="mt-6 max-w-[38rem] text-lg leading-relaxed text-bone-dim xl:max-w-2xl xl:text-xl">
+              <p className="mx-auto mt-6 max-w-[38rem] text-lg leading-relaxed text-bone-dim xl:text-xl">
                 The world&apos;s best AI tools were in the hands of people who didn&apos;t
                 understand why some things catch on and most don&apos;t. So we put them in the hands
                 of{" "}
                 <span className="font-serif italic text-gold-gradient">people who do</span> — then
                 built the machines to run it at scale.
-              </p>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* The approach (the wedge, expanded) */}
-      <section className="relative py-24 lg:py-32">
-        <div className="container-px">
-          <Reveal>
-            <div className="relative isolate">
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute -inset-x-6 -inset-y-4 -z-10 rounded-[45%] bg-ink-900/70 blur-2xl"
-              />
-              <h3 className="max-w-4xl text-balance font-serif text-[clamp(1.75rem,4.5vw,4.75rem)] font-medium leading-[1.08] tracking-tight text-bone">
-                We{" "}
-                <span className="italic text-gold-gradient">
-                  direct like a studio and ship like a system.
-                </span>
-              </h3>
-              <p className="mt-6 max-w-[38rem] text-lg leading-relaxed text-bone-dim xl:max-w-2xl xl:text-xl">
-                Storytellers set the hook, the craft, the emotion; the engine produces it at a scale
-                and speed that didn&apos;t exist two years ago, and keeps producing long after the
-                launch.
               </p>
             </div>
           </Reveal>
