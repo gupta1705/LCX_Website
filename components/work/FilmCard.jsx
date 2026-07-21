@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Play, ArrowUpRight } from "lucide-react";
 import { useReducedMotion } from "framer-motion";
-import { Cell, IndexNumeral, RowWash, RuleDraw } from "./IndexRow";
+import { Cell, IndexNumeral, RowWash } from "./IndexRow";
 import { CTA } from "@/lib/site";
 
 /**
@@ -64,7 +64,7 @@ function Poster({ youtubeId, thumbnail, thumbnailBg, href, onPlay, title, reduce
   );
 }
 
-export default function FilmCard({ film, index, flip = false, last = false }) {
+export default function FilmCard({ film, index, flip = false }) {
   const { title, tag, blurb, idea, metric, youtubeId, thumbnail, thumbnailBg, href, linkLabel } = film;
   const [playing, setPlaying] = useState(false);
   const reduce = useReducedMotion();
@@ -72,12 +72,7 @@ export default function FilmCard({ film, index, flip = false, last = false }) {
   const num = String(index + 1).padStart(2, "0");
 
   return (
-    <article
-      className={`group relative grid grid-cols-1 gap-y-6 py-10 lg:grid-cols-12 lg:gap-x-6 lg:py-14 ${
-        last ? "border-b border-white/[0.08]" : ""
-      }`}
-    >
-      <RuleDraw />
+    <article className="group relative grid grid-cols-1 gap-y-6 py-10 lg:grid-cols-12 lg:gap-x-6 lg:py-14">
       <RowWash />
 
       {/* index numeral — desktop spine */}

@@ -5,10 +5,10 @@ import { NAV_LINKS, CTA, SITE } from "@/lib/site";
 
 export default function Footer() {
   return (
-    <footer className="relative border-t border-white/[0.06] bg-ink-900">
+    <footer className="relative bg-ink-900">
       <div className="container-px py-16 lg:py-20">
         {/* Big CTA strip */}
-        <div className="flex flex-col items-start justify-between gap-8 border-b border-white/[0.06] pb-14 md:flex-row md:items-end">
+        <div className="flex flex-col items-start justify-between gap-8 pb-14 md:flex-row md:items-end">
           <div className="max-w-2xl">
             {/* no kicker over the line — the CTA is the line */}
             <h2 className="text-balance font-sans text-[clamp(2rem,5vw,5.5rem)] font-medium leading-[1.05] tracking-tightest text-bone">
@@ -75,7 +75,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-14 flex flex-col items-start justify-between gap-3 border-t border-white/[0.06] pt-7 text-xs text-bone-faint sm:flex-row sm:items-center">
+        <div className="mt-14 flex flex-col items-start justify-between gap-3 pt-7 text-xs text-bone-faint sm:flex-row sm:items-center">
           <p>© {new Date().getFullYear()} {SITE.name}. All rights reserved.</p>
           <p className="font-mono uppercase tracking-[0.2em]">{SITE.tagline}</p>
         </div>

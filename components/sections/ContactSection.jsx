@@ -45,7 +45,7 @@ export default function ContactSection() {
                   take, and whether we&apos;re the studio for it.
                 </p>
 
-                <div className="mt-8 border-t border-white/[0.07] pt-6">
+                <div className="mt-10">
                   <p className="text-sm text-bone-dim">Prefer email?</p>
                   <a
                     href={`mailto:${SITE.email}`}
@@ -55,7 +55,7 @@ export default function ContactSection() {
                   </a>
                 </div>
 
-                <div className="mt-6 border-t border-white/[0.07] pt-6">
+                <div className="mt-8">
                   <p className="eyebrow mb-3">Find us</p>
                   <div className="flex flex-wrap gap-x-5 gap-y-2">
                     {SOCIALS.map((s) => (

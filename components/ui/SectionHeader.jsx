@@ -6,14 +6,14 @@ import Reveal from "@/components/ui/Reveal";
  * Capabilities, Work, About, Contact.
  *
  * Composition, not labels. The tiny tracked-caps eyebrow is gone for good (it
- * out-titled the title); what replaced the structure it used to fake is:
+ * out-titled the title), and so is the hairline rule that once sat above the
+ * title — the page had accumulated a rule at every segment change and read as
+ * ruled paper. Whitespace and scale mark the chapter now.
  *
- *  - a full-width hairline RULE above the title — the chapter-break device the
- *    Work dividers already use, so every chapter on the site opens the same way;
- *  - the section index as an oversized GHOST NUMERAL in the work-index voice
- *    (serif italic, barely-there bone) sat on the title's baseline to the
- *    right. It's bigger than the headline, so it can never read as its title —
- *    it's texture that numbers the chapter.
+ * What carries it: the section index as an oversized GHOST NUMERAL in the
+ * work-index voice (serif italic, barely-there bone), sat on the title's
+ * baseline to the right. It's bigger than the headline, so it can never read
+ * as its title — it's texture that numbers the chapter.
  *
  * `eyebrow` is still accepted and deliberately ignored.
  */
@@ -21,7 +21,7 @@ export default function SectionHeader({ index, title, accent, blurb }) {
   return (
     <div className="container-px pt-12 lg:pt-16">
       <Reveal>
-        <div className="border-t border-white/[0.12] pt-8 lg:pt-10">
+        <div className="pt-8 lg:pt-10">
           <div className="flex items-end justify-between gap-10">
             <h2 className="max-w-4xl text-balance font-sans text-[clamp(2.2rem,5.75vw,6.75rem)] font-medium leading-[1.02] tracking-tightest text-bone">
               {title}

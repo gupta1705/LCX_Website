@@ -2,7 +2,7 @@
 
 import { ArrowUpRight } from "lucide-react";
 import Magnetic from "@/components/ui/Magnetic";
-import { Cell, IndexNumeral, RowWash, RuleDraw } from "./IndexRow";
+import { Cell, IndexNumeral, RowWash } from "./IndexRow";
 import { CTA } from "@/lib/site";
 
 /**
@@ -19,18 +19,13 @@ import { CTA } from "@/lib/site";
 
 const TICKS = ["left-0 top-0", "right-0 top-0 rotate-90", "right-0 bottom-0 rotate-180", "left-0 bottom-0 -rotate-90"];
 
-export default function SystemCard({ system, index, last = false }) {
+export default function SystemCard({ system, index }) {
   const { name, live, blurb, specs, href, linkLabel } = system;
   const num = String(index + 1).padStart(2, "0");
   const serial = String(index - 3).padStart(2, "0");
 
   return (
-    <article
-      className={`group relative grid grid-cols-1 gap-y-6 py-10 lg:grid-cols-12 lg:gap-x-6 lg:py-14 ${
-        last ? "border-b border-white/[0.08]" : ""
-      }`}
-    >
-      <RuleDraw />
+    <article className="group relative grid grid-cols-1 gap-y-6 py-10 lg:grid-cols-12 lg:gap-x-6 lg:py-14">
       <RowWash />
 
       {/* index numeral — continuous with the films */}

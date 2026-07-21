@@ -1,13 +1,9 @@
-// Index-row primitives. Entrance is static now — no scroll fade-up / rule-draw
-// (that "everything eases in as you scroll" pattern reads as generic/AI). The
-// hover effects (row wash, numeral ignite) stay; they're intent, not entrance.
-
-/** Top hairline for each index row. */
-export function RuleDraw() {
-  return (
-    <span aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-white/[0.08]" />
-  );
-}
+// Index-row primitives. Entrance is static — no scroll fade-up / rule-draw
+// (that "everything eases in as you scroll" pattern reads as generic/AI), and
+// the per-row top hairline is gone with every other segment rule on the site:
+// the rows are separated by generous padding and the oversized index numeral,
+// which is enough. The hover effects (row wash, numeral ignite) stay; they're
+// intent, not entrance.
 
 /** Gold breath across the row on hover — opacity only, no layout shift. */
 export function RowWash() {

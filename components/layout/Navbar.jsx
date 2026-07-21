@@ -268,7 +268,7 @@ function CurvedMenu({ reduced, activeId, onNavigate, onClose }) {
       >
       <div className="flex h-full flex-col justify-between overflow-y-auto px-8 pb-8 pt-24 sm:px-12">
         <nav>
-          <p className="flex items-center gap-3 border-b border-white/10 pb-3 font-mono text-[11px] uppercase tracking-[0.3em] text-bone-faint">
+          <p className="flex items-center gap-3 pb-3 font-mono text-[11px] uppercase tracking-[0.3em] text-bone-faint">
             Navigation
             <span className="ml-auto text-gold-400">(01 to 0{MENU_ITEMS.length})</span>
           </p>
@@ -286,7 +286,7 @@ function CurvedMenu({ reduced, activeId, onNavigate, onClose }) {
           </ul>
         </nav>
 
-        <div className="mt-10 border-t border-white/10 pt-6">
+        <div className="mt-10 pt-6">
           <a
             href={`mailto:${SITE.email}`}
             className="font-mono text-sm text-gold-300 transition-colors hover:text-gold-100"
@@ -322,7 +322,7 @@ function MenuLink({ item, index, active, onNavigate }) {
       href={item.href}
       onClick={(e) => onNavigate(e, item.href)}
       aria-current={active ? "true" : undefined}
-      className="group flex items-baseline gap-4 border-b border-white/10 py-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-400 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-800 md:py-6"
+      className="group flex items-baseline gap-4 py-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-400 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-800 md:py-6"
     >
       <span
         className={`shrink-0 font-mono text-base tabular-nums transition-colors duration-300 ${

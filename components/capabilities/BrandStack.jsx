@@ -130,7 +130,7 @@ export default function BrandStack() {
         type="button"
         onClick={advance}
         aria-label="Show the next brand"
-        className="relative z-10 -mt-px flex w-full max-w-[620px] items-center justify-center gap-2 border-t border-white/[0.08] py-3.5 font-mono text-[11px] uppercase tracking-[0.28em] text-bone-dim transition-colors duration-300 hover:text-gold-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-400"
+        className="relative z-10 flex w-full max-w-[620px] items-center justify-center gap-2 py-3.5 font-mono text-[11px] uppercase tracking-[0.28em] text-bone-dim transition-colors duration-300 hover:text-gold-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-400"
       >
         Next brand
       </button>

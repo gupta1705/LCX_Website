@@ -84,9 +84,11 @@ const SYSTEMS = [
 ];
 
 /**
- * Chapter divider — a rule, the chapter's name at heading scale, and what's in
- * it as a deck beneath. The sub used to run above the title as an 11px tracked
- * mark, which put the chapter's smallest type in charge of its biggest.
+ * Chapter divider — the chapter's name at heading scale with what's in it as a
+ * deck beneath. The sub used to run above the title as an 11px tracked mark,
+ * which put the chapter's smallest type in charge of its biggest; the hairline
+ * rule that used to sit above it is gone too, with every other segment rule on
+ * the page.
  *
  * Carries the same ghost-numeral counterweight as SectionHeader, one level
  * down ("03.1" under section "03") — without it the row is just text hugging
@@ -95,7 +97,7 @@ const SYSTEMS = [
 function GroupDivider({ index, title, sub }) {
   return (
     <Reveal>
-      <div className="border-t border-white/[0.12] pt-6">
+      <div className="pt-6">
         <div className="flex items-end justify-between gap-10">
           <h3 className="font-sans text-[clamp(2rem,4.75vw,5.5rem)] font-medium tracking-tight text-bone">
             {title}
@@ -141,12 +143,7 @@ export default function WorkSection() {
         <GroupDivider index="03.2" title="The Engine" sub="Systems we built" />
         <div className="mt-10">
           {SYSTEMS.map((system, i) => (
-            <SystemCard
-              key={system.name}
-              system={system}
-              index={i + FILMS.length}
-              last={i === SYSTEMS.length - 1}
-            />
+            <SystemCard key={system.name} system={system} index={i + FILMS.length} />
           ))}
         </div>
       </section>
