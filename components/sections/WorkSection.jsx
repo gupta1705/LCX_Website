@@ -1,4 +1,3 @@
-import SectionHeader from "@/components/ui/SectionHeader";
 import Reveal from "@/components/ui/Reveal";
 import FilmCard from "@/components/work/FilmCard";
 import SystemCard from "@/components/work/SystemCard";
@@ -120,14 +119,6 @@ function GroupDivider({ index, title, sub }) {
 export default function WorkSection() {
   return (
     <div id="work" className="scroll-mt-24">
-      <SectionHeader
-        index="03"
-        eyebrow="Proof of work"
-        title="The"
-        accent="Work."
-        blurb="Some of this we built to prove a point. The rest is running on its own as you read this."
-      />
-
       {/* The Studio — index entries 01-04 */}
       <section className="container-px py-14 lg:py-20">
         <GroupDivider index="03.1" title="The Studio" sub="Things we directed" />
