@@ -104,12 +104,12 @@ export default function Hero() {
 
           <motion.div variants={item} className="mt-10 flex flex-wrap items-center gap-3">
             <Magnetic>
-              <ActionButton as={Link} href="#work" tone="secondary" icon={Play}>
+              <ActionButton as={Link} href="#work" tone="secondary" icon={Play} size="lg">
                 See our work
               </ActionButton>
             </Magnetic>
             <Magnetic>
-              <ActionButton as={Link} id="hero-start-cta" href={CTA.href} tone="primary">
+              <ActionButton as={Link} id="hero-start-cta" href={CTA.href} tone="primary" size="lg">
                 {CTA.label}
               </ActionButton>
             </Magnetic>

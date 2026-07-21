@@ -139,9 +139,7 @@ export default function Navbar() {
               aria-expanded={open}
               aria-controls="site-menu"
               aria-label={open ? "Close menu" : "Open menu"}
-              className={`group relative grid place-items-center rounded-full text-bone transition-all duration-300 hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-400 ${
-                open ? "h-11 w-11" : "h-10 w-10"
-              }`}
+              className="group relative grid h-11 w-11 place-items-center rounded-full text-bone transition-all duration-300 hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-400"
             >
               <span className="relative block h-3.5 w-5">
                 <span
@@ -180,7 +178,7 @@ export default function Navbar() {
                     href={CTA.href}
                     onClick={(e) => scrollToHash(e, CTA.href)}
                     tone="primary"
-                    size="sm"
+                    size="lg"
                   >
                     {CTA.label}
                   </ActionButton>
@@ -301,7 +299,7 @@ function CurvedMenu({ reduced, activeId, onNavigate, onClose }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={label}
-                className="rounded-sm text-bone-dim transition-colors hover:text-gold-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-400"
+                className="-m-3 rounded-sm p-3 text-bone-dim transition-colors hover:text-gold-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-400"
               >
                 <Icon className="h-5 w-5" strokeWidth={1.6} />
               </a>
