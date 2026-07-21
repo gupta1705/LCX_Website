@@ -1,6 +1,6 @@
 import SectionHeader from "@/components/ui/SectionHeader";
 import Reveal from "@/components/ui/Reveal";
-import PrinciplesForme from "@/components/about/PrinciplesForme";
+import PrinciplesCircuit from "@/components/about/PrinciplesCircuit";
 
 export default function AboutSection() {
   return (
@@ -40,22 +40,22 @@ export default function AboutSection() {
         </div>
       </section>
 
-      {/* How we think. The forme is an opaque slab that OCCLUDES the attractor
-          rather than floating in it — the previous orbit was thin gold curves
-          drawn on a background of thin gold curves, and dissolved into it. No
-          stage, scrim or backdrop is needed here: the plate handles itself by
-          being solid. */}
+      {/* How we think. The circuit: four opaque station-plates wired in series
+          by straight-segment traces, each trace riding its own dark channel so
+          gold only ever appears on calmed ground — while the attractor stays at
+          full energy everywhere else. Straight lines are the one linear
+          material the curved background cannot produce. */}
       <section className="relative py-24 lg:py-32">
         <div className="container-px relative">
           <Reveal>
             <h3 className="max-w-4xl text-balance font-serif text-[clamp(2rem,4.5vw,4.75rem)] font-medium leading-[1.08] tracking-tight text-bone">
               Four principles,{" "}
-              <span className="italic text-gold-gradient">locked in one frame.</span>
+              <span className="italic text-gold-gradient">wired in series.</span>
             </h3>
           </Reveal>
 
           <Reveal>
-            <PrinciplesForme />
+            <PrinciplesCircuit />
           </Reveal>
         </div>
       </section>

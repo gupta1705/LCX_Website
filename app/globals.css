@@ -173,3 +173,23 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/* The Closed Circuit (About §04) — idle signal walking the loop 1→2→3→4→1.
+   Pure CSS on straight rails: stroke-dashoffset over pathLength=100, one net
+   at a time (3.22s travel, 3.5s spacing → a near-continuous circulation with
+   no JS timers). The global reduced-motion clamp above already freezes the
+   animation; the explicit rule below also hides the stationary dash so a
+   frozen pulse never reads as a stray mark on the trace. */
+@keyframes lcx-net-pulse {
+  0%        { stroke-dashoffset: 12;   opacity: 0; }
+  2%        { opacity: 0.9; }
+  23%       { stroke-dashoffset: -100; opacity: 0.9; }
+  25%, 100% { stroke-dashoffset: -100; opacity: 0; }
+}
+.lcx-pulse { animation: lcx-net-pulse 14s linear infinite; }
+.lcx-pulse-b { animation-delay: 3.5s; }
+.lcx-pulse-c { animation-delay: 7s; }
+.lcx-pulse-d { animation-delay: 10.5s; }
+@media (prefers-reduced-motion: reduce) {
+  .lcx-pulse { animation: none; opacity: 0; }
+}
