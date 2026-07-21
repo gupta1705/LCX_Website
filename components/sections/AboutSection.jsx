@@ -26,13 +26,13 @@ export default function AboutSection() {
               />
               <h3 className="text-balance font-serif text-[clamp(1.75rem,4.5vw,4.75rem)] font-medium leading-[1.08] tracking-tight text-bone">
                 Lights Camera Experiments started with{" "}
-                <span className="italic text-gold-gradient">a frustration.</span>
+                <span className="gold-flow italic">a frustration.</span>
               </h3>
               <p className="mx-auto mt-6 max-w-[38rem] text-lg leading-relaxed text-bone-dim xl:text-xl">
                 The world&apos;s best AI tools were in the hands of people who didn&apos;t
                 understand why some things catch on and most don&apos;t. So we put them in the hands
                 of{" "}
-                <span className="font-serif italic text-gold-gradient">people who do</span> — then
+                <span className="gold-flow font-serif italic">people who do</span> — then
                 built the machines to run it at scale.
               </p>
             </div>
