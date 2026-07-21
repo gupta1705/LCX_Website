@@ -82,6 +82,24 @@ const PRINCIPLES = [
   },
 ];
 
+// "Fired Earth" — four dark earth hues, one pigment family bracketing the
+// background field's own gold axis (analogous harmony, hues ~6°→54°):
+// oxblood, ember sienna, umber (the tonic, nearest today's ink), and
+// bronze-olive. Chosen over a split-complementary (a cool petrol card reads
+// as a foreign object in a warm monochrome) and a temperature ramp (its
+// neighbors were numerically indistinguishable, ΔE2000 as low as 1.2).
+// Verified before shipping: bone text ≥14.4:1 and the gold numeral ≥8.9:1 on
+// every value; pairwise ΔE2000 ≥5.5 open / ≥3.6 closed so all four read as
+// different cards. `closed` = spine, `open` = active (same whisper-lift the
+// old ink-800→ink-700 pair had); `cast` tints each card's photo toward its
+// own hue, replacing the shared gold cast.
+const PALETTE = [
+  { closed: "#1C0C0A", open: "#271210", cast: "rgba(130,65,42,0.25)" }, // Story — oxblood
+  { closed: "#1E120A", open: "#29180E", cast: "rgba(138,82,34,0.25)" }, // Speed — ember sienna
+  { closed: "#1A140C", open: "#241C10", cast: "rgba(130,96,34,0.25)" }, // Machines — umber
+  { closed: "#19180A", open: "#23210E", cast: "rgba(117,112,31,0.25)" }, // Edge — bronze-olive
+];
+
 // Percentage widths — the four always total 100%.
 const OPEN_W = 50;
 const CLOSED_W = (100 - OPEN_W) / 3;
@@ -90,8 +108,12 @@ const CLOSED_W = (100 - OPEN_W) / 3;
 const CLOSED_H = [320, 366, 412, 458];
 const OPEN_H = 500;
 
-/** Desaturated, gold-tinted photograph — texture in the brand palette. */
-function Plate_Image({ src, className = "" }) {
+/**
+ * Desaturated photograph tinted toward ITS card's hue — texture, not stock.
+ * `cast` is the card's tint (25% alpha), `base` the card's own background so
+ * the foot-of-frame fade dissolves into the plate with no visible seam.
+ */
+function Plate_Image({ src, cast, base, className = "" }) {
   return (
     <div className={`relative overflow-hidden bg-ink-900 ${className}`}>
       <img
@@ -101,11 +123,12 @@ function Plate_Image({ src, className = "" }) {
         loading="lazy"
         className="absolute inset-0 h-full w-full object-cover opacity-[0.45] sepia saturate-[0.6] contrast-[1.15]"
       />
-      {/* gold cast + a foot-of-frame fade so the photo sits into the plate */}
-      <span aria-hidden="true" className="pointer-events-none absolute inset-0 bg-gold-700/25" />
+      {/* the card's own hue cast + a fade into the card's own base color */}
+      <span aria-hidden="true" className="pointer-events-none absolute inset-0" style={{ backgroundColor: cast }} />
       <span
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink-700 via-ink-700/20 to-transparent"
+        className="pointer-events-none absolute inset-0"
+        style={{ backgroundImage: `linear-gradient(to top, ${base}, ${base}33 55%, transparent)` }}
       />
       <span aria-hidden="true" className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-bone/10" />
     </div>
@@ -148,9 +171,8 @@ export default function PrinciplesPanels() {
                 height: isOpen ? OPEN_H : CLOSED_H[i],
               }}
               transition={spring}
-              className={`relative cursor-pointer overflow-hidden outline-none shadow-[0_0_0_1px_rgba(10,9,8,0.92),inset_0_1px_0_0_rgba(247,227,181,0.09)] transition-colors duration-[450ms] ease-out-expo focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-gold-400 ${
-                isOpen ? "bg-ink-700" : "bg-ink-800"
-              }`}
+              style={{ backgroundColor: isOpen ? PALETTE[i].open : PALETTE[i].closed }}
+              className="relative cursor-pointer overflow-hidden outline-none shadow-[0_0_0_1px_rgba(10,9,8,0.92),inset_0_1px_0_0_rgba(247,227,181,0.09)] transition-colors duration-[450ms] ease-out-expo focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-gold-400"
             >
               <span
                 aria-hidden="true"
@@ -183,7 +205,7 @@ export default function PrinciplesPanels() {
                       of every build
                     </p>
                   </div>
-                  <Plate_Image src={p.image} className="h-[150px] lg:h-[180px]" />
+                  <Plate_Image src={p.image} cast={PALETTE[i].cast} base={PALETTE[i].open} className="h-[150px] lg:h-[180px]" />
                 </div>
               </motion.div>
 
@@ -206,17 +228,18 @@ export default function PrinciplesPanels() {
       {/* ————— mobile: everything open, stacked. Nothing worth reading should
               sit behind a tap on a phone. ————— */}
       <ul className="space-y-3 md:hidden">
-        {PRINCIPLES.map((p) => (
+        {PRINCIPLES.map((p, i) => (
           <li
             key={p.id}
-            className="relative overflow-hidden bg-ink-700 shadow-[0_0_0_1px_rgba(10,9,8,0.92),inset_0_1px_0_0_rgba(247,227,181,0.09)]"
+            style={{ backgroundColor: PALETTE[i].open }}
+            className="relative overflow-hidden shadow-[0_0_0_1px_rgba(10,9,8,0.92),inset_0_1px_0_0_rgba(247,227,181,0.09)]"
           >
             <span
               aria-hidden="true"
               className="pointer-events-none absolute inset-0 z-10 opacity-[0.045]"
               style={{ backgroundImage: GRAIN, backgroundSize: "128px 128px" }}
             />
-            <Plate_Image src={p.image} className="h-[132px] w-full" />
+            <Plate_Image src={p.image} cast={PALETTE[i].cast} base={PALETTE[i].open} className="h-[132px] w-full" />
             <div className="relative p-6">
               <p className="font-serif text-[22px] font-medium leading-[1.14] tracking-tight text-bone">
                 {p.pre}
