@@ -206,7 +206,7 @@ Headlines use `clamp(min, VWvw, max)` so they grow with the viewport and settle 
 
 ### Custom keyframes / animations
 
-`fade-up`, `shimmer`, `marquee`, `pulse-soft`, `scanline` (the live-machine readout line), `gold-flow`, plus the `out-expo` cubic-bezier easing used throughout.
+`fade-up`, `shimmer`, `marquee`, `pulse-soft`, `gold-flow`, plus the `out-expo` cubic-bezier easing used throughout.
 
 ---
 
@@ -218,7 +218,7 @@ Headlines use `clamp(min, VWvw, max)` so they grow with the viewport and settle 
 | **CapabilitiesScroll** | Pinned scroll section that morphs between "The Studio" and "The Engine" with scramble text and mirrored card tilts. |
 | **BrandStack** | Auto-advancing card stack (front card slides out, next rises), pauses on hover / off-screen, respects reduced-motion. Placeholder brands. |
 | **FilmCard** | Film entry as an index row: giant serif numeral + typographic block + 16:9 poster. YouTube → click-to-load embed; brand logo → `object-contain` poster (with sampled background color) that links out. |
-| **SystemCard** | Engine entry: gold-bordered **engraved plate** (opaque + faint blueprint grid — deliberately *not* glassmorphism) holding a `PipelineDiagram` that draws itself on scroll; a scanline runs on "live" systems. |
+| **SystemCard** | Engine entry: **proofs off the plate** — the machine's output as opaque ink "prints" (ReelForge fans three vertical cuts off a master frame; ParsecDaily stacks its published days), specs conjugated into a figure caption, "live" as a serif `gold-flow` sentence. |
 | **IndexNumeral** | Two stacked serif numerals (ghost + gold-gradient) that ignite on row hover. Padded paint-box so the gradient covers the full glyph. |
 | **Reveal / Magnetic / CountUp** | Scroll-reveal wrapper, cursor-magnetism, and count-up — all reduced-motion aware. |
 

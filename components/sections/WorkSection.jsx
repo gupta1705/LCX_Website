@@ -56,9 +56,14 @@ const FILMS = [
   },
 ];
 
+// `variant` picks the proof composition on the media rail ("fan" = one master
+// frame cut into verticals, "stack" = published days piling up). `caption` is
+// the specs conjugated to prose — keep in sync with `specs` by hand (specs
+// stays the source of truth even though the caption is what renders).
 const SYSTEMS = [
   {
     name: "ReelForge",
+    variant: "fan",
     blurb:
       "Feed it one long-form video; it cuts the sharpest short-form moments and mass-publishes across accounts, automatically. The content pipeline we sell, running in our own house first.",
     specs: [
@@ -66,16 +71,33 @@ const SYSTEMS = [
       { k: "Output", v: "Cut for every channel it runs on" },
       { k: "Runs", v: "On every new upload" },
     ],
+    caption: [
+      { g: "Input" },
+      { t: " — one long-form video. " },
+      { g: "Output" },
+      { t: " — cut for every channel it runs on. " },
+      { g: "Runs" },
+      { t: " on every new upload." },
+    ],
   },
   {
     name: "ParsecDaily",
+    variant: "stack",
     live: true,
     blurb:
-      "A daily Instagram channel that runs with zero human input, sourced, produced, and posted by the machine.",
+      "An Instagram channel that runs itself — sourced, produced, and posted by the machine.",
     specs: [
       { k: "Sourcing", v: "Automatic" },
       { k: "Publishing", v: "Daily" },
       { k: "Manual uploads", v: "Zero" },
+    ],
+    caption: [
+      { g: "Sourcing" },
+      { t: " — automatic. " },
+      { g: "Publishing" },
+      { t: " — daily. " },
+      { g: "Zero" },
+      { t: " manual uploads." },
     ],
     linkLabel: "See it live",
     // href: "https://instagram.com/...",

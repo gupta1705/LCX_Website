@@ -66,17 +66,12 @@ module.exports = {
           "0%, 100%": { opacity: "0.35" },
           "50%": { opacity: "0.9" },
         },
-        scanline: {
-          "0%": { transform: "translateX(-100%)" },
-          "100%": { transform: "translateX(350%)" },
-        },
       },
       animation: {
         "fade-up": "fade-up 0.8s cubic-bezier(0.16,1,0.3,1) both",
         shimmer: "shimmer 6s linear infinite",
         marquee: "marquee 38s linear infinite",
         "pulse-soft": "pulse-soft 3.5s ease-in-out infinite",
-        scanline: "scanline 3.2s ease-in-out infinite",
       },
       transitionTimingFunction: {
         "out-expo": "cubic-bezier(0.16,1,0.3,1)",
