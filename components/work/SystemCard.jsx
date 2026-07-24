@@ -49,8 +49,21 @@ const canvasVariants = {
  * One print. `breathe` is the print's hover drift, driven from the canvas's
  * whileHover via variant propagation — a Tailwind group-hover translate would
  * be silently overridden by framer's inline transform, so it must live here.
+ * `src`, once supplied, fills the promised img-under-mat contract. Real
+ * thumbnails render near-full color (FilmCard's precedent for real content —
+ * a sepia wash here would erase exactly what makes them recognizable); the
+ * plate's gold wash stays on top as the unifying cast, so photo and
+ * non-photo prints still read as one family.
+ *
+ * `fit` follows FilmCard's Poster convention: "cover" (default) for stills
+ * that already match the print's own aspect ratio; "contain" for a supplied
+ * asset of ARBITRARY aspect that must show in full, uncropped — cover would
+ * silently discard whichever edges don't fit, which is how a full account
+ * screenshot turned into an unrecognizable single tile the first time this
+ * shipped. contain letterboxes instead, onto the plate's own near-black
+ * surface, so nothing the source image contains is ever cut away.
  */
-function Print({ position, surface, wash, mat, breathe, children }) {
+function Print({ position, surface, wash, mat, breathe, src, fit = "cover", children }) {
   const variants = {
     hidden: { opacity: 0 },
     shown: { opacity: 1, transition: { duration: 0.6, ease: EASE } },
@@ -62,8 +75,15 @@ function Print({ position, surface, wash, mat, breathe, children }) {
       variants={variants}
       className={`absolute overflow-hidden rounded-sm ring-1 ring-white/[0.06] shadow-[0_8px_24px_rgba(0,0,0,0.45)] ${position} ${surface}`}
     >
-      {/* future contract: an <img className="absolute inset-0 h-full w-full
-          object-cover" /> drops in here, under the mat, zero layout change */}
+      {src && (
+        <img
+          src={src}
+          alt=""
+          aria-hidden="true"
+          loading="lazy"
+          className={`absolute inset-0 h-full w-full ${fit === "contain" ? "object-contain" : "object-cover"} opacity-[0.88] saturate-[0.9]`}
+        />
+      )}
       {wash && (
         <span
           aria-hidden="true"
@@ -82,8 +102,9 @@ function Print({ position, surface, wash, mat, breathe, children }) {
   );
 }
 
-function ProofCanvas({ variant, live }) {
+function ProofCanvas({ variant, live, masterImage, cutImages = [], stackImage }) {
   const reduce = useReducedMotion();
+  const [cutA, cutB, cutC] = cutImages;
 
   return (
     <motion.div
@@ -102,6 +123,7 @@ function ProofCanvas({ variant, live }) {
             surface="bg-ink-800"
             wash={MASTER_WASH}
             mat="inset-2"
+            src={masterImage}
           />
           {/* the cuts peeling off its corner, dealt in machine order */}
           <Print
@@ -110,6 +132,7 @@ function ProofCanvas({ variant, live }) {
             wash={cutWash(0.16)}
             mat="inset-1.5"
             breathe={{ x: 2, y: 2 }}
+            src={cutA}
           />
           <Print
             position="left-[57%] top-[40%] z-20 w-[23%] aspect-[9/16]"
@@ -117,6 +140,7 @@ function ProofCanvas({ variant, live }) {
             wash={cutWash(0.12)}
             mat="inset-1.5"
             breathe={{ x: 4, y: 4 }}
+            src={cutB}
           />
           <Print
             position="left-[76%] top-[50%] z-30 w-[23%] aspect-[9/16]"
@@ -124,6 +148,7 @@ function ProofCanvas({ variant, live }) {
             wash={cutWash(0.09)}
             mat="inset-1.5"
             breathe={{ x: 6, y: 6 }}
+            src={cutC}
           />
         </>
       ) : (
@@ -145,9 +170,17 @@ function ProofCanvas({ variant, live }) {
             wash={MASTER_WASH}
             mat="inset-2"
             breathe={{ y: -3 }}
+            src={stackImage}
+            fit="contain"
           >
+            {live && stackImage && (
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-ink-900/90 via-ink-900/30 to-transparent"
+              />
+            )}
             {live && (
-              <span className="gold-flow absolute bottom-3.5 left-4 font-serif text-[13px] italic">
+              <span className="gold-flow absolute bottom-3.5 left-4 z-10 font-serif text-[13px] italic">
                 Live daily.
               </span>
             )}
@@ -159,7 +192,7 @@ function ProofCanvas({ variant, live }) {
 }
 
 export default function SystemCard({ system, index }) {
-  const { name, live, blurb, variant, caption, href, linkLabel } = system;
+  const { name, live, blurb, variant, caption, href, linkLabel, masterImage, cutImages, stackImage } = system;
   const num = String(index + 1).padStart(2, "0");
   const serial = String(index - 3).padStart(2, "0");
 
@@ -186,7 +219,13 @@ export default function SystemCard({ system, index }) {
 
       {/* the proofs — the machine's output as prints, specs as the caption */}
       <Cell className="flex flex-col lg:col-span-5" delay={0.26}>
-        <ProofCanvas variant={variant} live={live} />
+        <ProofCanvas
+          variant={variant}
+          live={live}
+          masterImage={masterImage}
+          cutImages={cutImages}
+          stackImage={stackImage}
+        />
         {/* bone-dim, not the specced bone-faint — the ReelForge caption sits
             over the attractor's brightest ring field and faint drowned there */}
         <p className="mt-5 max-w-[40ch] font-sans text-[13px] leading-relaxed text-bone-dim xl:text-[14px]">

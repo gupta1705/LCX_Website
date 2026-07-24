@@ -79,6 +79,18 @@ const SYSTEMS = [
       { g: "Runs" },
       { t: " on every new upload." },
     ],
+    // master: Panchayat (user-supplied), pre-cropped to the frame's exact
+    // 16:9 so the title and faces are chosen deliberately, not auto-cropped.
+    // Source: Inspiration Websites/images/long_video_thumbnail.jpg.
+    masterImage: "/work/reelforge-master.jpg",
+    // the three cuts: real clip channels the engine publishes to
+    // (thefictionpeople, kahaanicircuit, thetvfadda) — user-supplied
+    // screenshots, top-anchored 9:16 crops so each channel header survives.
+    cutImages: [
+      "/work/reelforge-short1.jpg",
+      "/work/reelforge-short2.jpg",
+      "/work/reelforge-short3.jpg",
+    ],
   },
   {
     name: "ParsecDaily",
@@ -99,6 +111,15 @@ const SYSTEMS = [
       { g: "Zero" },
       { t: " manual uploads." },
     ],
+    // the real @parsecdaily profile screenshot, verbatim — thumbnail-parsec.jpg
+    // at the repo root, copied in unmodified. Two cropped attempts before this
+    // both failed: the full 2-row post grid read as noise under object-cover
+    // (6 tiles squeezed and partial at once), and cropping down to one clean
+    // tile lost every trace of "parsecdaily" — from the outside indistinguishable
+    // from a random stock photo. This Print renders with fit="contain", so the
+    // whole screenshot shows uncropped, pillarboxed onto the plate's own
+    // near-black surface rather than a crop discarding part of it.
+    stackImage: "/work/parsecdaily-feed.jpg",
     linkLabel: "See it live",
     // href: "https://instagram.com/...",
   },
