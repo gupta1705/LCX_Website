@@ -56,13 +56,20 @@ const canvasVariants = {
  * screenshot turned into an unrecognizable single tile the first time this
  * shipped. contain letterboxes instead, onto the plate's own near-black
  * surface, so nothing the source image contains is ever cut away.
+ *
+ * `tilt` (degrees) is set on every variant, not as a separate Tailwind
+ * class — same reasoning as `breathe` above: framer overwrites the whole
+ * inline `transform` on hover, so a static `rotate-*` class would vanish
+ * the moment `breathe` fires. Baking it into each variant keeps the tilt
+ * present through fade-in and hover alike, with breathe's x/y layering on
+ * top of it in the same transform.
  */
-function Print({ position, surface, breathe, src, fit = "cover", children }) {
+function Print({ position, surface, breathe, tilt, src, fit = "cover", children }) {
   const variants = {
-    hidden: { opacity: 0 },
-    shown: { opacity: 1, transition: { duration: 0.6, ease: EASE } },
+    hidden: { opacity: 0, rotate: tilt || 0 },
+    shown: { opacity: 1, rotate: tilt || 0, transition: { duration: 0.6, ease: EASE } },
   };
-  if (breathe) variants.breathe = { ...breathe, transition: { duration: 0.5, ease: EASE } };
+  if (breathe) variants.breathe = { ...breathe, rotate: tilt || 0, transition: { duration: 0.5, ease: EASE } };
 
   return (
     <motion.div
@@ -129,10 +136,12 @@ function ProofCanvas({ variant, live, masterImage, cutImages = [], stackImage })
           {/* one print, centered — was a three-layer stack; simplified to a
               single card of the real feed. 6:13 — close to a real phone
               screen, not the 4:5 photo-print ratio the fan's cuts use — so
-              the profile screenshot sits inside with barely any pillarbox. */}
+              the profile screenshot sits inside with barely any pillarbox.
+              A slight tilt reads as a print set down, not a UI panel. */}
           <Print
             position="left-[35%] top-[12%] z-0 w-[30%] aspect-[6/13]"
             surface="bg-ink-800"
+            tilt={-4}
             breathe={{ y: -3 }}
             src={stackImage}
             fit="contain"
