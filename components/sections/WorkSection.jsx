@@ -57,9 +57,10 @@ const FILMS = [
 ];
 
 // `variant` picks the proof composition on the media rail ("fan" = one master
-// frame cut into verticals, "stack" = published days piling up). `caption` is
-// the specs conjugated to prose — keep in sync with `specs` by hand (specs
-// stays the source of truth even though the caption is what renders).
+// frame cut into verticals, "solo" = a single print of the real feed).
+// `caption` is the specs conjugated to prose — keep in sync with `specs` by
+// hand (specs stays the source of truth even though the caption is what
+// renders).
 const SYSTEMS = [
   {
     name: "ReelForge",
@@ -94,7 +95,7 @@ const SYSTEMS = [
   },
   {
     name: "ParsecDaily",
-    variant: "stack",
+    variant: "solo",
     live: true,
     blurb:
       "An Instagram channel that runs itself — sourced, produced, and posted by the machine.",

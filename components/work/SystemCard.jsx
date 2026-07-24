@@ -10,10 +10,10 @@ import { CTA } from "@/lib/site";
  * One system we built (The Engine), on the same index-row spine as the films.
  * The media rail holds proofs pulled off the plate — the machine's OUTPUT as
  * physical prints, not a panel about its specs. ReelForge fans three vertical
- * cuts off one master frame (the machine mid-cut); ParsecDaily piles up its
- * published days, today landing on top. The specs survive beneath as a figure
- * caption conjugated into prose, and "live" is a serif sentence with the
- * site's own gold sheen, not a status dot.
+ * cuts off one master frame (the machine mid-cut); ParsecDaily shows a single
+ * print of the real feed. The specs survive beneath as a figure caption
+ * conjugated into prose, and "live" is a serif sentence with the site's own
+ * gold sheen, not a status dot.
  *
  * What this replaced: a mono key/value plate on a blueprint grid with corner
  * ticks and a scanline — the terminal-HUD look every AI landing page ships
@@ -24,15 +24,6 @@ import { CTA } from "@/lib/site";
  * a real still drops in under the mat later with zero layout change, the
  * same promise FilmCard's placeholder poster makes.
  */
-
-// FilmCard's radial gold wash, reused verbatim so the prints read as the same
-// photographic material as the film posters above them.
-const MASTER_WASH =
-  "radial-gradient(120% 90% at 30% 0%, rgba(201,146,61,0.15), transparent 60%)";
-
-// One raking light losing strength across the fan of cuts.
-const cutWash = (a) =>
-  `radial-gradient(140% 60% at 50% 0%, rgba(201,146,61,${a}), transparent 65%)`;
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -51,9 +42,12 @@ const canvasVariants = {
  * be silently overridden by framer's inline transform, so it must live here.
  * `src`, once supplied, fills the promised img-under-mat contract. Real
  * thumbnails render near-full color (FilmCard's precedent for real content —
- * a sepia wash here would erase exactly what makes them recognizable); the
- * plate's gold wash stays on top as the unifying cast, so photo and
- * non-photo prints still read as one family.
+ * a sepia wash here would erase exactly what makes them recognizable). No
+ * gold cast on top of the image itself: an earlier pass kept a radial gold
+ * wash over every print for material unity, but on real photos — especially
+ * ParsecDaily's contain-fit screenshot, with its own pillarboxed margin — it
+ * showed up as an unwanted gold border/vignette rather than a unifying cast.
+ * The plate's own ink surface plus the thin mat ring now carry that job.
  *
  * `fit` follows FilmCard's Poster convention: "cover" (default) for stills
  * that already match the print's own aspect ratio; "contain" for a supplied
@@ -63,7 +57,7 @@ const canvasVariants = {
  * shipped. contain letterboxes instead, onto the plate's own near-black
  * surface, so nothing the source image contains is ever cut away.
  */
-function Print({ position, surface, wash, mat, breathe, src, fit = "cover", children }) {
+function Print({ position, surface, mat, breathe, src, fit = "cover", children }) {
   const variants = {
     hidden: { opacity: 0 },
     shown: { opacity: 1, transition: { duration: 0.6, ease: EASE } },
@@ -82,13 +76,6 @@ function Print({ position, surface, wash, mat, breathe, src, fit = "cover", chil
           aria-hidden="true"
           loading="lazy"
           className={`absolute inset-0 h-full w-full ${fit === "contain" ? "object-contain" : "object-cover"} opacity-[0.88] saturate-[0.9]`}
-        />
-      )}
-      {wash && (
-        <span
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0"
-          style={{ backgroundImage: wash }}
         />
       )}
       {mat && (
@@ -121,7 +108,6 @@ function ProofCanvas({ variant, live, masterImage, cutImages = [], stackImage })
           <Print
             position="left-0 top-0 z-0 w-[74%] aspect-video"
             surface="bg-ink-800"
-            wash={MASTER_WASH}
             mat="inset-2"
             src={masterImage}
           />
@@ -129,7 +115,6 @@ function ProofCanvas({ variant, live, masterImage, cutImages = [], stackImage })
           <Print
             position="left-[38%] top-[30%] z-10 w-[23%] aspect-[9/16]"
             surface="bg-ink-700"
-            wash={cutWash(0.16)}
             mat="inset-1.5"
             breathe={{ x: 2, y: 2 }}
             src={cutA}
@@ -137,7 +122,6 @@ function ProofCanvas({ variant, live, masterImage, cutImages = [], stackImage })
           <Print
             position="left-[57%] top-[40%] z-20 w-[23%] aspect-[9/16]"
             surface="bg-ink-700"
-            wash={cutWash(0.12)}
             mat="inset-1.5"
             breathe={{ x: 4, y: 4 }}
             src={cutB}
@@ -145,7 +129,6 @@ function ProofCanvas({ variant, live, masterImage, cutImages = [], stackImage })
           <Print
             position="left-[76%] top-[50%] z-30 w-[23%] aspect-[9/16]"
             surface="bg-ink-700"
-            wash={cutWash(0.09)}
             mat="inset-1.5"
             breathe={{ x: 6, y: 6 }}
             src={cutC}
@@ -153,25 +136,13 @@ function ProofCanvas({ variant, live, masterImage, cutImages = [], stackImage })
         </>
       ) : (
         <>
-          {/* the published days piling up, today landing on top. 6:13 —
-              close to a real phone screen, not the 4:5 photo-print ratio
-              the fan's cuts use — so a full profile screenshot sits inside
-              with barely any pillarbox instead of shrinking to fit a
-              squarer frame. */}
+          {/* one print, centered — was a three-layer stack; simplified to a
+              single card of the real feed. 6:13 — close to a real phone
+              screen, not the 4:5 photo-print ratio the fan's cuts use — so
+              the profile screenshot sits inside with barely any pillarbox. */}
           <Print
-            position="left-[25%] top-[14%] z-0 w-[30%] aspect-[6/13]"
-            surface="bg-ink-600"
-            breathe={{ x: 2, y: -2 }}
-          />
-          <Print
-            position="left-[22.5%] top-[17%] z-10 w-[30%] aspect-[6/13]"
-            surface="bg-ink-700"
-            breathe={{ x: 2, y: -2 }}
-          />
-          <Print
-            position="left-[20%] top-[20%] z-20 w-[30%] aspect-[6/13]"
+            position="left-[35%] top-[12%] z-0 w-[30%] aspect-[6/13]"
             surface="bg-ink-800"
-            wash={MASTER_WASH}
             mat="inset-2"
             breathe={{ y: -3 }}
             src={stackImage}
