@@ -21,8 +21,8 @@ import { CTA } from "@/lib/site";
  *
  * Every print is an opaque ink plate (they occlude the live attractor by
  * z-order — this site's proven separation strategy) and doubles as a frame:
- * a real still drops in under the mat later with zero layout change, the
- * same promise FilmCard's placeholder poster makes.
+ * a real still drops in later with zero layout change, the same promise
+ * FilmCard's placeholder poster makes.
  */
 
 const EASE = [0.16, 1, 0.3, 1];
@@ -40,14 +40,14 @@ const canvasVariants = {
  * One print. `breathe` is the print's hover drift, driven from the canvas's
  * whileHover via variant propagation — a Tailwind group-hover translate would
  * be silently overridden by framer's inline transform, so it must live here.
- * `src`, once supplied, fills the promised img-under-mat contract. Real
- * thumbnails render near-full color (FilmCard's precedent for real content —
+ * `src`, once supplied, fills the promised image contract. Real thumbnails
+ * render near-full color (FilmCard's precedent for real content —
  * a sepia wash here would erase exactly what makes them recognizable). No
- * gold cast on top of the image itself: an earlier pass kept a radial gold
- * wash over every print for material unity, but on real photos — especially
- * ParsecDaily's contain-fit screenshot, with its own pillarboxed margin — it
- * showed up as an unwanted gold border/vignette rather than a unifying cast.
- * The plate's own ink surface plus the thin mat ring now carry that job.
+ * ring anywhere on the print, inset or outer: two earlier passes both left a
+ * thin white line on top of real photos (first a radial gold wash, then an
+ * inset "photo mat" ring) and both read as an unwanted border rather than a
+ * frame. The image is the whole plate now — clipping + a black drop shadow
+ * for depth is the only separation from the page behind it.
  *
  * `fit` follows FilmCard's Poster convention: "cover" (default) for stills
  * that already match the print's own aspect ratio; "contain" for a supplied
@@ -57,7 +57,7 @@ const canvasVariants = {
  * shipped. contain letterboxes instead, onto the plate's own near-black
  * surface, so nothing the source image contains is ever cut away.
  */
-function Print({ position, surface, mat, breathe, src, fit = "cover", children }) {
+function Print({ position, surface, breathe, src, fit = "cover", children }) {
   const variants = {
     hidden: { opacity: 0 },
     shown: { opacity: 1, transition: { duration: 0.6, ease: EASE } },
@@ -67,7 +67,7 @@ function Print({ position, surface, mat, breathe, src, fit = "cover", children }
   return (
     <motion.div
       variants={variants}
-      className={`absolute overflow-hidden rounded-sm ring-1 ring-white/[0.06] shadow-[0_8px_24px_rgba(0,0,0,0.45)] ${position} ${surface}`}
+      className={`absolute overflow-hidden rounded-sm shadow-[0_8px_24px_rgba(0,0,0,0.45)] ${position} ${surface}`}
     >
       {src && (
         <img
@@ -76,12 +76,6 @@ function Print({ position, surface, mat, breathe, src, fit = "cover", children }
           aria-hidden="true"
           loading="lazy"
           className={`absolute inset-0 h-full w-full ${fit === "contain" ? "object-contain" : "object-cover"} opacity-[0.88] saturate-[0.9]`}
-        />
-      )}
-      {mat && (
-        <span
-          aria-hidden="true"
-          className={`pointer-events-none absolute ${mat} rounded-[2px] ring-1 ring-white/10`}
         />
       )}
       {children}
@@ -108,28 +102,24 @@ function ProofCanvas({ variant, live, masterImage, cutImages = [], stackImage })
           <Print
             position="left-0 top-0 z-0 w-[74%] aspect-video"
             surface="bg-ink-800"
-            mat="inset-2"
             src={masterImage}
           />
           {/* the cuts peeling off its corner, dealt in machine order */}
           <Print
             position="left-[38%] top-[30%] z-10 w-[23%] aspect-[9/16]"
             surface="bg-ink-700"
-            mat="inset-1.5"
             breathe={{ x: 2, y: 2 }}
             src={cutA}
           />
           <Print
             position="left-[57%] top-[40%] z-20 w-[23%] aspect-[9/16]"
             surface="bg-ink-700"
-            mat="inset-1.5"
             breathe={{ x: 4, y: 4 }}
             src={cutB}
           />
           <Print
             position="left-[76%] top-[50%] z-30 w-[23%] aspect-[9/16]"
             surface="bg-ink-700"
-            mat="inset-1.5"
             breathe={{ x: 6, y: 6 }}
             src={cutC}
           />
@@ -143,7 +133,6 @@ function ProofCanvas({ variant, live, masterImage, cutImages = [], stackImage })
           <Print
             position="left-[35%] top-[12%] z-0 w-[30%] aspect-[6/13]"
             surface="bg-ink-800"
-            mat="inset-2"
             breathe={{ y: -3 }}
             src={stackImage}
             fit="contain"
