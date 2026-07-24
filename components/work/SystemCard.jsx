@@ -153,19 +153,23 @@ function ProofCanvas({ variant, live, masterImage, cutImages = [], stackImage })
         </>
       ) : (
         <>
-          {/* the published days piling up, today landing on top */}
+          {/* the published days piling up, today landing on top. 6:13 —
+              close to a real phone screen, not the 4:5 photo-print ratio
+              the fan's cuts use — so a full profile screenshot sits inside
+              with barely any pillarbox instead of shrinking to fit a
+              squarer frame. */}
           <Print
-            position="left-[18%] top-[8%] z-0 w-[52%] aspect-[4/5]"
+            position="left-[25%] top-[14%] z-0 w-[30%] aspect-[6/13]"
             surface="bg-ink-600"
             breathe={{ x: 2, y: -2 }}
           />
           <Print
-            position="left-[14%] top-[13%] z-10 w-[52%] aspect-[4/5]"
+            position="left-[22.5%] top-[17%] z-10 w-[30%] aspect-[6/13]"
             surface="bg-ink-700"
             breathe={{ x: 2, y: -2 }}
           />
           <Print
-            position="left-[10%] top-[18%] z-20 w-[52%] aspect-[4/5]"
+            position="left-[20%] top-[20%] z-20 w-[30%] aspect-[6/13]"
             surface="bg-ink-800"
             wash={MASTER_WASH}
             mat="inset-2"
