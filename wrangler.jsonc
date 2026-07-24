@@ -1,0 +1,13 @@
+{
+  // Static-assets-only deploy — no Worker script, no "main" entrypoint.
+  // The presence of this file is what stops Cloudflare's build pipeline from
+  // auto-detecting "Next.js project" and routing through @opennextjs/cloudflare
+  // (the adapter that refused to build on this Next version — see
+  // next.config.mjs's output: "export" comment for the full story). With
+  // this config, `npx wrangler deploy` just uploads ./out as static files.
+  "name": "tvf-ai-website",
+  "compatibility_date": "2026-07-24",
+  "assets": {
+    "directory": "./out"
+  }
+}
