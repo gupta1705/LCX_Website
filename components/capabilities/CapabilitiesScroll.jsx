@@ -218,27 +218,25 @@ export default function CapabilitiesScroll() {
   return (
     <>
       {/* Desktop: pinned scroll — title scrambles, cards shuffle.
-          lg:mt-[38vh]: this track sat with ZERO document-flow gap after
-          SectionHeader, on the assumption that the pinned content's own
-          vertical centering (h-screen + items-center below) would supply
-          enough breathing room on its own. It doesn't — that centering only
-          governs where the content sits WITHIN this track once reached; it
-          does nothing to stop the track's own top from being adjacent, in
-          document flow, to the header above. So as soon as the header's
-          quote scrolls anywhere near center-of-viewport, this track's content
-          is already peeking in from the bottom, on any viewport short
-          enough that 100vh of "The Studio" text no longer clears the
-          remaining scroll distance. Verified before fixing: with the
-          header's title+blurb block scrolled to dead center of an actual
-          1100px-tall window, "The Studio" was already 44px into view from
-          the bottom edge. The math: for NOTHING below to show while the
-          header is centered, the track's top needs to clear
-          scrollY-at-centered + viewportHeight, which works out to almost
-          exactly half a viewport height below the header's own block,
-          regardless of viewport size — hence a vh unit, not a fixed px
-          gap tuned to one window. 38vh clears the measured 36.5vh minimum
-          with a small margin. */}
-      <section ref={trackRef} className="relative hidden h-[170vh] lg:mt-[38vh] lg:block">
+          lg:mt-[12vh]: an earlier pass here used 38vh, sized against this
+          TRACK's own top clearing the viewport — but the track's top is an
+          empty, transparent h-[170vh] box; the sticky child inside it is
+          h-screen + items-center, so the real "Studio" heading sits ~300px
+          into that box, not at its top. Gating on the invisible box instead
+          of the actual heading meant paying for a full extra viewport of
+          dead scroll (the box's own height sliding fully into place) on top
+          of the margin — which is what read as "too much space" once there
+          was a real showreel video up in the hero for contrast. Re-measured
+          against the heading itself (h3, not the track): at a real
+          2000×1125 window, headline-centered left the heading 111px below
+          the fold — plenty to still clear before the header is centered,
+          nowhere near a full viewport. 12vh is the tightest margin that
+          keeps that gap non-negative down to a real 1100×640 window too
+          (checked 640/700/900/1125-tall windows) — short of that, a few px
+          of peek reappear, same trade-off as the original fix, just
+          measured against what's actually visible instead of an invisible
+          box. */}
+      <section ref={trackRef} className="relative hidden h-[170vh] lg:mt-[12vh] lg:block">
         <div className="sticky top-0 flex h-screen items-center overflow-hidden">
           <div className="container-px grid w-full grid-cols-12 items-center gap-y-12">
             {/* LEFT — scramble on change */}
