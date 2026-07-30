@@ -6,6 +6,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { Play } from "lucide-react";
 import Magnetic from "@/components/ui/Magnetic";
 import ActionButton from "@/components/ui/ActionButton";
+import HeroShowreel from "@/components/home/HeroShowreel";
 import { CTA } from "@/lib/site";
 
 const EASE = [0.16, 1, 0.3, 1];
@@ -32,7 +33,10 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="relative flex min-h-[100svh] items-center overflow-hidden">
+    <section className="relative isolate flex min-h-[100svh] items-center overflow-hidden">
+      {/* isolate keeps the showreel's -z-10 inside THIS stacking context —
+          above the fixed z-0 attractor, below the hero copy */}
+      <HeroShowreel />
       <div className="container-px grid w-full grid-cols-12 pb-16 pt-32">
         <motion.div
           variants={stagger}
