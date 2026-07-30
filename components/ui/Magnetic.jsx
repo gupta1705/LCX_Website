@@ -24,6 +24,9 @@ export default function Magnetic({ children, className = "", strength = 0.35, ma
 
   const clamp = (v) => (v > max ? max : v < -max ? -max : v);
   const move = (e) => {
+    // mouse only: touch presses emit pointermove too, and a slightly-moving
+    // finger would spring the button out from under its own tap
+    if (e.pointerType !== "mouse") return;
     const el = ref.current;
     if (!el) return;
     const r = el.getBoundingClientRect();

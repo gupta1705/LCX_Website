@@ -7,7 +7,7 @@ export default function AboutSection() {
       {/* The origin — centered, the sole statement in this slot now that
           "The approach" is gone. Matches the centered-coda convention already
           used in Work/Capabilities rather than staying left-column alone. */}
-      <section className="relative py-24 lg:py-32">
+      <section className="relative py-16 md:py-24 lg:py-32">
         <div className="container-px">
           <Reveal>
             <div className="relative isolate mx-auto max-w-3xl text-center">
@@ -35,7 +35,7 @@ export default function AboutSection() {
           time — hovering widens it and narrows the rest to spines. The plates
           occlude the attractor outright, so separation is z-order fact rather
           than contrast tuning. */}
-      <section className="relative py-24 lg:py-32">
+      <section className="relative py-16 md:py-24 lg:py-32">
         <div className="container-px relative">
           <Reveal>
             <h3 className="max-w-4xl text-balance font-serif text-[clamp(2rem,4.5vw,4.75rem)] font-medium leading-[1.08] tracking-tight text-bone">

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Check } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 import ActionButton from "@/components/ui/ActionButton";
 import { SITE } from "@/lib/site";
 
@@ -108,29 +108,55 @@ export default function StartProjectForm() {
           <label htmlFor="need" className="mb-2 block text-sm text-bone-dim">
             What you need
           </label>
-          <select id="need" name="need" required defaultValue="" className={`${field} cursor-pointer`}>
-            <option value="" disabled>
-              Select one
-            </option>
-            {NEEDS.map((n) => (
-              <option key={n} value={n} className="bg-ink-800 text-bone">
-                {n}
+          {/* appearance-none kills the inconsistent native select chrome, so
+              the explicit chevron is what tells a touch user (who has no
+              cursor-pointer affordance) that this is a dropdown */}
+          <div className="relative">
+            <select
+              id="need"
+              name="need"
+              required
+              defaultValue=""
+              className={`${field} cursor-pointer appearance-none pr-10`}
+            >
+              <option value="" disabled>
+                Select one
               </option>
-            ))}
-          </select>
+              {NEEDS.map((n) => (
+                <option key={n} value={n} className="bg-ink-800 text-bone">
+                  {n}
+                </option>
+              ))}
+            </select>
+            <ChevronDown
+              aria-hidden="true"
+              className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-bone-faint"
+            />
+          </div>
         </div>
         <div>
           <label htmlFor="budget" className="mb-2 block text-sm text-bone-dim">
             Budget range <span className="text-bone-faint">(optional)</span>
           </label>
-          <select id="budget" name="budget" defaultValue="" className={`${field} cursor-pointer`}>
-            <option value="">No preference</option>
-            {BUDGETS.map((b) => (
-              <option key={b} value={b} className="bg-ink-800 text-bone">
-                {b}
-              </option>
-            ))}
-          </select>
+          <div className="relative">
+            <select
+              id="budget"
+              name="budget"
+              defaultValue=""
+              className={`${field} cursor-pointer appearance-none pr-10`}
+            >
+              <option value="">No preference</option>
+              {BUDGETS.map((b) => (
+                <option key={b} value={b} className="bg-ink-800 text-bone">
+                  {b}
+                </option>
+              ))}
+            </select>
+            <ChevronDown
+              aria-hidden="true"
+              className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-bone-faint"
+            />
+          </div>
         </div>
       </div>
 

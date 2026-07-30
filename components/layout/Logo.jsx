@@ -33,7 +33,9 @@ export default function Logo({ className = "", size = "base", expanded = false }
     <Link
       href="/"
       aria-label="Lights Camera Experiments, home"
-      className={`group inline-flex items-center rounded-md ${className}`}
+      // self-stretch + min-h-11: fill the nav pill's full height so the tap
+      // target matches the 44px hamburger beside it (the label alone is ~26px)
+      className={`group inline-flex min-h-11 items-center self-stretch rounded-md ${className}`}
     >
       <svg
         viewBox="0 0 12 12"
@@ -57,7 +59,10 @@ export default function Logo({ className = "", size = "base", expanded = false }
         aria-hidden="true"
         className={`${slot} ${expanded ? "grid-cols-[1fr] opacity-100" : "grid-cols-[0fr] opacity-0"}`}
       >
-        <span className={`${inner} text-[clamp(10px,2.4vw,12px)] leading-none tracking-[0.16em]`}>
+        {/* tighter tracking below sm: at 360px the open pill leaves ~228px
+            for this span and the full name at 0.16em needs ~250px — the
+            overflow-hidden nowrap wrapper would silently clip "Experiments" */}
+        <span className={`${inner} text-[clamp(10px,2.4vw,12px)] leading-none tracking-[0.06em] sm:tracking-[0.16em]`}>
           Lights <span className="text-gold-400">·</span> Camera{" "}
           <span className="text-gold-400">·</span> Experiments
         </span>

@@ -101,10 +101,19 @@ export default function BrandStack() {
     <div
       ref={rootRef}
       className="flex w-full flex-col items-center"
-      onMouseEnter={() => (hover.current = true)}
-      onMouseLeave={() => (hover.current = false)}
+      // mouse-guarded: a tap fires synthetic mouseenter with NO mouseleave
+      // until the user taps elsewhere, which silently froze the auto-cycle
+      // on touch devices (hover.current stuck true forever)
+      onPointerEnter={(e) => {
+        if (e.pointerType === "mouse") hover.current = true;
+      }}
+      onPointerLeave={(e) => {
+        if (e.pointerType === "mouse") hover.current = false;
+      }}
     >
-      <div className="relative h-[460px] w-full max-w-[620px] overflow-hidden">
+      {/* tap anywhere on the deck advances — the touch counterpart of the
+          hover-pause + the "or on click" the header comment promises */}
+      <div className="relative h-[460px] w-full max-w-[620px] overflow-hidden" onClick={advance}>
         <AnimatePresence initial={false}>
           {visible.map((card, index) => {
             const { scale, y } = POS[index] ?? POS[2];

@@ -44,14 +44,24 @@ export default function Navbar() {
     return () => io.disconnect();
   }, []);
 
-  // lock scroll + ESC while the menu is open
+  // lock scroll + ESC while the menu is open. The lock is the position:fixed
+  // pattern, not overflow:hidden — iOS Safari ignores body overflow and keeps
+  // rubber-band scrolling the page behind the drawer. Fixing the body at the
+  // current scroll offset actually freezes it; cleanup restores the offset
+  // before the close-then-scroll timeout in scrollToHash fires (130ms).
   useEffect(() => {
     if (!open) return;
-    document.body.style.overflow = "hidden";
+    const yOffset = window.scrollY;
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${yOffset}px`;
+    document.body.style.width = "100%";
     const onKey = (e) => e.key === "Escape" && setOpen(false);
     window.addEventListener("keydown", onKey);
     return () => {
-      document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.width = "";
+      window.scrollTo(0, yOffset);
       window.removeEventListener("keydown", onKey);
     };
   }, [open]);
@@ -121,14 +131,17 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="fixed inset-x-0 top-0 z-50">
+      {/* pointer-events-none on the header shell: it spans the full top strip
+          at z-50, which otherwise swallows backdrop-close taps beside the pill
+          while the drawer is open. The two interactive children re-enable. */}
+      <header className="pointer-events-none fixed inset-x-0 top-0 z-50">
         <div
           className={`flex items-center justify-between pt-5 transition-[padding] duration-300 ${
             open ? "px-5 sm:px-6" : "px-6 sm:px-10 lg:px-16"
           }`}
         >
           <div
-            className={`flex items-center rounded-full border border-white/[0.07] bg-ink-900/90 transition-all duration-300 ${
+            className={`pointer-events-auto flex items-center rounded-full border border-white/[0.07] bg-ink-900/90 transition-all duration-300 ${
               open ? "gap-2 p-1.5 pr-4" : "gap-1.5 p-1 pr-3"
             }`}
           >
@@ -170,7 +183,7 @@ export default function Navbar() {
                 animate={{ opacity: 1, x: 0, scale: 1 }}
                 exit={reduced ? { opacity: 0 } : { opacity: 0, x: 26, scale: 0.94 }}
                 transition={{ duration: reduced ? 0.2 : 0.55, ease: EASE }}
-                className="hidden sm:block"
+                className="pointer-events-auto hidden sm:block"
               >
                 <Magnetic>
                   <ActionButton
@@ -264,7 +277,7 @@ function CurvedMenu({ reduced, activeId, onNavigate, onClose }) {
         exit="exit"
         className="fixed left-0 top-0 z-40 h-[100dvh] w-[85%] max-w-[400px] bg-ink-800 shadow-[10px_0_50px_-12px_rgba(0,0,0,0.85)] sm:max-w-lg"
       >
-      <div className="flex h-full flex-col justify-between overflow-y-auto px-8 pb-8 pt-24 sm:px-12">
+      <div className="flex h-full flex-col justify-between overflow-y-auto overscroll-y-contain px-8 pb-8 pt-24 sm:px-12">
         <nav>
           <p className="flex items-center gap-3 border-b border-white/10 pb-3 font-mono text-[11px] uppercase tracking-[0.3em] text-bone-faint">
             Navigation
@@ -287,11 +300,14 @@ function CurvedMenu({ reduced, activeId, onNavigate, onClose }) {
         <div className="mt-10 border-t border-white/10 pt-6">
           <a
             href={`mailto:${SITE.email}`}
-            className="font-mono text-sm text-gold-300 transition-colors hover:text-gold-100"
+            className="relative inline-block font-mono text-sm text-gold-300 transition-colors before:absolute before:-inset-x-2 before:-inset-y-3 hover:text-gold-100"
           >
             {SITE.email}
           </a>
-          <div className="mt-4 flex items-center gap-4">
+          {/* gap-7, not gap-4: each icon's tap box is 44px (p-3 around a 20px
+              icon, -m-3 collapsing the flow box), so gaps under 24px make
+              adjacent TAP ZONES overlap even though the icons look spaced */}
+          <div className="mt-4 flex items-center gap-7">
             {SOCIALS.map(({ label, Icon, href }) => (
               <a
                 key={label}

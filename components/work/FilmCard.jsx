@@ -95,7 +95,7 @@ export default function FilmCard({ film, index, flip = false }) {
         {linkLabel && (
           <a
             href={watchHref}
-            className="link-underline mt-auto inline-flex w-fit items-center gap-1.5 pt-6 text-sm font-medium text-gold-300 transition-colors hover:text-gold-100"
+            className="link-underline mt-auto inline-flex w-fit items-center gap-1.5 pt-6 text-sm font-medium text-gold-300 transition-colors before:absolute before:-inset-x-2 before:-inset-y-3 hover:text-gold-100"
           >
             {linkLabel}
             <ArrowUpRight
@@ -115,7 +115,7 @@ export default function FilmCard({ film, index, flip = false }) {
           {youtubeId && playing ? (
             <iframe
               className="absolute inset-0 h-full w-full"
-              src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0`}
+              src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0&playsinline=1`}
               title={title}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen

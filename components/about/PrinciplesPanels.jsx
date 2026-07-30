@@ -125,6 +125,11 @@ function PosterSurface({ src }) {
       <span aria-hidden="true" className="pointer-events-none absolute inset-0" style={{ backgroundImage: SURFACE }} />
       <img
         src={src}
+        // phones get a 640w candidate — the card is ~320-390px CSS on
+        // mobile, so shipping the raw 1200w to every phone was ~4x waste
+        // on top of the always-animating WebGL background
+        srcSet={`${src.replace("w=1200", "w=640")} 640w, ${src} 1200w`}
+        sizes="(min-width: 768px) 50vw, 100vw"
         alt=""
         aria-hidden="true"
         loading="lazy"
@@ -273,7 +278,7 @@ export default function PrinciplesPanels() {
                 <p className="font-serif text-[40px] font-medium leading-none tracking-tight text-gold-gradient">
                   {p.share}
                 </p>
-                <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-bone-faint">of every build</p>
+                <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-bone-faint">of every build</p>
               </div>
             </div>
           </li>

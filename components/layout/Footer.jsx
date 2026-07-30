@@ -40,7 +40,7 @@ export default function Footer() {
             </p>
             <a
               href={`mailto:${SITE.email}`}
-              className="link-underline mt-6 inline-block font-mono text-sm text-gold-300 transition-colors hover:text-gold-100"
+              className="link-underline relative mt-6 inline-block font-mono text-sm text-gold-300 transition-colors before:absolute before:-inset-x-2 before:-inset-y-3 hover:text-gold-100"
             >
               {SITE.email}
             </a>
@@ -48,12 +48,15 @@ export default function Footer() {
 
           <div>
             <p className="eyebrow mb-5">Studio</p>
-            <ul className="space-y-3">
+            {/* hit zones sized to the row pitch: expanding further than the
+                gap between rows would make neighboring zones overlap, which
+                trades a small target for an ambiguous one */}
+            <ul className="space-y-3.5">
               {[...NAV_LINKS.slice(1), CTA].map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="link-underline text-sm text-bone-dim transition-colors hover:text-bone"
+                    className="link-underline relative text-sm text-bone-dim transition-colors before:absolute before:-inset-x-2 before:-inset-y-1.5 hover:text-bone"
                   >
                     {link.label}
                   </Link>

@@ -101,7 +101,12 @@ function ProofCanvas({ variant, live, masterImage, cutImages = [], stackImage })
       whileInView="shown"
       viewport={{ once: true, amount: 0.4 }}
       whileHover={reduce ? undefined : "breathe"}
-      className="relative aspect-[7/6] w-full max-w-[440px]"
+      // solo gets a taller canvas on mobile: at ~335px content width the
+      // desktop geometry rendered the phone screenshot 115px wide — an
+      // illegible sliver floating in a two-thirds-empty box
+      className={`relative w-full max-w-[440px] ${
+        variant === "fan" ? "aspect-[7/6]" : "aspect-[3/4] md:aspect-[7/6]"
+      }`}
     >
       {variant === "fan" ? (
         <>
@@ -139,7 +144,7 @@ function ProofCanvas({ variant, live, masterImage, cutImages = [], stackImage })
               the profile screenshot sits inside with barely any pillarbox.
               A slight tilt reads as a print set down, not a UI panel. */}
           <Print
-            position="left-[35%] top-[12%] z-0 w-[30%] aspect-[6/13]"
+            position="left-[22%] top-[4%] z-0 w-[56%] aspect-[6/13] md:left-[35%] md:top-[12%] md:w-[30%]"
             surface="bg-ink-800"
             tilt={-4}
             breathe={{ y: -3 }}
@@ -201,7 +206,9 @@ export default function SystemCard({ system, index }) {
         />
         {/* bone-dim, not the specced bone-faint — the ReelForge caption sits
             over the attractor's brightest ring field and faint drowned there */}
-        <p className="mt-5 max-w-[40ch] font-sans text-[13px] leading-relaxed text-bone-dim xl:text-[14px]">
+        {/* 14px below md — this caption is the ONLY place the specs render,
+            so on phones it follows the body-text floor, not caption sizing */}
+        <p className="mt-5 max-w-[40ch] font-sans text-[14px] leading-relaxed text-bone-dim md:text-[13px] xl:text-[14px]">
           {caption.map((seg, i) =>
             seg.g ? (
               <span key={i} className="font-serif italic text-gold-300">
@@ -217,7 +224,7 @@ export default function SystemCard({ system, index }) {
           <Magnetic className="mt-4 w-fit">
             <a
               href={href || CTA.href}
-              className="link-underline inline-flex items-center gap-1.5 text-sm font-medium text-gold-300 transition-colors hover:text-gold-100"
+              className="link-underline relative inline-flex items-center gap-1.5 text-sm font-medium text-gold-300 transition-colors before:absolute before:-inset-x-2 before:-inset-y-3 hover:text-gold-100"
             >
               {linkLabel}
               <ArrowUpRight
