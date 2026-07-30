@@ -161,7 +161,11 @@ export default function WorkSection() {
         </div>
       </section>
 
-      {/* The Engine — index entries 05-06 */}
+      {/* The Engine — index entries 05-06. No closing statement after this
+          anymore (removed) — the section's own py-20 bottom plus About's own
+          py-32 top already lands the Work-to-About gap in the same family as
+          the other cross-section gaps on the page (144-224px), verified
+          after removal rather than assumed. */}
       <section className="container-px py-14 lg:py-20">
         <GroupDivider title="The Engine" sub="Systems we built" />
         <div className="mt-10">
@@ -169,20 +173,6 @@ export default function WorkSection() {
             <SystemCard key={system.name} system={system} index={i + FILMS.length} />
           ))}
         </div>
-      </section>
-
-      {/* Closing */}
-      <section className="container-px pb-16 pt-16 lg:pb-24 lg:pt-24">
-        <Reveal>
-          <p className="mx-auto max-w-5xl text-balance text-center font-serif text-[clamp(1.5rem,3.5vw,3.75rem)] leading-[1.12] tracking-tight text-bone">
-            Whatever you&apos;re launching, we&apos;ve either{" "}
-            <span className="gold-flow italic">directed something like it</span> or{" "}
-            <span className="gold-flow italic" style={{ animationDelay: "0.5s" }}>
-              built the system that ships it
-            </span>
-            .
-          </p>
-        </Reveal>
       </section>
     </div>
   );
