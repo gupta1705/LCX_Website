@@ -7,6 +7,7 @@ export default function CapabilitiesSection() {
   return (
     <div id="capabilities" className="scroll-mt-24">
       <SectionHeader
+        center
         eyebrow="What we make"
         title="We run two things"
         accent="at once."
