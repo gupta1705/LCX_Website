@@ -247,8 +247,8 @@ Headlines use `clamp(min, VWvw, max)` so they grow with the viewport and settle 
 - **StartProjectForm** is front-end only — it doesn't submit anywhere yet (needs an email/back-end wire-up).
 - **Placeholder content** remains in BrandStack (NOVA/HELIO/…) and the team roles.
 - `WorkCard.jsx` / `WorkGallery.jsx` are dead code and can be deleted.
-- `lib/site.js` email (`hello@lightscameraexperiments.com`) is a placeholder on a domain that isn't registered yet, and differs from the account email (`aitools@theviralfever.com`) — needs a real inbox on the real domain before launch.
-- `metadataBase` in `app/layout.jsx` points at the same placeholder domain — update once the real one is decided.
+- Enquiries route to `suhasc@theviralfever.com` (set in `lib/site.js`, read by every mailto on the site). If a real inbox is ever created on `lightscameraexperiment.com`, change that one constant.
+- The live domain is `lightscameraexperiment.com` — **"experiment", singular**, not the plural of the studio name. `metadataBase` in `app/layout.jsx` matches it.
 
 ---
 

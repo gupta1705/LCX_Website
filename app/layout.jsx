@@ -39,9 +39,12 @@ const mono = Fragment_Mono({
 });
 
 export const metadata = {
-  // Placeholder domain until the real one is registered/pointed — flagging
-  // rather than guessing at a domain that may or may not exist.
-  metadataBase: new URL("https://lightscameraexperiments.com"),
+  // The real domain, registered and connected as a Cloudflare custom domain.
+  // Note the spelling: "experiment", singular — the earlier placeholder here
+  // guessed "experiments" (plural, matching the studio name), which would
+  // have pointed every canonical URL and OG/social preview link at a domain
+  // that doesn't exist.
+  metadataBase: new URL("https://lightscameraexperiment.com"),
   title: {
     default: "Lights Camera Experiments | An AI-native creative studio",
     template: "%s | LCX",
