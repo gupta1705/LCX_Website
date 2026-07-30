@@ -65,7 +65,8 @@ const GRAIN =
 // Fallback for the one render before Hero's measurement effect runs.
 const FALLBACK_BTN_PCT = 88;
 
-// 2:06 — the loop point, not the video's own runtime.
+// The loop plays 0:17 -> 2:06, not the video's own start/runtime.
+const LOOP_START_SECONDS = 17;
 const LOOP_END_SECONDS = 126;
 
 export default function HeroShowreel({ btnBottomPct }) {
@@ -99,8 +100,9 @@ export default function HeroShowreel({ btnBottomPct }) {
   }, []);
 
   // Wire the IFrame Player API to the embed once it's in the DOM, and poll
-  // its own clock to jump back to 0 on crossing LOOP_END_SECONDS — see the
-  // file-header note on why this replaced the loop=1+playlist URL trick.
+  // its own clock to jump back to LOOP_START_SECONDS on crossing
+  // LOOP_END_SECONDS — see the file-header note on why this replaced the
+  // loop=1+playlist URL trick.
   useEffect(() => {
     if (!mounted || reduced) return;
     let cancelled = false;
@@ -108,7 +110,7 @@ export default function HeroShowreel({ btnBottomPct }) {
     const startPolling = (player) => {
       pollRef.current = setInterval(() => {
         if (typeof player.getCurrentTime !== "function") return;
-        if (player.getCurrentTime() >= LOOP_END_SECONDS) player.seekTo(0, true);
+        if (player.getCurrentTime() >= LOOP_END_SECONDS) player.seekTo(LOOP_START_SECONDS, true);
       }, 500);
     };
 
@@ -167,9 +169,10 @@ export default function HeroShowreel({ btnBottomPct }) {
             height: "max(75.94cqw, 135cqh)",
             filter: "saturate(0.92) contrast(1.03) brightness(1.12)",
           }}
+          // start=17 (0:17): the loop's own starting point, not the video's.
           // enablejsapi=1: required for the postMessage API (above) to seek
           // this player. No loop/playlist param — see the file-header note.
-          src="https://www.youtube-nocookie.com/embed/y_4g0q1_HnI?autoplay=1&mute=1&start=0&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&disablekb=1&playsinline=1&enablejsapi=1"
+          src="https://www.youtube-nocookie.com/embed/y_4g0q1_HnI?autoplay=1&mute=1&start=17&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&disablekb=1&playsinline=1&enablejsapi=1"
           title="TVF AI showreel"
           allow="autoplay; encrypted-media"
           frameBorder="0"
