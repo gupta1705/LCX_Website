@@ -14,10 +14,17 @@ import { useEffect, useState } from "react";
  *
  * What does the blending, outermost to innermost:
  *  • bottom mask (not a black gradient): the whole layer — footage, scrims,
- *    grain — goes transparent over the hero's last ~40%, so the live
- *    attractor underneath emerges *through* the fading footage. A gradient
- *    to ink-900 would instead end in a solid-black band with filaments
- *    popping in abruptly below the hero's edge.
+ *    grain — goes transparent right at the hero's bottom edge, so the live
+ *    attractor underneath emerges *through* the fading footage rather than a
+ *    solid-black band with filaments popping in abruptly. Held fully opaque
+ *    until just below the button row, so the attractor never shows through
+ *    the footage anywhere near the text or buttons — a first pass hardcoded
+ *    that "just below the buttons" point as a percentage guessed from three
+ *    test window sizes, which is exactly as fragile as it sounds: it holds
+ *    only at those three sizes, and drifts anywhere else. `btnBottomPct` is
+ *    the button row's own real measured position (Hero.jsx, via ref +
+ *    getBoundingClientRect, re-measured on resize), so this now starts at
+ *    the actual rendered edge on any window, not a guess.
  *  • entrance crossfade: opacity 0 → 1 over 1.5s after a 1.2s delay. The
  *    attractor is already animating underneath, so the page opens on it and
  *    the film fades in over it — and the delay outlasts YouTube's boot
@@ -44,13 +51,22 @@ import { useEffect, useState } from "react";
 const GRAIN =
   "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")";
 
-const MASK =
-  "linear-gradient(to bottom, black 55%, rgba(0,0,0,0.55) 78%, transparent 97%)";
+// Fallback for the one render before Hero's measurement effect runs.
+const FALLBACK_BTN_PCT = 88;
 
-export default function HeroShowreel() {
+export default function HeroShowreel({ btnBottomPct }) {
   const [mounted, setMounted] = useState(false);
   const [reduced, setReduced] = useState(false);
   const [ready, setReady] = useState(false); // cue the crossfade in
+
+  const btnPct = btnBottomPct ?? FALLBACK_BTN_PCT;
+  // Scrim (headline contrast) fades out right at the buttons' own bottom
+  // edge, gone 9 points later. Attractor reveal waits an extra 3 points
+  // past that — so the footage settles back to full brightness first,
+  // then the attractor starts emerging — and is gone by 100% regardless of
+  // where that lands, since the hero itself ends there.
+  const scrimFade = `linear-gradient(to bottom, black ${btnPct}%, transparent ${btnPct + 9}%)`;
+  const mask = `linear-gradient(to bottom, black ${Math.min(btnPct + 3, 99)}%, transparent 100%)`;
 
   useEffect(() => {
     setMounted(true);
@@ -73,8 +89,8 @@ export default function HeroShowreel() {
       className="pointer-events-none absolute inset-0 -z-10 hidden transition-opacity duration-[1500ms] ease-out lg:block"
       style={{
         opacity: ready ? 1 : 0,
-        maskImage: MASK,
-        WebkitMaskImage: MASK,
+        maskImage: mask,
+        WebkitMaskImage: mask,
       }}
     >
       <div className="absolute inset-0" style={{ containerType: "size" }}>
@@ -83,7 +99,7 @@ export default function HeroShowreel() {
           style={{
             width: "max(135cqw, 240cqh)",
             height: "max(75.94cqw, 135cqh)",
-            filter: "saturate(0.82) contrast(1.06) brightness(0.82)",
+            filter: "saturate(0.92) contrast(1.03) brightness(1.12)",
           }}
           src="https://www.youtube-nocookie.com/embed/y_4g0q1_HnI?autoplay=1&mute=1&loop=1&playlist=y_4g0q1_HnI&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&disablekb=1&playsinline=1"
           title="TVF AI showreel"
@@ -93,9 +109,19 @@ export default function HeroShowreel() {
         />
       </div>
 
-      {/* the attractor's own dressing, re-applied over the footage */}
-      <div className="absolute inset-0 bg-ink-900/40" />
-      <div className="absolute inset-0 bg-gradient-to-r from-ink-900/90 via-ink-900/45 to-ink-900/15" />
+      {/* the attractor's own dressing, re-applied over the footage — lighter
+          than SceneBackground's own scrims: that layer has to fight a busy
+          animating attractor at full strength, this one just needs to keep
+          the headline readable over calmer footage. Masked (scrimFade) to
+          fade out right at the buttons' own bottom edge — no text down
+          there to protect. */}
+      <div
+        className="absolute inset-0"
+        style={{ maskImage: scrimFade, WebkitMaskImage: scrimFade }}
+      >
+        <div className="absolute inset-0 bg-ink-900/10" />
+        <div className="absolute inset-0 bg-gradient-to-r from-ink-900/45 via-ink-900/18 to-transparent" />
+      </div>
       <div
         className="absolute inset-0"
         style={{

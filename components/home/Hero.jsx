@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { Play } from "lucide-react";
@@ -26,17 +26,43 @@ const WORD_INTERVAL = 2200;
 export default function Hero() {
   const reduced = useReducedMotion();
   const [index, setIndex] = useState(0);
+  const sectionRef = useRef(null);
+  const ctaRef = useRef(null);
+  // Fed to HeroShowreel so its gradients start exactly at the button row's
+  // own rendered position instead of a percentage guessed from a handful of
+  // test window sizes — that guess held for the sizes it was checked at and
+  // missed the user's actual window, leaving the fade starting well below
+  // where the buttons actually end. null until measured; HeroShowreel keeps
+  // its own fallback for that first tick.
+  const [btnBottomPct, setBtnBottomPct] = useState(null);
 
   useEffect(() => {
     const id = setInterval(() => setIndex((i) => (i + 1) % WORDS.length), WORD_INTERVAL);
     return () => clearInterval(id);
   }, []);
 
+  useEffect(() => {
+    const measure = () => {
+      const section = sectionRef.current;
+      const cta = ctaRef.current;
+      if (!section || !cta) return;
+      const sectionRect = section.getBoundingClientRect();
+      const ctaRect = cta.getBoundingClientRect();
+      setBtnBottomPct(((ctaRect.bottom - sectionRect.top) / sectionRect.height) * 100);
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, []);
+
   return (
-    <section className="relative isolate flex min-h-[100svh] items-center overflow-hidden">
+    <section
+      ref={sectionRef}
+      className="relative isolate flex min-h-[100svh] items-center overflow-hidden"
+    >
       {/* isolate keeps the showreel's -z-10 inside THIS stacking context —
           above the fixed z-0 attractor, below the hero copy */}
-      <HeroShowreel />
+      <HeroShowreel btnBottomPct={btnBottomPct} />
       <div className="container-px grid w-full grid-cols-12 pb-16 pt-32">
         <motion.div
           variants={stagger}
@@ -46,10 +72,15 @@ export default function Hero() {
         >
           {/* soft scrim — lifts headline/body contrast where they overlap the
               bright attractor (most visible on mobile, where the rings run
-              under the body copy) */}
+              under the body copy). lg:hidden: at lg+ HeroShowreel is behind
+              this instead of the plain attractor, and its own broad gradient
+              already carries this job — stacking this on top of it read as
+              a visible dark box/rectangle sitting over the (detailed,
+              photographic) footage, in a way it never did over the
+              attractor's own soft abstract lines. */}
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute -inset-x-6 -inset-y-8 -z-10 bg-[radial-gradient(70%_60%_at_35%_45%,rgba(10,9,8,0.7),transparent_72%)]"
+            className="pointer-events-none absolute -inset-x-6 -inset-y-8 -z-10 bg-[radial-gradient(70%_60%_at_35%_45%,rgba(10,9,8,0.7),transparent_72%)] lg:hidden"
           />
           <motion.h1
             variants={item}
@@ -106,7 +137,7 @@ export default function Hero() {
             content that gets brands noticed.
           </motion.p>
 
-          <motion.div variants={item} className="mt-10 flex flex-wrap items-center gap-3">
+          <motion.div ref={ctaRef} variants={item} className="mt-10 flex flex-wrap items-center gap-3">
             <Magnetic>
               <ActionButton as={Link} href="#work" tone="secondary" icon={Play} size="lg">
                 See our work
