@@ -130,30 +130,18 @@ const SYSTEMS = [
  * Chapter divider — the chapter's name at heading scale with what's in it as a
  * deck beneath. The sub used to run above the title as an 11px tracked mark,
  * which put the chapter's smallest type in charge of its biggest; the hairline
- * rule that used to sit above it is gone too, with every other segment rule on
- * the page.
- *
- * Carries the same ghost-numeral counterweight as SectionHeader, one level
- * down ("03.1" under section "03") — without it the row is just text hugging
- * the left edge with nothing balancing the rest of the line.
+ * rule that used to sit above it, and the "03.1"/"03.2" ghost-numeral counter
+ * that used to sit beside the title, are both gone too — every numeral on the
+ * page (section-level and group-level alike) was removed sitewide. Whitespace
+ * and scale carry the break now, same as everywhere else this happened.
  */
-function GroupDivider({ index, title, sub }) {
+function GroupDivider({ title, sub }) {
   return (
     <Reveal>
       <div className="pt-6">
-        <div className="flex items-end justify-between gap-10">
-          <h3 className="font-sans text-[clamp(2rem,4.75vw,5.5rem)] font-medium tracking-tight text-bone">
-            {title}
-          </h3>
-          {index && (
-            <span
-              aria-hidden="true"
-              className="hidden shrink-0 select-none font-serif text-[clamp(5rem,9vw,9rem)] italic leading-[0.72] tracking-[-0.04em] text-bone/[0.08] md:block"
-            >
-              {index}
-            </span>
-          )}
-        </div>
+        <h3 className="font-sans text-[clamp(2rem,4.75vw,5.5rem)] font-medium tracking-tight text-bone">
+          {title}
+        </h3>
         <p className="mt-3 text-lg leading-relaxed text-bone-dim">{sub}.</p>
       </div>
     </Reveal>
@@ -165,7 +153,7 @@ export default function WorkSection() {
     <div id="work" className="scroll-mt-24">
       {/* The Studio — index entries 01-04 */}
       <section className="container-px py-14 lg:py-20">
-        <GroupDivider index="03.1" title="The Studio" sub="Things we directed" />
+        <GroupDivider title="The Studio" sub="Things we directed" />
         <div className="mt-10">
           {FILMS.map((film, i) => (
             <FilmCard key={film.title} film={film} index={i} flip={i % 2 === 1} />
@@ -175,7 +163,7 @@ export default function WorkSection() {
 
       {/* The Engine — index entries 05-06 */}
       <section className="container-px py-14 lg:py-20">
-        <GroupDivider index="03.2" title="The Engine" sub="Systems we built" />
+        <GroupDivider title="The Engine" sub="Systems we built" />
         <div className="mt-10">
           {SYSTEMS.map((system, i) => (
             <SystemCard key={system.name} system={system} index={i + FILMS.length} />

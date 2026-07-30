@@ -7,7 +7,6 @@ export default function CapabilitiesSection() {
   return (
     <div id="capabilities" className="scroll-mt-24">
       <SectionHeader
-        index="02"
         eyebrow="What we make"
         title="We run two things"
         accent="at once."
@@ -17,7 +16,13 @@ export default function CapabilitiesSection() {
       {/* The Studio ↔ The Engine — pinned scroll morph */}
       <CapabilitiesScroll />
 
-      <section className="container-px py-10 lg:py-14">
+      {/* pb-20/36, not the old symmetric py-10/14: the closing line that used
+          to live here carried its own mt-20 lg:mt-36 clearance before it, so
+          removing the line without compensating would have collapsed the
+          BrandStack-to-Work gap from ~313px down to ~56px. Reusing that same
+          mt-20/36 value as the section's own bottom padding keeps the
+          breathing room the line was providing, without the line. */}
+      <section className="container-px pt-10 pb-20 lg:pt-14 lg:pb-36">
         {/* Brands we have worked with — across both the studio and the engine */}
         <Reveal>
           <div className="grid gap-10 lg:grid-cols-12 lg:items-center lg:gap-16">
@@ -31,17 +36,6 @@ export default function CapabilitiesSection() {
               <BrandStack />
             </div>
           </div>
-        </Reveal>
-
-        {/* Closing — big centered impact line */}
-        <Reveal className="mt-20 lg:mt-36">
-          <p className="mx-auto max-w-5xl text-balance text-center font-serif text-[clamp(1.5rem,3.5vw,3.75rem)] leading-[1.12] tracking-tight text-bone">
-            Whatever you&apos;re launching, we can{" "}
-            <span className="gold-flow italic" style={{ animationDelay: "0s" }}>
-              direct it or scale it
-            </span>
-            , usually both.
-          </p>
         </Reveal>
       </section>
     </div>

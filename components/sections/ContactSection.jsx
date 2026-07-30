@@ -9,7 +9,6 @@ export default function ContactSection() {
   return (
     <div id="start" className="scroll-mt-24">
       <SectionHeader
-        index="05"
         eyebrow="Start a project"
         title="Tell us what you're"
         accent="building."

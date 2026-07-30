@@ -1,18 +1,9 @@
-import SectionHeader from "@/components/ui/SectionHeader";
 import Reveal from "@/components/ui/Reveal";
 import PrinciplesPanels from "@/components/about/PrinciplesPanels";
 
 export default function AboutSection() {
   return (
     <div id="about" className="scroll-mt-24">
-      <SectionHeader
-        index="04"
-        eyebrow="About"
-        title="Inside the"
-        accent="Lab."
-        blurb="One team, two disciplines: a studio that directs and an engine that scales. Here's why we exist and how we think."
-      />
-
       {/* The origin — centered, the sole statement in this slot now that
           "The approach" is gone. Matches the centered-coda convention already
           used in Work/Capabilities rather than staying left-column alone. */}
