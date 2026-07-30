@@ -49,23 +49,6 @@ export default function AboutSection() {
           </Reveal>
         </div>
       </section>
-
-      {/* Closing one-liner */}
-      <section className="container-px pb-8 pt-16 lg:pb-12 lg:pt-24">
-        <Reveal>
-          <div className="relative isolate max-w-3xl">
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute -inset-x-6 -inset-y-4 -z-10 rounded-[45%] bg-ink-900/70 blur-2xl"
-            />
-            <p className="text-balance font-sans text-[clamp(1.5rem,3.5vw,3.75rem)] font-normal leading-[1.25] tracking-tighter text-bone">
-              The tools get better every week. Knowing{" "}
-              <span className="font-serif italic text-gold-gradient">why it works</span> doesn&apos;t
-              come in an update.
-            </p>
-          </div>
-        </Reveal>
-      </section>
     </div>
   );
 }
