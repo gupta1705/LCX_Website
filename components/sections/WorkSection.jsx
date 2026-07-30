@@ -94,66 +94,41 @@ const SYSTEMS = [
     ],
   },
   {
-    name: "ParsecDaily",
-    variant: "solo",
-    live: true,
+    // ParsecDaily and ElannaHart are two different automated Instagram
+    // channels running on the same underlying system, and were originally
+    // two separate cards — one description each, one thumbnail each. Folded
+    // into a single card: same system, so one shared description, both
+    // thumbnails proving it runs more than one kind of channel.
+    name: "ParsecDaily / ElannaHart",
+    variant: "duo",
     blurb:
-      "An Instagram channel that runs itself — sourced, produced, and posted by the machine.",
+      "Instagram channels that run themselves end to end — sourced or scripted, produced, and posted by the machine, with no one behind the camera.",
     specs: [
       { k: "Sourcing", v: "Automatic" },
-      { k: "Publishing", v: "Daily" },
+      { k: "Publishing", v: "Automatic" },
       { k: "Manual uploads", v: "Zero" },
     ],
     caption: [
       { g: "Sourcing" },
       { t: " — automatic. " },
       { g: "Publishing" },
-      { t: " — daily. " },
+      { t: " — automatic. " },
       { g: "Zero" },
       { t: " manual uploads." },
     ],
-    // the real @parsecdaily profile screenshot, verbatim — thumbnail-parsec.jpg
-    // at the repo root, copied in unmodified. Two cropped attempts before this
-    // both failed: the full 2-row post grid read as noise under object-cover
-    // (6 tiles squeezed and partial at once), and cropping down to one clean
-    // tile lost every trace of "parsecdaily" — from the outside indistinguishable
-    // from a random stock photo. This Print renders with fit="contain", so the
-    // whole screenshot shows uncropped, pillarboxed onto the plate's own
-    // near-black surface rather than a crop discarding part of it.
-    stackImage: "/work/parsecdaily-feed.jpg",
+    // both real profile screenshots, verbatim (thumbnail-parsec.jpg /
+    // thumbnail-2.jpg at the repo root, copied in unmodified) — each Print
+    // renders with fit="contain" so nothing about either account is cropped
+    // away, same reasoning as when these were separate cards.
+    stackImages: [
+      // ParsecDaily: live daily-posting confirmed by its own post count.
+      { src: "/work/parsecdaily-feed.jpg", live: true },
+      // ElannaHart: only 7 posts visible in its source screenshot, not
+      // enough to honestly back the same "Live daily." claim.
+      { src: "/work/elannahart-feed.jpg", live: false },
+    ],
     linkLabel: "See it live",
     // href: "https://instagram.com/...",
-  },
-  {
-    // handle is @itselannahart, display name "Elanna | Relationship & Love" —
-    // named for the card the way ParsecDaily is (a brand-style name, not the
-    // raw handle with its filler "its" prefix).
-    name: "ElannaHart",
-    variant: "solo",
-    blurb:
-      "A relationship-advice channel fronted by a synthetic presenter — scripted, delivered, and posted with no one behind the camera.",
-    specs: [
-      { k: "Presenter", v: "AI-generated" },
-      { k: "Publishing", v: "Automatic" },
-      { k: "Manual filming", v: "Zero" },
-    ],
-    caption: [
-      { g: "Presenter" },
-      { t: " — AI-generated. " },
-      { g: "Publishing" },
-      { t: " — automatic. " },
-      { g: "Zero" },
-      { t: " manual filming." },
-    ],
-    // the real @itselannahart profile screenshot, verbatim — same treatment
-    // as ParsecDaily above and for the same reason: fit="contain" shows the
-    // whole thing uncropped rather than losing the account's identity to a
-    // crop. Source: thumbnail-2.jpg at the repo root.
-    stackImage: "/work/elannahart-feed.jpg",
-    // No "live" flag: only 7 posts visible in the source screenshot, not
-    // enough to honestly back a "Live daily." claim the way ParsecDaily's
-    // higher post count does. No linkLabel/href either — no public URL
-    // confirmed for this one yet, same as ReelForge.
   },
 ];
 

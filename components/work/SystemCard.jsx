@@ -10,10 +10,13 @@ import { CTA } from "@/lib/site";
  * One system we built (The Engine), on the same index-row spine as the films.
  * The media rail holds proofs pulled off the plate — the machine's OUTPUT as
  * physical prints, not a panel about its specs. ReelForge fans three vertical
- * cuts off one master frame (the machine mid-cut); ParsecDaily shows a single
- * print of the real feed. The specs survive beneath as a figure caption
- * conjugated into prose, and "live" is a serif sentence with the site's own
- * gold sheen, not a status dot.
+ * cuts off one master frame (the machine mid-cut); the ParsecDaily/ElannaHart
+ * card fans two prints of two real feeds off one shared description, since
+ * they're two channels on the same underlying system; a bare "solo" variant
+ * (one print) still exists for a single-channel system with nothing to pair
+ * it against. The specs survive beneath as a figure caption conjugated into
+ * prose, and "live" is a serif sentence with the site's own gold sheen, not a
+ * status dot.
  *
  * What this replaced: a mono key/value plate on a blueprint grid with corner
  * ticks and a scanline — the terminal-HUD look every AI landing page ships
@@ -90,7 +93,7 @@ function Print({ position, surface, breathe, tilt, src, fit = "cover", children 
   );
 }
 
-function ProofCanvas({ variant, live, masterImage, cutImages = [], stackImage }) {
+function ProofCanvas({ variant, live, masterImage, cutImages = [], stackImage, stackImages = [] }) {
   const reduce = useReducedMotion();
   const [cutA, cutB, cutC] = cutImages;
 
@@ -103,12 +106,60 @@ function ProofCanvas({ variant, live, masterImage, cutImages = [], stackImage })
       whileHover={reduce ? undefined : "breathe"}
       // solo gets a taller canvas on mobile: at ~335px content width the
       // desktop geometry rendered the phone screenshot 115px wide — an
-      // illegible sliver floating in a two-thirds-empty box
+      // illegible sliver floating in a two-thirds-empty box. duo needs the
+      // width fan gets (two side-by-side prints), not solo's mobile height.
       className={`relative w-full max-w-[440px] ${
-        variant === "fan" ? "aspect-[7/6]" : "aspect-[3/4] md:aspect-[7/6]"
+        variant === "fan" || variant === "duo" ? "aspect-[7/6]" : "aspect-[3/4] md:aspect-[7/6]"
       }`}
     >
-      {variant === "fan" ? (
+      {variant === "duo" ? (
+        <>
+          {/* two accounts, same system — fanned like a pair of prints set
+              down at an angle, not a symmetrical side-by-side comparison
+              (which would read as a spec-sheet grid, the exact look this
+              whole card treatment replaced). */}
+          <Print
+            position="left-[8%] top-[10%] z-10 w-[30%] aspect-[6/13]"
+            surface="bg-ink-800"
+            tilt={-7}
+            breathe={{ y: -3 }}
+            src={stackImages[0]?.src}
+            fit="contain"
+          >
+            {stackImages[0]?.live && stackImages[0]?.src && (
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-ink-900/90 via-ink-900/30 to-transparent"
+              />
+            )}
+            {stackImages[0]?.live && (
+              <span className="gold-flow absolute bottom-3.5 left-4 z-10 font-serif text-[13px] italic">
+                Live daily.
+              </span>
+            )}
+          </Print>
+          <Print
+            position="left-[54%] top-[6%] z-20 w-[30%] aspect-[6/13]"
+            surface="bg-ink-800"
+            tilt={6}
+            breathe={{ y: -3 }}
+            src={stackImages[1]?.src}
+            fit="contain"
+          >
+            {stackImages[1]?.live && stackImages[1]?.src && (
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-ink-900/90 via-ink-900/30 to-transparent"
+              />
+            )}
+            {stackImages[1]?.live && (
+              <span className="gold-flow absolute bottom-3.5 left-4 z-10 font-serif text-[13px] italic">
+                Live daily.
+              </span>
+            )}
+          </Print>
+        </>
+      ) : variant === "fan" ? (
         <>
           {/* the master frame — one long-form video on the plate */}
           <Print
@@ -170,7 +221,8 @@ function ProofCanvas({ variant, live, masterImage, cutImages = [], stackImage })
 }
 
 export default function SystemCard({ system, index }) {
-  const { name, live, blurb, variant, caption, href, linkLabel, masterImage, cutImages, stackImage } = system;
+  const { name, live, blurb, variant, caption, href, linkLabel, masterImage, cutImages, stackImage, stackImages } =
+    system;
   const num = String(index + 1).padStart(2, "0");
   const serial = String(index - 3).padStart(2, "0");
 
@@ -203,6 +255,7 @@ export default function SystemCard({ system, index }) {
           masterImage={masterImage}
           cutImages={cutImages}
           stackImage={stackImage}
+          stackImages={stackImages}
         />
         {/* bone-dim, not the specced bone-faint — the ReelForge caption sits
             over the attractor's brightest ring field and faint drowned there */}
