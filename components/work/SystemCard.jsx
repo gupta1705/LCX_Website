@@ -114,14 +114,17 @@ function ProofCanvas({ variant, live, masterImage, cutImages = [], stackImage, s
     >
       {variant === "duo" ? (
         <>
-          {/* two accounts, same system — fanned like a pair of prints set
-              down at an angle, not a symmetrical side-by-side comparison
-              (which would read as a spec-sheet grid, the exact look this
-              whole card treatment replaced). */}
+          {/* two accounts, same system — a first pass fanned these like tilted
+              prints (opposing angles, staggered), the treatment that works
+              for a single abstract photo elsewhere on this card. Two
+              recognizable phone-app screenshots at opposing tilts read as
+              scattered clutter, not a deliberate pairing — these are
+              evidence (two real accounts), not decor, so they're presented
+              level and matched instead: same size, same top edge, symmetric
+              margins, no tilt. */}
           <Print
-            position="left-[8%] top-[10%] z-10 w-[30%] aspect-[6/13]"
+            position="left-[9%] top-[8%] z-10 w-[34%] aspect-[6/13]"
             surface="bg-ink-800"
-            tilt={-7}
             breathe={{ y: -3 }}
             src={stackImages[0]?.src}
             fit="contain"
@@ -139,9 +142,8 @@ function ProofCanvas({ variant, live, masterImage, cutImages = [], stackImage, s
             )}
           </Print>
           <Print
-            position="left-[54%] top-[6%] z-20 w-[30%] aspect-[6/13]"
+            position="left-[57%] top-[8%] z-10 w-[34%] aspect-[6/13]"
             surface="bg-ink-800"
-            tilt={6}
             breathe={{ y: -3 }}
             src={stackImages[1]?.src}
             fit="contain"
