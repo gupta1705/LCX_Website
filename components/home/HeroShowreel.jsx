@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 /**
  * The TVF AI showreel as the hero's background — YouTube-hosted (no local
@@ -29,6 +29,17 @@ import { useEffect, useState } from "react";
  *    attractor is already animating underneath, so the page opens on it and
  *    the film fades in over it — and the delay outlasts YouTube's boot
  *    (spinner/black frame), which would otherwise be the first thing seen.
+ *  • loop point at 2:06, not the video's own end: a first pass used the
+ *    URL-only trick (`loop=1`+`playlist=<same id>`+`end=126`), which works,
+ *    but a `playlist` param — even a single-video one, purely to make `loop`
+ *    honor `end` — puts the embed in "playlist mode," and YouTube shows its
+ *    playlist prev/next-track chrome over the footage for a few seconds on
+ *    load regardless of `controls=0` (that param only hides the scrubber
+ *    bar, not playlist navigation). Replaced with the real IFrame Player
+ *    API instead: no `playlist`/`loop` params at all, just `enablejsapi=1`
+ *    and a poll on `getCurrentTime()` that calls `seekTo(0)` on crossing
+ *    2:06 — the loop still happens, but nothing about it reads as a
+ *    playlist to the player, so that chrome never has a reason to render.
  *  • grade + scrims: the footage is dimmed and desaturated toward the ink
  *    palette, cast with the same gold radial the attractor's fallback uses,
  *    and scrimmed left (headline sits there) and top (navbar) — the same
@@ -54,10 +65,16 @@ const GRAIN =
 // Fallback for the one render before Hero's measurement effect runs.
 const FALLBACK_BTN_PCT = 88;
 
+// 2:06 — the loop point, not the video's own runtime.
+const LOOP_END_SECONDS = 126;
+
 export default function HeroShowreel({ btnBottomPct }) {
   const [mounted, setMounted] = useState(false);
   const [reduced, setReduced] = useState(false);
   const [ready, setReady] = useState(false); // cue the crossfade in
+  const iframeRef = useRef(null);
+  const playerRef = useRef(null);
+  const pollRef = useRef(null);
 
   const btnPct = btnBottomPct ?? FALLBACK_BTN_PCT;
   // Scrim (headline contrast) fades out right at the buttons' own bottom
@@ -81,6 +98,54 @@ export default function HeroShowreel({ btnBottomPct }) {
     };
   }, []);
 
+  // Wire the IFrame Player API to the embed once it's in the DOM, and poll
+  // its own clock to jump back to 0 on crossing LOOP_END_SECONDS — see the
+  // file-header note on why this replaced the loop=1+playlist URL trick.
+  useEffect(() => {
+    if (!mounted || reduced) return;
+    let cancelled = false;
+
+    const startPolling = (player) => {
+      pollRef.current = setInterval(() => {
+        if (typeof player.getCurrentTime !== "function") return;
+        if (player.getCurrentTime() >= LOOP_END_SECONDS) player.seekTo(0, true);
+      }, 500);
+    };
+
+    const createPlayer = () => {
+      if (cancelled || !iframeRef.current) return;
+      playerRef.current = new window.YT.Player(iframeRef.current, {
+        events: {
+          onStateChange: (e) => {
+            if (e.data === window.YT.PlayerState.PLAYING && !pollRef.current) startPolling(e.target);
+          },
+        },
+      });
+    };
+
+    if (window.YT?.Player) {
+      createPlayer();
+    } else {
+      if (!document.getElementById("youtube-iframe-api")) {
+        const script = document.createElement("script");
+        script.id = "youtube-iframe-api";
+        script.src = "https://www.youtube.com/iframe_api";
+        document.head.appendChild(script);
+      }
+      const prevReady = window.onYouTubeIframeAPIReady;
+      window.onYouTubeIframeAPIReady = () => {
+        prevReady?.();
+        createPlayer();
+      };
+    }
+
+    return () => {
+      cancelled = true;
+      if (pollRef.current) clearInterval(pollRef.current);
+      playerRef.current?.destroy?.();
+    };
+  }, [mounted, reduced]);
+
   if (!mounted || reduced) return null;
 
   return (
@@ -95,13 +160,16 @@ export default function HeroShowreel({ btnBottomPct }) {
     >
       <div className="absolute inset-0" style={{ containerType: "size" }}>
         <iframe
+          ref={iframeRef}
           className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
           style={{
             width: "max(135cqw, 240cqh)",
             height: "max(75.94cqw, 135cqh)",
             filter: "saturate(0.92) contrast(1.03) brightness(1.12)",
           }}
-          src="https://www.youtube-nocookie.com/embed/y_4g0q1_HnI?autoplay=1&mute=1&loop=1&playlist=y_4g0q1_HnI&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&disablekb=1&playsinline=1"
+          // enablejsapi=1: required for the postMessage API (above) to seek
+          // this player. No loop/playlist param — see the file-header note.
+          src="https://www.youtube-nocookie.com/embed/y_4g0q1_HnI?autoplay=1&mute=1&start=0&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&disablekb=1&playsinline=1&enablejsapi=1"
           title="TVF AI showreel"
           allow="autoplay; encrypted-media"
           frameBorder="0"
