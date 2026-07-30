@@ -124,6 +124,37 @@ const SYSTEMS = [
     linkLabel: "See it live",
     // href: "https://instagram.com/...",
   },
+  {
+    // handle is @itselannahart, display name "Elanna | Relationship & Love" —
+    // named for the card the way ParsecDaily is (a brand-style name, not the
+    // raw handle with its filler "its" prefix).
+    name: "ElannaHart",
+    variant: "solo",
+    blurb:
+      "A relationship-advice channel fronted by a synthetic presenter — scripted, delivered, and posted with no one behind the camera.",
+    specs: [
+      { k: "Presenter", v: "AI-generated" },
+      { k: "Publishing", v: "Automatic" },
+      { k: "Manual filming", v: "Zero" },
+    ],
+    caption: [
+      { g: "Presenter" },
+      { t: " — AI-generated. " },
+      { g: "Publishing" },
+      { t: " — automatic. " },
+      { g: "Zero" },
+      { t: " manual filming." },
+    ],
+    // the real @itselannahart profile screenshot, verbatim — same treatment
+    // as ParsecDaily above and for the same reason: fit="contain" shows the
+    // whole thing uncropped rather than losing the account's identity to a
+    // crop. Source: thumbnail-2.jpg at the repo root.
+    stackImage: "/work/elannahart-feed.jpg",
+    // No "live" flag: only 7 posts visible in the source screenshot, not
+    // enough to honestly back a "Live daily." claim the way ParsecDaily's
+    // higher post count does. No linkLabel/href either — no public URL
+    // confirmed for this one yet, same as ReelForge.
+  },
 ];
 
 /**
