@@ -48,15 +48,18 @@ export default function Footer() {
 
           <div>
             <p className="eyebrow mb-5">Studio</p>
-            {/* hit zones sized to the row pitch: expanding further than the
-                gap between rows would make neighboring zones overlap, which
-                trades a small target for an ambiguous one */}
-            <ul className="space-y-3.5">
+            {/* space-y-8, not the old space-y-3.5: that gap (14px) only had
+                room for a 6px hit-zone expansion on each side before
+                neighboring zones started overlapping, capping the real tap
+                target at 30px — short of the 44px minimum. Widening the row
+                pitch to 32px makes room for a full 14px expansion each way
+                (44px effective height) with 4px still free between zones. */}
+            <ul className="space-y-8">
               {[...NAV_LINKS.slice(1), CTA].map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="link-underline relative text-sm text-bone-dim transition-colors before:absolute before:-inset-x-2 before:-inset-y-1.5 hover:text-bone"
+                    className="link-underline relative text-sm text-bone-dim transition-colors before:absolute before:-inset-x-2 before:-inset-y-3.5 hover:text-bone"
                   >
                     {link.label}
                   </Link>
