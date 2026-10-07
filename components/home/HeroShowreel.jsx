@@ -26,14 +26,28 @@ import { useEffect, useState } from "react";
  * the edges the same way the iframe's 1.35 cqw/cqh overscan used to.
  *
  * What does the blending, outermost to innermost:
- *  • bottom mask: the whole layer — footage, scrims, grain — goes
- *    transparent right at the hero's bottom edge, so the live attractor
- *    underneath emerges *through* the fading footage rather than a
- *    solid-black band with filaments popping in abruptly. Held fully opaque
- *    until just below the button row (`btnBottomPct`, Hero.jsx's own
- *    measured position via ref + getBoundingClientRect, re-measured on
- *    resize — not a guessed percentage), so the attractor never shows
- *    through the footage anywhere near the text or buttons.
+ *  • bottom mask: the whole layer — footage, scrims, grain — fades to
+ *    transparent so the live attractor underneath emerges *through* the
+ *    footage rather than a solid-black band with filaments popping in
+ *    abruptly. Held fully opaque until just below the button row
+ *    (`metrics.btnBottom`, Hero.jsx's own measured position via ref +
+ *    getBoundingClientRect, re-measured on resize — not a guessed
+ *    percentage), so the attractor never shows through the footage anywhere
+ *    near the text or buttons.
+ *    The buttons can sit only ~64px above the hero's bottom edge, so a fade
+ *    that had to finish *at* that edge got squeezed into a few pixels and
+ *    read as a hard horizontal cut. So the layer bleeds past the hero's
+ *    bottom edge (into the empty space above the next section's heading —
+ *    CapabilitiesSection is `relative` so its copy paints over this), and
+ *    the fade runs the whole way down that runway on an ease-in-out curve
+ *    instead of linearly — a linear alpha ramp leaves visible creases where
+ *    it starts and stops. The bleed costs no reframing: the footage box
+ *    stays exactly hero-sized, and the bleed is filled by the scale(1.35)
+ *    overscan that was already rendering past the hero's bottom edge (just
+ *    clipped). How much of that overscan is real picture depends on the
+ *    window's shape — most of the source's shots have LETTERBOX bars baked
+ *    in — so `bleedFor` computes it per window and the fade ends just
+ *    short of the bar, never showing its hard edge.
  *  • entrance crossfade: opacity 0 → 1, much shorter now than the embed
  *    version's 1.2s delay — there's no third-party player to boot, just
  *    this origin's own file decoding, so a brief fade is enough to avoid
@@ -59,19 +73,60 @@ const GRAIN =
 // Fallback for the one render before Hero's measurement effect runs.
 const FALLBACK_BTN_PCT = 88;
 
-export default function HeroShowreel({ btnBottomPct }) {
+const SCALE = 1.35;
+// Black bars baked into the top and bottom of most of the source's shots:
+// 57px of its 720px frame each.
+const LETTERBOX = 57 / 720;
+
+// How many px of real picture (overscan minus the letterbox bar) the
+// footage renders below a hero of this size, less a few px of margin — how
+// far the layer can bleed without its fade running into the bar's edge.
+// object-cover fits the 16:9 frame to the taller of the box's own height
+// or its width's 16:9 height and crops it to the box (on wide windows that
+// crop eats into the bar, or past it); SCALE then grows the box about its
+// center.
+function bleedFor(width, height) {
+  const coverH = Math.max(height, (width * 9) / 16);
+  const pictureBelowCenter = Math.min(coverH * (0.5 - LETTERBOX), height / 2);
+  const pictureBottom = height / 2 + SCALE * pictureBelowCenter;
+  return Math.max(0, Math.floor(pictureBottom - height - 4));
+}
+
+// Opaque → transparent between two positions on an ease-in-out (cosine)
+// curve, written out as stops since CSS gradients only interpolate linearly.
+function easedFade(start, end, unit, steps = 12) {
+  const stops = [];
+  for (let i = 0; i <= steps; i++) {
+    const t = i / steps;
+    const alpha = (1 + Math.cos(Math.PI * t)) / 2;
+    stops.push(`rgba(0,0,0,${alpha.toFixed(3)}) ${(start + (end - start) * t).toFixed(2)}${unit}`);
+  }
+  return `linear-gradient(to bottom, ${stops.join(", ")})`;
+}
+
+export default function HeroShowreel({ metrics }) {
   const [mounted, setMounted] = useState(false);
   const [reduced, setReduced] = useState(false);
   const [ready, setReady] = useState(false); // cue the crossfade in
 
-  const btnPct = btnBottomPct ?? FALLBACK_BTN_PCT;
+  const btnPct = metrics ? (metrics.btnBottom / metrics.height) * 100 : FALLBACK_BTN_PCT;
+  const bleed = metrics ? bleedFor(metrics.width, metrics.height) : 0;
   // Scrim (headline contrast) fades out right at the buttons' own bottom
-  // edge, gone 9 points later. Attractor reveal waits an extra 3 points
-  // past that — so the footage settles back to full brightness first,
-  // then the attractor starts emerging — and is gone by 100% regardless of
-  // where that lands, since the hero itself ends there.
-  const scrimFade = `linear-gradient(to bottom, black ${btnPct}%, transparent ${btnPct + 9}%)`;
-  const mask = `linear-gradient(to bottom, black ${Math.min(btnPct + 3, 99)}%, transparent 100%)`;
+  // edge, gone 9 points later — capped at the hero box's own bottom, since
+  // the scrims end there and any strength left would show as a seam where
+  // the bled footage continues unscrimmed. Attractor reveal waits an extra
+  // 3% of the hero past the buttons — so the footage settles back to full
+  // brightness first, then the attractor starts emerging — and runs to the
+  // bottom of the bleed. In px once measured, since the layer is taller
+  // than the hero by a px amount.
+  const scrimFade = `linear-gradient(to bottom, black ${btnPct}%, transparent ${Math.min(btnPct + 9, 100)}%)`;
+  const mask = metrics
+    ? easedFade(
+        Math.min(metrics.btnBottom + metrics.height * 0.03, metrics.height),
+        metrics.height + bleed,
+        "px"
+      )
+    : easedFade(Math.min(btnPct + 3, 99), 100, "%");
 
   useEffect(() => {
     setMounted(true);
@@ -91,48 +146,57 @@ export default function HeroShowreel({ btnBottomPct }) {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none absolute inset-0 -z-10 hidden overflow-hidden transition-opacity duration-[1500ms] ease-out lg:block"
+      className="pointer-events-none absolute inset-x-0 top-0 -z-10 hidden overflow-hidden transition-opacity duration-[1500ms] ease-out lg:block"
       style={{
+        bottom: -bleed,
         opacity: ready ? 1 : 0,
         maskImage: mask,
         WebkitMaskImage: mask,
       }}
     >
-      <video
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="auto"
-        className="absolute inset-0 h-full w-full object-cover"
-        style={{
-          transform: "scale(1.35)",
-          filter: "saturate(0.92) contrast(1.03) brightness(1.12)",
-        }}
-        src="/home/showreel.mp4"
-      />
+      {/* hero-sized, not bled-layer-sized: keeps the footage's framing and
+          every hero-relative gradient below exactly where they were. Not
+          clipped itself — the video's overscan past its bottom edge is what
+          fills the bleed. */}
+      <div className="absolute inset-x-0 top-0" style={{ bottom: bleed }}>
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          className="absolute inset-0 h-full w-full object-cover"
+          style={{
+            transform: `scale(${SCALE})`,
+            filter: "saturate(0.92) contrast(1.03) brightness(1.12)",
+          }}
+          src="/home/showreel.mp4"
+        />
 
-      {/* the attractor's own dressing, re-applied over the footage — lighter
-          than SceneBackground's own scrims: that layer has to fight a busy
-          animating attractor at full strength, this one just needs to keep
-          the headline readable over calmer footage. Masked (scrimFade) to
-          fade out right at the buttons' own bottom edge — no text down
-          there to protect. */}
-      <div
-        className="absolute inset-0"
-        style={{ maskImage: scrimFade, WebkitMaskImage: scrimFade }}
-      >
-        <div className="absolute inset-0 bg-ink-900/10" />
-        <div className="absolute inset-0 bg-gradient-to-r from-ink-900/45 via-ink-900/18 to-transparent" />
+        {/* the attractor's own dressing, re-applied over the footage — lighter
+            than SceneBackground's own scrims: that layer has to fight a busy
+            animating attractor at full strength, this one just needs to keep
+            the headline readable over calmer footage. Masked (scrimFade) to
+            fade out right at the buttons' own bottom edge — no text down
+            there to protect. */}
+        <div
+          className="absolute inset-0"
+          style={{ maskImage: scrimFade, WebkitMaskImage: scrimFade }}
+        >
+          <div className="absolute inset-0 bg-ink-900/10" />
+          <div className="absolute inset-0 bg-gradient-to-r from-ink-900/45 via-ink-900/18 to-transparent" />
+        </div>
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage:
+              "radial-gradient(55% 45% at 70% 35%, rgba(201,146,61,0.10), transparent 65%)",
+          }}
+        />
+        <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-ink-900/85 to-transparent" />
       </div>
-      <div
-        className="absolute inset-0"
-        style={{
-          backgroundImage:
-            "radial-gradient(55% 45% at 70% 35%, rgba(201,146,61,0.10), transparent 65%)",
-        }}
-      />
-      <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-ink-900/85 to-transparent" />
+      {/* full bled height, so the grain fades out with the footage and hands
+          over to SceneBackground's own grain underneath without a seam */}
       <div className="absolute inset-0 opacity-[0.035]" style={{ backgroundImage: GRAIN }} />
     </div>
   );

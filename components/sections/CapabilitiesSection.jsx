@@ -5,7 +5,10 @@ import CapabilitiesScroll from "@/components/capabilities/CapabilitiesScroll";
 
 export default function CapabilitiesSection() {
   return (
-    <div id="capabilities" className="scroll-mt-24">
+    // relative: the hero showreel's fade bleeds down behind this section's
+    // heading, and the hero is positioned — so this has to be too, or the
+    // static heading would paint underneath the footage instead of over it.
+    <div id="capabilities" className="relative scroll-mt-24">
       <SectionHeader
         center
         eyebrow="What we make"

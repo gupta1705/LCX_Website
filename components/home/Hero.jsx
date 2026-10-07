@@ -32,9 +32,11 @@ export default function Hero() {
   // own rendered position instead of a percentage guessed from a handful of
   // test window sizes — that guess held for the sizes it was checked at and
   // missed the user's actual window, leaving the fade starting well below
-  // where the buttons actually end. null until measured; HeroShowreel keeps
-  // its own fallback for that first tick.
-  const [btnBottomPct, setBtnBottomPct] = useState(null);
+  // where the buttons actually end. The section's own size comes along too,
+  // for HeroShowreel to work out how far its fade can bleed past the hero.
+  // null until measured; HeroShowreel keeps its own fallback for that first
+  // tick.
+  const [showreelMetrics, setShowreelMetrics] = useState(null);
 
   useEffect(() => {
     const id = setInterval(() => setIndex((i) => (i + 1) % WORDS.length), WORD_INTERVAL);
@@ -48,21 +50,37 @@ export default function Hero() {
       if (!section || !cta) return;
       const sectionRect = section.getBoundingClientRect();
       const ctaRect = cta.getBoundingClientRect();
-      setBtnBottomPct(((ctaRect.bottom - sectionRect.top) / sectionRect.height) * 100);
+      // On mount the button row is still mid-entrance, translated 24px down
+      // (`item`'s hidden y) — subtract that so this is where it settles.
+      const transform = getComputedStyle(cta).transform;
+      const ty = transform === "none" ? 0 : new DOMMatrixReadOnly(transform).m42;
+      setShowreelMetrics({
+        btnBottom: ctaRect.bottom - ty - sectionRect.top,
+        width: sectionRect.width,
+        height: sectionRect.height,
+      });
     };
+    // Observing the section rather than window resize: also catches size
+    // changes that don't come from the window (font swap, svh settling).
+    // Measured once up front too — the observer's first callback waits for
+    // a rendered frame, which a background tab doesn't get.
     measure();
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
+    const ro = new ResizeObserver(measure);
+    ro.observe(sectionRef.current);
+    return () => ro.disconnect();
   }, []);
 
   return (
     <section
       ref={sectionRef}
-      className="relative isolate flex min-h-[100svh] items-center overflow-hidden"
+      className="relative isolate flex min-h-[100svh] items-center overflow-x-clip"
     >
       {/* isolate keeps the showreel's -z-10 inside THIS stacking context —
-          above the fixed z-0 attractor, below the hero copy */}
-      <HeroShowreel btnBottomPct={btnBottomPct} />
+          above the fixed z-0 attractor, below the hero copy.
+          overflow-x-clip, not overflow-hidden: the showreel deliberately
+          bleeds below this section's bottom edge so its fade-out has room
+          (see HeroShowreel), which a vertical clip would cut back off. */}
+      <HeroShowreel metrics={showreelMetrics} />
       <div className="container-px grid w-full grid-cols-12 pb-16 pt-32">
         <motion.div
           variants={stagger}
