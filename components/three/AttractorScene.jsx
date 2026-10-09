@@ -2,8 +2,8 @@
 
 import { useEffect, useMemo, useRef } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
 import * as THREE from "three";
+import { GlowPipeline, VIGNETTE_GLSL } from "./GlowPipeline";
 
 /* ------------------------------------------------------------------ */
 /*  ONE Lorenz attractor, treated like a camera subject (the Axiom     */
@@ -176,6 +176,98 @@ const HEAD_SPEED = 1200; // curve vertices advanced per second (~7.5s per lap)
 const GLOW_TAIL = 340; // length of the glowing arc, in vertices
 const GLOW_MAX = 0.65; // peak brightness of the travel glow (kept slight)
 
+// Shared between the line shader and the render loop: the glow pass renders
+// the scene un-vignetted (the composite vignettes the glow itself), the
+// screen pass with it.
+const SHARED = {
+  uVignette: { value: 1 },
+  uResolution: { value: new THREE.Vector2(1, 1) },
+};
+const VIGNETTE_OFFSET = 0.25;
+const VIGNETTE_DARKNESS = 0.85;
+
+/*
+ * The comet glow, cursor highlight and cursor "eye" all run here, per vertex
+ * on the GPU. They used to run as a 9000-iteration JS loop every frame that
+ * rewrote the colour buffer (and the position buffer while the eye was open)
+ * and re-uploaded it — real CPU and bus cost on weak machines. Now the curve
+ * is uploaded once and each frame only sets a handful of uniforms. The maths
+ * is the same as that loop's, line for line.
+ */
+const LINE_VERT = /* glsl */ `
+attribute float aIndex;
+attribute vec3 aColor;
+uniform float uHead;
+uniform float uHeadRamp;
+uniform float uGlowTail;
+uniform float uGlowMax;
+uniform vec3 uRayO;
+uniform vec3 uRayD;
+uniform float uBoost;
+uniform float uHlR;
+uniform float uRepel;
+uniform float uRpR;
+uniform float uVdR;
+uniform vec3 uHi;
+varying vec3 vColor;
+varying float vFogDepth;
+void main() {
+  vec3 p = position;
+
+  // perpendicular offset from the cursor sight-line
+  vec3 o = p - uRayO;
+  vec3 pp = o - dot(o, uRayD) * uRayD;
+  float d2 = dot(pp, pp);
+
+  // travelling comet: brightest at the head, fading back along the tail
+  float d = uHead - aIndex;
+  float gl = 0.0;
+  if (d >= 0.0 && d <= uGlowTail) {
+    float q = 1.0 - d / uGlowTail;
+    gl = q * q * uGlowMax * uHeadRamp;
+  }
+  // cursor proximity highlight
+  float br = 0.0;
+  if (uBoost > 0.02 && d2 < uHlR * uHlR) {
+    float dd = 1.0 - sqrt(d2) / uHlR;
+    br = dd * dd * uBoost;
+  }
+  vColor = mix(aColor, uHi, min(gl + br, 1.0));
+
+  // the eye: perpendicular distance remapped monotonically from [0, rpR]
+  // onto [vdR, rpR], so filaments inside the influence radius land on a
+  // clean circle around the cursor
+  if (uRepel > 0.01 && d2 < uRpR * uRpR && d2 > 1e-10) {
+    float rd = sqrt(d2);
+    float t = rd / uRpR;
+    float target = uVdR + (uRpR - uVdR) * t * t;
+    p += pp * ((target / rd - 1.0) * uRepel);
+  }
+
+  vec4 mv = modelViewMatrix * vec4(p, 1.0);
+  vFogDepth = -mv.z;
+  gl_Position = projectionMatrix * mv;
+}`;
+
+const LINE_FRAG = /* glsl */ `
+uniform vec3 uFogColor;
+uniform float uFogNear;
+uniform float uFogFar;
+uniform float uOpacity;
+uniform float uVignette;
+uniform vec2 uResolution;
+varying vec3 vColor;
+varying float vFogDepth;
+${VIGNETTE_GLSL}
+void main() {
+  vec3 c = mix(vColor, uFogColor, smoothstep(uFogNear, uFogFar, vFogDepth));
+  if (uVignette > 0.5) {
+    c *= vignette(gl_FragCoord.xy / uResolution, ${VIGNETTE_OFFSET.toFixed(2)}, ${VIGNETTE_DARKNESS.toFixed(2)});
+  }
+  gl_FragColor = vec4(c, uOpacity);
+  #include <colorspace_fragment>
+}`;
+
 function LorenzAttractor() {
   const group = useRef();
   const cursor = useRef();
@@ -184,20 +276,13 @@ function LorenzAttractor() {
   const lastScrollY = useRef(0); // last sampled scrollY, for scroll-velocity
   const swirl = useRef(0); // smoothed scroll speed → spin/compression while moving
   const repel = useRef(0); // eased cursor-repulsion strength (the eye opening)
-  const wasRepel = useRef(false); // were positions displaced last frame?
   const hasPointer = useRef(false); // set on the first real pointer movement
   const vel = useRef(0); // smoothed pointer velocity (event-decoupled)
   const prevPointer = useRef({ x: 0, y: 0 });
+  const scrollMax = useRef(0); // scrollable height, cached — see below
   const { pointer, viewport, camera } = useThree();
 
-  const base = useMemo(buildLorenz, []); // static curve — never rebuilt
-  const drawPos = useMemo(() => base.slice(), [base]); // displaced positions actually drawn
-  const baseColors = useMemo(goldColors, []);
-  const colors = useMemo(() => baseColors.slice(), [baseColors]); // working (mutated) colors
   const tmp = useMemo(() => new THREE.Vector3(), []);
-  const rayO = useMemo(() => new THREE.Vector3(), []); // camera position, local space
-  const rayD = useMemo(() => new THREE.Vector3(), []); // cursor sight-line, local space
-  const hi = useMemo(() => new THREE.Color("#fff4d6"), []);
   // repulsion is a hover interaction — only meaningful for mouse/trackpad
   const fine = useMemo(
     () => typeof window !== "undefined" && window.matchMedia("(pointer: fine)").matches,
@@ -205,15 +290,37 @@ function LorenzAttractor() {
   );
 
   const line = useMemo(() => {
+    const base = buildLorenz(); // static curve — uploaded once, never rebuilt
+    const index = new Float32Array(COUNT);
+    for (let i = 0; i < COUNT; i++) index[i] = i;
     const geo = new THREE.BufferGeometry();
-    // colors mutate every frame, positions while the eye is open — hint the driver
-    geo.setAttribute("position", new THREE.BufferAttribute(drawPos, 3).setUsage(THREE.DynamicDrawUsage));
-    geo.setAttribute("color", new THREE.BufferAttribute(colors, 3).setUsage(THREE.DynamicDrawUsage));
-    geo.frustumCulled = false;
-    const mat = new THREE.LineBasicMaterial({
-      vertexColors: true,
+    geo.setAttribute("position", new THREE.BufferAttribute(base, 3));
+    geo.setAttribute("aColor", new THREE.BufferAttribute(goldColors(), 3));
+    geo.setAttribute("aIndex", new THREE.BufferAttribute(index, 1));
+    const fog = new THREE.Color("#0a0908");
+    const mat = new THREE.ShaderMaterial({
+      uniforms: {
+        uHead: { value: 0 },
+        uHeadRamp: { value: 0 },
+        uGlowTail: { value: GLOW_TAIL },
+        uGlowMax: { value: GLOW_MAX },
+        uRayO: { value: new THREE.Vector3() },
+        uRayD: { value: new THREE.Vector3(0, 0, -1) },
+        uBoost: { value: 0 },
+        uHlR: { value: HIGHLIGHT_R },
+        uRepel: { value: 0 },
+        uRpR: { value: REPEL_R },
+        uVdR: { value: VOID_R },
+        uHi: { value: new THREE.Color("#fff4d6") },
+        uFogColor: { value: fog },
+        uFogNear: { value: 9 },
+        uFogFar: { value: 22 },
+        uOpacity: { value: 0.85 },
+        ...SHARED,
+      },
+      vertexShader: LINE_VERT,
+      fragmentShader: LINE_FRAG,
       transparent: true,
-      opacity: 0.85,
       blending: THREE.AdditiveBlending,
       depthWrite: false,
       toneMapped: false,
@@ -221,7 +328,7 @@ function LorenzAttractor() {
     const l = new THREE.Line(geo, mat);
     l.frustumCulled = false; // the choreography swings it far off-centre; never cull
     return l;
-  }, [drawPos, colors]);
+  }, []);
 
   // Release the imperatively-created buffers/material on unmount or HMR.
   useEffect(() => {
@@ -248,13 +355,31 @@ function LorenzAttractor() {
     };
   }, []);
 
+  // The page's scrollable height, kept current by a ResizeObserver instead
+  // of read every frame — reading scrollHeight inside the render loop forced
+  // a synchronous layout whenever anything on the page had changed.
+  useEffect(() => {
+    const update = () => {
+      scrollMax.current = document.documentElement.scrollHeight - window.innerHeight;
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(document.body);
+    window.addEventListener("resize", update);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", update);
+    };
+  }, []);
+
   useFrame((state, delta) => {
     const g = group.current;
     if (!g) return;
     const t = state.clock.elapsedTime;
+    const u = line.material.uniforms;
 
     // --- scroll progress + velocity (screens/sec), read live each frame ---
-    const max = document.documentElement.scrollHeight - window.innerHeight;
+    const max = scrollMax.current;
     const sp = max > 0 ? Math.min(Math.max(window.scrollY / max, 0), 1) : 0;
     const sy = Math.min(Math.max(window.scrollY, 0), Math.max(max, 0));
     const vh = Math.max(window.innerHeight, 1);
@@ -319,106 +444,28 @@ function LorenzAttractor() {
     //     camera through the dot's exact world position, so the parted tube is
     //     dead-centred under the dot at every group depth and travel position ---
     g.updateWorldMatrix(true, false);
-    rayO.copy(camera.position);
-    g.worldToLocal(rayO);
+    u.uRayO.value.copy(camera.position);
+    g.worldToLocal(u.uRayO.value);
     tmp.set(cx, cy, glowZ);
     g.worldToLocal(tmp);
-    rayD.copy(tmp).sub(rayO).normalize();
-    const boost = Math.min(speed * 0.7, 1);
-    const highlighting = boost > 0.02;
+    u.uRayD.value.copy(tmp).sub(u.uRayO.value).normalize();
+    u.uBoost.value = Math.min(speed * 0.7, 1);
 
     // advance the travelling glow head; it runs past the end of the OPEN
     // polyline so the tail drains off naturally, then is reborn at the start
     headIndex.current = (headIndex.current + delta * HEAD_SPEED) % (COUNT + GLOW_TAIL);
-    const headPos = headIndex.current;
-    const headRamp = Math.min(headPos / GLOW_TAIL, 1); // fade in at birth, no pop
+    u.uHead.value = headIndex.current;
+    u.uHeadRamp.value = Math.min(headIndex.current / GLOW_TAIL, 1); // fade in at birth, no pop
 
-    // cursor repulsion: filaments part around the pointer, opening an "eye"
-    // that eases closed when the pointer leaves. Positions are re-uploaded
-    // only while the eye is open or closing — the base curve is static.
+    // cursor repulsion eases open/closed; world-space radii → local units so
+    // the eye and highlight stay a constant size on screen at any zoom
     const repelTarget = fine && hasPointer.current ? 1 : 0;
     repel.current += (repelTarget - repel.current) * Math.min(delta * 3.5, 1);
-    const repelOn = repel.current > 0.01;
-    const posDirty = repelOn || wasRepel.current;
-
-    // world-space cursor radii → local units (constant size on screen at any zoom)
+    u.uRepel.value = repel.current;
     const sInv = sNow > 1e-4 ? 1 / sNow : 1;
-    const hlR = HIGHLIGHT_R * sInv;
-    const hl2 = hlR * hlR;
-    const rpR = REPEL_R * sInv;
-    const rp2 = rpR * rpR;
-    const vdR = VOID_R * sInv;
-
-    // colours refresh every frame so the glow can travel — the moving comet
-    // arc plus the cursor-proximity highlight, both easing the base gold → cream.
-    // The highlight and the eye share one measurement: each vertex's
-    // perpendicular offset from the cursor sight-line, so both effects are
-    // depth-independent and stay centred under the dot.
-    const rox = rayO.x, roy = rayO.y, roz = rayO.z;
-    const rdx = rayD.x, rdy = rayD.y, rdz = rayD.z;
-    const measure = highlighting || posDirty;
-    for (let v = 0, j = 0; v < COUNT; v++, j += 3) {
-      const px0 = base[j], py0 = base[j + 1], pz0 = base[j + 2];
-
-      // perpendicular offset from the cursor ray
-      let d2 = Infinity, ppx = 0, ppy = 0, ppz = 0;
-      if (measure) {
-        const ox = px0 - rox, oy = py0 - roy, oz = pz0 - roz;
-        const tt = ox * rdx + oy * rdy + oz * rdz;
-        ppx = ox - tt * rdx;
-        ppy = oy - tt * rdy;
-        ppz = oz - tt * rdz;
-        d2 = ppx * ppx + ppy * ppy + ppz * ppz;
-      }
-
-      // travelling comet: brightest at the head, fading back along the tail
-      const d = headPos - v;
-      let gl = 0;
-      if (d >= 0 && d <= GLOW_TAIL) {
-        const q = 1 - d / GLOW_TAIL;
-        gl = q * q * GLOW_MAX * headRamp;
-      }
-      // cursor proximity highlight
-      let br = 0;
-      if (highlighting && d2 < hl2) {
-        const dd = 1 - Math.sqrt(d2) / hlR;
-        br = dd * dd * boost;
-      }
-      let tot = gl + br;
-      if (tot > 1) tot = 1;
-      const b0 = baseColors[j], b1 = baseColors[j + 1], b2 = baseColors[j + 2];
-      colors[j] = b0 + (hi.r - b0) * tot;
-      colors[j + 1] = b1 + (hi.g - b1) * tot;
-      colors[j + 2] = b2 + (hi.b - b2) * tot;
-
-      // Part the filaments out of the sight-line cylinder (the eye).
-      //
-      // The perpendicular distance rd is remapped MONOTONICALLY from
-      // [0, rpR] onto [vdR, rpR]: every filament inside the influence radius is
-      // lifted out and lands on a clean circle around the cursor. The old curve
-      // (rd + push*(1-rd/rpR)^2) was NOT monotonic — it dipped from 0.85 at the
-      // centre down to 0.74 and back up, so vertices folded over each other and
-      // the rim came out as straight kinks instead of an arc. Squaring t keeps
-      // the pile-up at the rim that makes the edge read bright.
-      if (posDirty) {
-        let px = px0, py = py0, pz = pz0;
-        if (repelOn && d2 < rp2 && d2 > 1e-10) {
-          const rd = Math.sqrt(d2);
-          const t = rd / rpR; // 0 on the ray → 1 at the influence edge
-          const target = vdR + (rpR - vdR) * t * t; // monotonic: vdR → rpR
-          const k = (target / rd - 1) * repel.current; // eased open/close
-          px += ppx * k;
-          py += ppy * k;
-          pz += ppz * k;
-        }
-        drawPos[j] = px;
-        drawPos[j + 1] = py;
-        drawPos[j + 2] = pz;
-      }
-    }
-    if (posDirty) line.geometry.attributes.position.needsUpdate = true;
-    wasRepel.current = repelOn;
-    line.geometry.attributes.color.needsUpdate = true;
+    u.uHlR.value = HIGHLIGHT_R * sInv;
+    u.uRpR.value = REPEL_R * sInv;
+    u.uVdR.value = VOID_R * sInv;
   });
 
   return (
@@ -434,6 +481,49 @@ function LorenzAttractor() {
       </mesh>
     </>
   );
+}
+
+// Takes over R3F's render (priority 1 — runs after the attractor's own
+// frame update): glow pass into the quarter-res mip chain, sharp scene
+// straight to the screen, then the glow composited on top. Threshold,
+// smoothing and radius are the old <Bloom> props; intensity is lower than
+// its 1.05 to match its look from the lower-res source (see GlowPipeline).
+function GlowRenderer() {
+  const { gl, scene, camera, size, viewport } = useThree();
+  const pipeline = useMemo(
+    () =>
+      new GlowPipeline({
+        threshold: 0.14,
+        smoothing: 0.9,
+        radius: 0.75,
+        intensity: 0.55,
+        vignetteOffset: VIGNETTE_OFFSET,
+        vignetteDarkness: VIGNETTE_DARKNESS,
+      }),
+    [],
+  );
+
+  useEffect(() => () => pipeline.dispose(), [pipeline]);
+
+  useEffect(() => {
+    pipeline.setSize(size.width, size.height);
+    gl.getDrawingBufferSize(SHARED.uResolution.value);
+  }, [gl, pipeline, size.width, size.height, viewport.dpr]);
+
+  useFrame(() => {
+    const autoClear = gl.autoClear;
+    gl.autoClear = false;
+    SHARED.uVignette.value = 0;
+    pipeline.renderGlow(gl, scene, camera);
+    SHARED.uVignette.value = 1;
+    gl.setRenderTarget(null);
+    gl.clear();
+    gl.render(scene, camera);
+    pipeline.composite(gl);
+    gl.autoClear = autoClear;
+  }, 1);
+
+  return null;
 }
 
 function FloatingDust({ count = 200 }) {
@@ -467,15 +557,9 @@ function FloatingDust({ count = 200 }) {
 }
 
 export default function AttractorScene() {
-  // Lighter pixel ceiling on phones. Composer MSAA is off everywhere (bloom's
-  // mipmapBlur already softens the thin additive lines), and the composer's
-  // buffers are 8-bit instead of its HalfFloat default. Measured on an Intel
-  // UHD iGPU (where browsers on hybrid-GPU laptops run) at 1920x1000: 4x MSAA
-  // + HalfFloat held the whole page to ~30fps with >80% of frames janky;
-  // dropping both gets it to ~57fps for no visible change. Note: with the
-  // always-on EffectComposer the scene renders into the composer's target, so
-  // MSAA is controlled by its `multisampling` prop — canvas antialias is left
-  // off since the default framebuffer only receives the final blit.
+  // Lighter pixel ceiling on phones. Canvas antialias stays off: the glow
+  // already softens the thin additive lines, and MSAA was measured as one of
+  // the two biggest costs on integrated GPUs (see GlowPipeline for the other).
   const isMobile =
     typeof window !== "undefined" &&
     (window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 768);
@@ -492,10 +576,7 @@ export default function AttractorScene() {
       <fog attach="fog" args={["#0a0908", 9, 22]} />
       <LorenzAttractor />
       <FloatingDust />
-      <EffectComposer multisampling={0} frameBufferType={THREE.UnsignedByteType}>
-        <Bloom intensity={1.05} luminanceThreshold={0.14} luminanceSmoothing={0.9} mipmapBlur radius={0.75} />
-        <Vignette eskil={false} offset={0.25} darkness={0.85} />
-      </EffectComposer>
+      <GlowRenderer />
     </Canvas>
   );
 }
