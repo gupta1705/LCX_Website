@@ -467,8 +467,12 @@ function FloatingDust({ count = 200 }) {
 }
 
 export default function AttractorScene() {
-  // Lighter pipeline on phones: lower pixel ceiling + no composer MSAA (bloom's
-  // mipmapBlur already softens the thin additive lines). Note: with the
+  // Lighter pixel ceiling on phones. Composer MSAA is off everywhere (bloom's
+  // mipmapBlur already softens the thin additive lines), and the composer's
+  // buffers are 8-bit instead of its HalfFloat default. Measured on an Intel
+  // UHD iGPU (where browsers on hybrid-GPU laptops run) at 1920x1000: 4x MSAA
+  // + HalfFloat held the whole page to ~30fps with >80% of frames janky;
+  // dropping both gets it to ~57fps for no visible change. Note: with the
   // always-on EffectComposer the scene renders into the composer's target, so
   // MSAA is controlled by its `multisampling` prop — canvas antialias is left
   // off since the default framebuffer only receives the final blit.
@@ -488,7 +492,7 @@ export default function AttractorScene() {
       <fog attach="fog" args={["#0a0908", 9, 22]} />
       <LorenzAttractor />
       <FloatingDust />
-      <EffectComposer multisampling={isMobile ? 0 : 4}>
+      <EffectComposer multisampling={0} frameBufferType={THREE.UnsignedByteType}>
         <Bloom intensity={1.05} luminanceThreshold={0.14} luminanceSmoothing={0.9} mipmapBlur radius={0.75} />
         <Vignette eskil={false} offset={0.25} darkness={0.85} />
       </EffectComposer>
