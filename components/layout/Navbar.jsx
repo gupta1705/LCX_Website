@@ -8,7 +8,7 @@ import Magnetic from "@/components/ui/Magnetic";
 import ActionButton from "@/components/ui/ActionButton";
 import { NAV_LINKS, CTA, SITE } from "@/lib/site";
 
-// All five destinations, numbered — tab names unchanged. Single-page anchors.
+// Section destinations, numbered. Single-page anchors.
 const MENU_ITEMS = [...NAV_LINKS, CTA];
 // Placeholder hrefs — swap for real profile URLs when available.
 const SOCIALS = [

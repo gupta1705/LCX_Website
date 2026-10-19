@@ -3,6 +3,7 @@ import CapabilitiesSection from "@/components/sections/CapabilitiesSection";
 import WorkSection from "@/components/sections/WorkSection";
 import AboutSection from "@/components/sections/AboutSection";
 import ContactSection from "@/components/sections/ContactSection";
+import ServicesSection from "@/components/sections/ServicesSection";
 
 // Single-page site — the nav tabs smooth-scroll to these anchored sections.
 // Home is just the hero (the one-liner lives in it); the depth lives in the
@@ -14,6 +15,7 @@ export default function HomePage() {
         <Hero />
       </div>
       <CapabilitiesSection />
+      <ServicesSection />
       <WorkSection />
       <AboutSection />
       <ContactSection />

@@ -4,9 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import { Check, ChevronDown } from "lucide-react";
 import ActionButton from "@/components/ui/ActionButton";
 import { SITE } from "@/lib/site";
+import { SERVICE_GROUPS } from "@/lib/services";
 
 // Single-select per the brief. "Not sure" is a valid, first-class choice.
-const NEEDS = ["Marketing", "Video", "Images", "Automation", "Not sure"];
 const BUDGETS = ["< $10k", "$10k – $25k", "$25k – $50k", "$50k+", "Not sure yet"];
 
 const field =
@@ -122,11 +122,14 @@ export default function StartProjectForm() {
               <option value="" disabled>
                 Select one
               </option>
-              {NEEDS.map((n) => (
-                <option key={n} value={n} className="bg-ink-800 text-bone">
-                  {n}
-                </option>
+              {SERVICE_GROUPS.map((group) => (
+                <optgroup key={group.id} label={group.title} className="bg-ink-800 text-bone">
+                  {group.services.map((service) => (
+                    <option key={service.name} value={service.name}>{service.name}</option>
+                  ))}
+                </optgroup>
               ))}
+              <option value="Not sure" className="bg-ink-800 text-bone">Not sure</option>
             </select>
             <ChevronDown
               aria-hidden="true"
