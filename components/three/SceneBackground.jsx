@@ -13,6 +13,22 @@ export default function SceneBackground() {
   const [reduced, setReduced] = useState(false);
   const [ready, setReady] = useState(false); // canvas has drawn → cue the fade-in
   const sceneRef = useRef(null);
+  const [active, setActive] = useState(false);
+
+  useEffect(() => {
+    let inView = false;
+    const sync = () => setActive(inView && !document.hidden);
+    const observer = new IntersectionObserver(([entry]) => {
+      inView = entry.isIntersecting && entry.intersectionRatio > 0;
+      sync();
+    }, { threshold: [0, 0.001] });
+    observer.observe(sceneRef.current);
+    document.addEventListener("visibilitychange", sync);
+    return () => {
+      observer.disconnect();
+      document.removeEventListener("visibilitychange", sync);
+    };
+  }, []);
 
   useEffect(() => {
     setMounted(true);
@@ -65,6 +81,7 @@ export default function SceneBackground() {
       ref={sceneRef}
       aria-hidden="true"
       data-scene-background
+      data-scene-active={active}
       className="pointer-events-none fixed inset-0 z-0"
       style={{ transform: "translateY(100svh)" }}
     >
@@ -84,7 +101,7 @@ export default function SceneBackground() {
           style={{ opacity: ready ? 0.7 : 0 }}
           className="absolute inset-0 transition-opacity duration-[1200ms] ease-out"
         >
-          <AttractorScene />
+          <AttractorScene active={active} />
         </div>
       )}
 

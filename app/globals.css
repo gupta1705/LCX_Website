@@ -75,6 +75,7 @@ body {
     color: transparent;
     filter: drop-shadow(0 0 7px rgba(241, 208, 138, 0.35));
     animation: gold-flow 3.6s ease-in-out infinite;
+    animation-play-state: var(--hero-animation-state, running);
   }
 
   /* Text link with an underline that draws in from the left on hover/focus

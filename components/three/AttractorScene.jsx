@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { GlowPipeline, VIGNETTE_GLSL } from "./GlowPipeline";
 import { topEdgeOffset } from "./placeAttractorBelowEdge.mjs";
+import { scenePixelRatio } from "./renderBudget.mjs";
 
 /* ------------------------------------------------------------------ */
 /*  ONE Lorenz attractor, treated like a camera subject (the Axiom     */
@@ -269,7 +270,7 @@ void main() {
   #include <colorspace_fragment>
 }`;
 
-function LorenzAttractor() {
+function LorenzAttractor({ active }) {
   const entrance = useRef();
   const group = useRef();
   const cursor = useRef();
@@ -378,6 +379,8 @@ function LorenzAttractor() {
   }, []);
 
   useFrame((state, delta) => {
+    if (!active) return;
+    delta = Math.min(delta, 0.05); // Resume smoothly after an offscreen/tab pause.
     const g = group.current;
     if (!g) return;
     const t = state.clock.elapsedTime;
@@ -507,8 +510,10 @@ function LorenzAttractor() {
 // straight to the screen, then the glow composited on top. Threshold,
 // smoothing and radius are the old <Bloom> props; intensity is lower than
 // its 1.05 to match its look from the lower-res source (see GlowPipeline).
-function GlowRenderer() {
+function GlowRenderer({ active }) {
   const { gl, scene, camera, size, viewport } = useThree();
+  const glowAge = useRef(Infinity);
+  useEffect(() => { glowAge.current = Infinity; }, [active]);
   const pipeline = useMemo(
     () =>
       new GlowPipeline({
@@ -527,13 +532,21 @@ function GlowRenderer() {
   useEffect(() => {
     pipeline.setSize(size.width, size.height);
     gl.getDrawingBufferSize(SHARED.uResolution.value);
+    glowAge.current = Infinity;
   }, [gl, pipeline, size.width, size.height, viewport.dpr]);
 
-  useFrame(() => {
+  useFrame((_, delta) => {
+    if (!active) return;
     const autoClear = gl.autoClear;
     gl.autoClear = false;
-    SHARED.uVignette.value = 0;
-    pipeline.renderGlow(gl, scene, camera);
+    // The soft halo can refresh at 30 Hz while the crisp geometry and pointer
+    // keep the display's full frame rate. Reuse its texture between updates.
+    glowAge.current += delta;
+    if (glowAge.current >= 1 / 30) {
+      SHARED.uVignette.value = 0;
+      pipeline.renderGlow(gl, scene, camera);
+      glowAge.current = Number.isFinite(glowAge.current) ? glowAge.current % (1 / 30) : 0;
+    }
     SHARED.uVignette.value = 1;
     gl.setRenderTarget(null);
     gl.clear();
@@ -545,7 +558,7 @@ function GlowRenderer() {
   return null;
 }
 
-function FloatingDust({ count = 200 }) {
+function FloatingDust({ count = 200, active }) {
   const ref = useRef();
   const positions = useMemo(() => {
     const arr = new Float32Array(count * 3);
@@ -562,7 +575,7 @@ function FloatingDust({ count = 200 }) {
   }, [count]);
 
   useFrame((state, delta) => {
-    if (ref.current) ref.current.rotation.y += delta * 0.012;
+    if (active && ref.current) ref.current.rotation.y += Math.min(delta, 0.05) * 0.012;
   });
 
   return (
@@ -575,17 +588,36 @@ function FloatingDust({ count = 200 }) {
   );
 }
 
-export default function AttractorScene() {
-  // Lighter pixel ceiling on phones. Canvas antialias stays off: the glow
-  // already softens the thin additive lines, and MSAA was measured as one of
-  // the two biggest costs on integrated GPUs (see GlowPipeline for the other).
-  const isMobile =
-    typeof window !== "undefined" &&
-    (window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 768);
+function AdaptiveResolution({ active, onChange }) {
+  const { size } = useThree();
+  const quality = useRef(1);
+  const sample = useRef({ seconds: 0, frames: 0 });
+  useEffect(() => {
+    onChange(scenePixelRatio(size.width, size.height, window.devicePixelRatio, quality.current));
+    sample.current = { seconds: 0, frames: 0 };
+  }, [size.width, size.height, onChange, active]);
+  useFrame((_, delta) => {
+    // Ignore tab resumes, then require a sustained slow sample before reducing
+    // resolution. Only step down: no constant quality oscillation/reallocation.
+    if (!active || delta <= 0 || delta > 0.2 || quality.current <= 0.7) return;
+    sample.current.seconds += delta;
+    sample.current.frames++;
+    if (sample.current.seconds < 3) return;
+    if (sample.current.frames / sample.current.seconds < 50) {
+      quality.current = Math.max(0.7, quality.current - 0.15);
+      onChange(scenePixelRatio(size.width, size.height, window.devicePixelRatio, quality.current));
+    }
+    sample.current = { seconds: 0, frames: 0 };
+  });
+  return null;
+}
+
+export default function AttractorScene({ active = true }) {
+  const [dpr, setDpr] = useState(1);
 
   return (
     <Canvas
-      dpr={[1, isMobile ? 1.3 : 1.8]}
+      dpr={dpr}
       gl={{ antialias: false, alpha: true, powerPreference: "high-performance" }}
       camera={{ position: [0, 0, 9.5], fov: 45 }}
       style={{ background: "transparent" }}
@@ -593,9 +625,10 @@ export default function AttractorScene() {
       eventPrefix="client"
     >
       <fog attach="fog" args={["#0a0908", 9, 22]} />
-      <LorenzAttractor />
-      <FloatingDust />
-      <GlowRenderer />
+      <AdaptiveResolution active={active} onChange={setDpr} />
+      <LorenzAttractor active={active} />
+      <FloatingDust active={active} />
+      <GlowRenderer active={active} />
     </Canvas>
   );
 }

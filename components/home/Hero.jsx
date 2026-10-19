@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 import { Play } from "lucide-react";
 import Magnetic from "@/components/ui/Magnetic";
 import ActionButton from "@/components/ui/ActionButton";
@@ -26,14 +26,28 @@ const WORD_INTERVAL = 2200;
 export default function Hero() {
   const reduced = useReducedMotion();
   const [index, setIndex] = useState(0);
+  const heroRef = useRef(null);
+  const inView = useInView(heroRef);
 
   useEffect(() => {
-    const id = setInterval(() => setIndex((i) => (i + 1) % WORDS.length), WORD_INTERVAL);
-    return () => clearInterval(id);
-  }, []);
+    if (!inView || reduced) return;
+    let id;
+    const sync = () => {
+      clearInterval(id);
+      if (!document.hidden) id = setInterval(() => setIndex((i) => (i + 1) % WORDS.length), WORD_INTERVAL);
+    };
+    sync();
+    document.addEventListener("visibilitychange", sync);
+    return () => {
+      clearInterval(id);
+      document.removeEventListener("visibilitychange", sync);
+    };
+  }, [inView, reduced]);
 
   return (
     <section
+      ref={heroRef}
+      style={{ "--hero-animation-state": inView ? "running" : "paused" }}
       className="relative isolate flex min-h-[100svh] items-center overflow-hidden border-b border-gold-500/20 bg-ink-900"
     >
       <HeroShowreel />

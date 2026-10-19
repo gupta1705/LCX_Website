@@ -5,24 +5,46 @@ import { Pause, Play } from "lucide-react";
 
 export default function HeroShowreel() {
   const videoRef = useRef(null);
+  const wantsPlayback = useRef(true);
+  const syncPlayback = useRef(() => {});
   const [playing, setPlaying] = useState(false);
 
   useEffect(() => {
     const video = videoRef.current;
     const motion = window.matchMedia("(prefers-reduced-motion: no-preference)");
+    const hero = video.closest("section");
+    const bounds = hero.getBoundingClientRect();
+    let visible = bounds.bottom > 0 && bounds.top < window.innerHeight;
+    wantsPlayback.current = motion.matches;
     const updatePlayback = () => {
-      if (motion.matches) video.play().catch(() => {});
+      if (wantsPlayback.current && visible && !document.hidden) video.play().catch(() => {});
       else video.pause();
     };
+    syncPlayback.current = updatePlayback;
+    const onMotionChange = () => {
+      wantsPlayback.current = motion.matches;
+      updatePlayback();
+    };
+    const observer = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting && entry.intersectionRatio > 0;
+      updatePlayback();
+    }, { threshold: [0, 0.001] });
+    observer.observe(hero);
     updatePlayback();
-    motion.addEventListener("change", updatePlayback);
-    return () => motion.removeEventListener("change", updatePlayback);
+    motion.addEventListener("change", onMotionChange);
+    document.addEventListener("visibilitychange", updatePlayback);
+    return () => {
+      observer.disconnect();
+      motion.removeEventListener("change", onMotionChange);
+      document.removeEventListener("visibilitychange", updatePlayback);
+      video.pause();
+    };
   }, []);
 
   const togglePlayback = () => {
     const video = videoRef.current;
-    if (video.paused) video.play().catch(() => {});
-    else video.pause();
+    wantsPlayback.current = video.paused;
+    syncPlayback.current();
   };
 
   return (

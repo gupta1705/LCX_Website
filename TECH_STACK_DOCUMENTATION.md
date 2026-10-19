@@ -170,9 +170,11 @@ Content is co-located, not fetched. The Work section's `FILMS` and `SYSTEMS` arr
 
 ### Post-processing & performance
 
-- `EffectComposer` → **Bloom** (the golden glow) + **Vignette** (edge darkening).
+- `GlowPipeline` renders a quarter-resolution bloom pyramid at up to 30 Hz, reusing its texture between updates. Sharp lines and pointer interaction still render at the display's frame rate; vignette runs in the line/composite shaders.
 - **Reduced motion:** if `prefers-reduced-motion: reduce`, the canvas never mounts — a static CSS radial-gradient fallback shows instead.
-- **Mobile:** lower DPR ceiling (1.3 vs 1.8), MSAA off (bloom already softens the thin lines), pointer-repulsion disabled on coarse pointers.
+- **Render budget:** DPR is capped at 1.25 and two million drawing-buffer pixels. Sustained frame rates below 50 FPS lower resolution in two steps, down to 70% of that baseline, without changing geometry or framing. MSAA stays off and pointer repulsion is disabled on coarse pointers.
+- **Visibility:** canvas drawing and geometry updates are skipped when it is entirely below the viewport or the tab is hidden. A lightweight frame callback stays scheduled to avoid browser stalls when restarting. Hero video, rotating headline and text shimmer stop offscreen; video also stops in hidden tabs and preserves a visitor's manual pause when scrolling away and back.
+- The video-to-loop boundary uses the same top-plane clearance calculation with constants moved outside its vertex loop; the original size and choreography are preserved.
 - Buffers/materials are disposed on unmount/HMR; frustum culling is disabled (the choreography swings the form far off-center, so culling would wrongly hide it).
 - `SceneBackground.jsx` layers readability scrims (left/bottom/top gradients) and a faint SVG film-grain over the canvas so text stays legible.
 

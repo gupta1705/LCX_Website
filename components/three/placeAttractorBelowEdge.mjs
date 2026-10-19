@@ -3,12 +3,15 @@
 export function topEdgeOffset(positions, matrix, cameraZ, fov, cursorPadding = 0.75) {
   const slope = Math.tan(fov * Math.PI / 360) * 0.82;
   const m = matrix.elements;
+  // Pull the camera-plane transform and constant padding outside the loop.
+  const ax = m[1] + slope * m[2];
+  const ay = m[5] + slope * m[6];
+  const az = m[9] + slope * m[10];
+  const bias = m[13] + slope * m[14] - cameraZ * slope + cursorPadding * Math.hypot(1, slope);
   let offset = 0;
   for (let i = 0; i < positions.length; i += 3) {
     const x = positions[i], y = positions[i + 1], z = positions[i + 2];
-    const worldY = m[1] * x + m[5] * y + m[9] * z + m[13];
-    const worldZ = m[2] * x + m[6] * y + m[10] * z + m[14];
-    offset = Math.max(offset, worldY - (cameraZ - worldZ) * slope + cursorPadding * Math.hypot(1, slope));
+    offset = Math.max(offset, ax * x + ay * y + az * z + bias);
   }
   return offset;
 }
