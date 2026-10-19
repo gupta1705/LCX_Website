@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ArrowUpRight, Check, Copy } from "lucide-react";
 import { SITE } from "@/lib/site";
+import GmailComposeLink from "@/components/ui/GmailComposeLink";
 
 export default function ServiceContact({ group }) {
   const [open, setOpen] = useState(false);
@@ -34,7 +35,7 @@ export default function ServiceContact({ group }) {
         <p className="text-base leading-relaxed text-bone-dim">
           Email us about {group.title.toLowerCase()}. Tell us what you’re building and when you need it.
         </p>
-        <p className="mt-4 select-all break-all text-lg text-bone">{SITE.email}</p>
+        <GmailComposeLink serviceGroup={group.title} className="mt-4 block break-all text-lg text-gold-200 underline underline-offset-4">{SITE.email}</GmailComposeLink>
         <button
           type="button"
           onClick={copyEmail}

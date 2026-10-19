@@ -244,7 +244,7 @@ Headlines use `clamp(min, VWvw, max)` so they grow with the viewport and settle 
 
 ## 10. Known limitations / open items
 
-- **StartProjectForm** is front-end only — it doesn't submit anywhere yet (needs an email/back-end wire-up).
+- **StartProjectForm** opens a Gmail draft addressed to the contact email with all entered brief details. The visitor reviews and sends it in Gmail; there is no automatic server-side email delivery. Contact email links also include the current form details.
 - **Placeholder content** remains in BrandStack (NOVA/HELIO/…) and the team roles.
 - `WorkCard.jsx` / `WorkGallery.jsx` are dead code and can be deleted.
 - The contact address is `kartikeyap@lightscameraexperiment.com` (set in `lib/site.js`, shared by the contact section, navigation, footer, form guidance and service contact panels).

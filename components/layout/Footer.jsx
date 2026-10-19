@@ -1,4 +1,5 @@
 import Link from "next/link";
+import GmailComposeLink from "@/components/ui/GmailComposeLink";
 import Magnetic from "@/components/ui/Magnetic";
 import ActionButton from "@/components/ui/ActionButton";
 import { NAV_LINKS, CTA, SITE } from "@/lib/site";
@@ -38,12 +39,11 @@ export default function Footer() {
               that gets brands noticed, faster than an agency, sharper than a
               tool.
             </p>
-            <a
-              href={`mailto:${SITE.email}`}
+            <GmailComposeLink
               className="max-w-full break-all link-underline relative mt-6 inline-block font-mono text-sm text-gold-300 transition-colors before:absolute before:-inset-x-2 before:-inset-y-3 hover:text-gold-100"
             >
               {SITE.email}
-            </a>
+            </GmailComposeLink>
           </div>
 
           <div>

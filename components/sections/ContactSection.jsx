@@ -1,4 +1,5 @@
 import SectionHeader from "@/components/ui/SectionHeader";
+import GmailComposeLink from "@/components/ui/GmailComposeLink";
 import Reveal from "@/components/ui/Reveal";
 import StartProjectForm from "@/components/start/StartProjectForm";
 import { SITE } from "@/lib/site";
@@ -46,12 +47,11 @@ export default function ContactSection() {
 
                 <div className="mt-10">
                   <p className="text-sm text-bone-dim">Prefer email?</p>
-                  <a
-                    href={`mailto:${SITE.email}`}
+                  <GmailComposeLink
                     className="max-w-full break-all relative mt-1 inline-block rounded-sm font-mono text-sm text-gold-300 transition-colors before:absolute before:-inset-x-2 before:-inset-y-3 hover:text-gold-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-400"
                   >
                     {SITE.email}
-                  </a>
+                  </GmailComposeLink>
                 </div>
 
                 <div className="mt-8">

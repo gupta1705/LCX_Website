@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Instagram, Linkedin, Youtube, Twitter } from "lucide-react";
 import Logo from "./Logo";
+import GmailComposeLink from "@/components/ui/GmailComposeLink";
 import Magnetic from "@/components/ui/Magnetic";
 import ActionButton from "@/components/ui/ActionButton";
 import { NAV_LINKS, CTA, SITE } from "@/lib/site";
@@ -298,12 +299,11 @@ function CurvedMenu({ reduced, activeId, onNavigate, onClose }) {
         </nav>
 
         <div className="mt-10 border-t border-white/10 pt-6">
-          <a
-            href={`mailto:${SITE.email}`}
+          <GmailComposeLink
             className="max-w-full break-all relative inline-block font-mono text-sm text-gold-300 transition-colors before:absolute before:-inset-x-2 before:-inset-y-3 hover:text-gold-100"
           >
             {SITE.email}
-          </a>
+          </GmailComposeLink>
           {/* gap-7, not gap-4: each icon's tap box is 44px (p-3 around a 20px
               icon, -m-3 collapsing the flow box), so gaps under 24px make
               adjacent TAP ZONES overlap even though the icons look spaced */}

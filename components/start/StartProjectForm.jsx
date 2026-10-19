@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { Check, ChevronDown } from "lucide-react";
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
 import ActionButton from "@/components/ui/ActionButton";
 import { SITE } from "@/lib/site";
 import { SERVICE_GROUPS } from "@/lib/services";
+import { buildGmailComposeUrl, readBriefFields } from "@/lib/gmail-compose.mjs";
 
 // Single-select per the brief. "Not sure" is a valid, first-class choice.
 const BUDGETS = ["< $10k", "$10k – $25k", "$25k – $50k", "$50k+", "Not sure yet"];
@@ -13,49 +14,17 @@ const field =
   "w-full rounded-xl border border-white/10 bg-ink-800/50 px-4 py-3.5 text-bone placeholder:text-bone-faint outline-none transition-colors duration-200 focus:border-gold-400 focus:ring-2 focus:ring-gold-400";
 
 export default function StartProjectForm() {
-  const [sent, setSent] = useState(false);
-  const successRef = useRef(null);
-
-  // Move focus to the confirmation so screen-reader users are told it worked.
-  useEffect(() => {
-    if (sent) successRef.current?.focus();
-  }, [sent]);
+  const [draftUrl, setDraftUrl] = useState("");
 
   const onSubmit = (e) => {
     e.preventDefault();
-    // Front-end only for now — no real send. Wire to a backend / email service later.
-    setSent(true);
+    const url = buildGmailComposeUrl(SITE.email, readBriefFields(e.currentTarget));
+    setDraftUrl(url);
+    window.open(url, "_blank", "noopener,noreferrer");
   };
 
-  if (sent) {
-    return (
-      <div
-        ref={successRef}
-        tabIndex={-1}
-        role="status"
-        className="flex flex-col items-start gap-5 rounded-2xl border border-gold-soft bg-ink-800/50 p-10 outline-none"
-      >
-        <span className="grid h-12 w-12 place-items-center rounded-full bg-gold-500 text-ink-900">
-          <Check className="h-6 w-6" />
-        </span>
-        <h2 className="text-2xl font-medium tracking-tight text-bone">Thanks for the brief.</h2>
-        <p className="max-w-md leading-relaxed text-bone-dim">
-          We reply within 24 hours with a point of view, not a sales pitch. This form isn&apos;t
-          wired to send just yet, to be sure it reaches us right now, drop the same note to{" "}
-          <a
-            href={`mailto:${SITE.email}`}
-            className="max-w-full break-all rounded-sm text-gold-300 underline-offset-4 transition-colors hover:text-gold-100 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-400"
-          >
-            {SITE.email}
-          </a>
-          .
-        </p>
-      </div>
-    );
-  }
-
   return (
-    <form onSubmit={onSubmit} className="space-y-6">
+    <form id="project-brief-form" onSubmit={onSubmit} onChange={() => setDraftUrl("")} className="space-y-6">
       <h2 className="sr-only">Project brief form</h2>
 
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
@@ -178,8 +147,18 @@ export default function StartProjectForm() {
       </div>
 
       <ActionButton type="submit" tone="primary" size="lg" className="w-full sm:w-auto">
-        Send the brief
+        Open in Gmail
       </ActionButton>
+      <p className="text-sm leading-relaxed text-bone-dim">
+        Opens a Gmail draft addressed to <span className="break-all">{SITE.email}</span> with your details. Review it and press Send in Gmail.
+      </p>
+      {draftUrl && (
+        <p role="status" className="rounded-lg border border-gold-500/25 bg-ink-900/80 p-4 text-sm leading-relaxed text-bone">
+          Your draft is ready. If Gmail didn’t open, {" "}
+          <a href={draftUrl} target="_blank" rel="noopener noreferrer" className="text-gold-200 underline underline-offset-4">open your draft here</a>.
+          {" "}Your details remain in this form until you leave the page.
+        </p>
+      )}
     </form>
   );
 }
