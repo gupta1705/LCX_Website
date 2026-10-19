@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { Play } from "lucide-react";
@@ -26,83 +26,31 @@ const WORD_INTERVAL = 2200;
 export default function Hero() {
   const reduced = useReducedMotion();
   const [index, setIndex] = useState(0);
-  const sectionRef = useRef(null);
-  const ctaRef = useRef(null);
-  // Fed to HeroShowreel so its gradients start exactly at the button row's
-  // own rendered position instead of a percentage guessed from a handful of
-  // test window sizes — that guess held for the sizes it was checked at and
-  // missed the user's actual window, leaving the fade starting well below
-  // where the buttons actually end. The section's own size comes along too,
-  // for HeroShowreel to work out how far its fade can bleed past the hero.
-  // null until measured; HeroShowreel keeps its own fallback for that first
-  // tick.
-  const [showreelMetrics, setShowreelMetrics] = useState(null);
 
   useEffect(() => {
     const id = setInterval(() => setIndex((i) => (i + 1) % WORDS.length), WORD_INTERVAL);
     return () => clearInterval(id);
   }, []);
 
-  useEffect(() => {
-    const measure = () => {
-      const section = sectionRef.current;
-      const cta = ctaRef.current;
-      if (!section || !cta) return;
-      const sectionRect = section.getBoundingClientRect();
-      const ctaRect = cta.getBoundingClientRect();
-      // On mount the button row is still mid-entrance, translated 24px down
-      // (`item`'s hidden y) — subtract that so this is where it settles.
-      const transform = getComputedStyle(cta).transform;
-      const ty = transform === "none" ? 0 : new DOMMatrixReadOnly(transform).m42;
-      setShowreelMetrics({
-        btnBottom: ctaRect.bottom - ty - sectionRect.top,
-        width: sectionRect.width,
-        height: sectionRect.height,
-      });
-    };
-    // Observing the section rather than window resize: also catches size
-    // changes that don't come from the window (font swap, svh settling).
-    // Measured once up front too — the observer's first callback waits for
-    // a rendered frame, which a background tab doesn't get.
-    measure();
-    const ro = new ResizeObserver(measure);
-    ro.observe(sectionRef.current);
-    return () => ro.disconnect();
-  }, []);
-
   return (
     <section
-      ref={sectionRef}
-      className="relative isolate flex min-h-[100svh] items-center overflow-x-clip"
+      className="relative isolate flex min-h-[100svh] items-center"
     >
-      {/* isolate keeps the showreel's -z-10 inside THIS stacking context —
-          above the fixed z-0 attractor, below the hero copy.
-          overflow-x-clip, not overflow-hidden: the showreel deliberately
-          bleeds below this section's bottom edge so its fade-out has room
-          (see HeroShowreel), which a vertical clip would cut back off. */}
-      <HeroShowreel metrics={showreelMetrics} />
-      <div className="container-px grid w-full grid-cols-12 pb-16 pt-32">
+      <div className="container-px grid w-full grid-cols-12 items-center gap-y-12 pb-16 pt-32 lg:gap-x-10 xl:gap-x-16">
         <motion.div
           variants={stagger}
           initial="hidden"
           animate="show"
-          className="relative isolate col-span-12 lg:col-span-7 xl:col-span-6"
+          className="relative isolate col-span-12 lg:col-span-5"
         >
-          {/* soft scrim — lifts headline/body contrast where they overlap the
-              bright attractor (most visible on mobile, where the rings run
-              under the body copy). lg:hidden: at lg+ HeroShowreel is behind
-              this instead of the plain attractor, and its own broad gradient
-              already carries this job — stacking this on top of it read as
-              a visible dark box/rectangle sitting over the (detailed,
-              photographic) footage, in a way it never did over the
-              attractor's own soft abstract lines. */}
+          {/* Keep the copy readable over the separate animated background. */}
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute -inset-x-6 -inset-y-8 -z-10 bg-[radial-gradient(70%_60%_at_35%_45%,rgba(10,9,8,0.7),transparent_72%)] lg:hidden"
+            className="pointer-events-none absolute -inset-x-6 -inset-y-8 -z-10 bg-[radial-gradient(70%_60%_at_35%_45%,rgba(10,9,8,0.7),transparent_72%)]"
           />
           <motion.h1
             variants={item}
-            className="font-sans text-[clamp(2.6rem,7vw,8rem)] font-medium leading-[0.98] tracking-tightest text-bone"
+            className="font-sans text-[clamp(2.6rem,7vw,6rem)] font-medium leading-[0.98] tracking-tightest text-bone lg:text-[clamp(3rem,5.2vw,5.2rem)]"
           >
             {/* one clean sentence for screen readers; the visual cycle is hidden from AT */}
             <span className="sr-only">
@@ -146,7 +94,7 @@ export default function Hero() {
 
           <motion.p
             variants={item}
-            className="mt-8 max-w-xl text-balance font-sans text-lg font-normal leading-[1.75] text-bone-dim md:text-xl xl:max-w-2xl xl:text-2xl"
+            className="mt-8 max-w-xl text-balance font-sans text-lg font-normal leading-[1.75] text-bone-dim md:text-xl"
           >
             From a single brief to a finished campaign, we use AI to{" "}
             <span className="gold-flow font-serif text-[1.05em] italic" style={{ animationDelay: "0s" }}>design</span>,{" "}
@@ -155,7 +103,7 @@ export default function Hero() {
             content that gets brands noticed.
           </motion.p>
 
-          <motion.div ref={ctaRef} variants={item} className="mt-10 flex flex-wrap items-center gap-3">
+          <motion.div variants={item} className="mt-10 flex flex-wrap items-center gap-3">
             <Magnetic>
               <ActionButton as={Link} href="#work" tone="secondary" icon={Play} size="lg">
                 See our work
@@ -168,6 +116,9 @@ export default function Hero() {
             </Magnetic>
           </motion.div>
         </motion.div>
+        <div className="col-span-12 min-w-0 lg:col-span-7">
+          <HeroShowreel />
+        </div>
       </div>
     </section>
   );
