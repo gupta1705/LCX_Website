@@ -1,8 +1,8 @@
-import { ArrowUpRight, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import SectionHeader from "@/components/ui/SectionHeader";
 import Reveal from "@/components/ui/Reveal";
 import { SERVICE_GROUPS } from "@/lib/services";
-import { SITE } from "@/lib/site";
+import ServiceContact from "./ServiceContact";
 
 export default function ServicesSection() {
   return (
@@ -35,10 +35,7 @@ export default function ServicesSection() {
                     </article>
                   ))}
                 </div>
-                <a href={`mailto:${SITE.email}?subject=${encodeURIComponent(`LCX enquiry: ${group.title}`)}`} className="mt-4 inline-flex min-h-11 items-center gap-3 rounded-sm text-base font-medium text-gold-200 underline-offset-8 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold-300">
-                  Talk to us about {group.title.toLowerCase()}
-                  <ArrowUpRight aria-hidden="true" className="h-4 w-4 shrink-0" />
-                </a>
+                <ServiceContact group={{ id: group.id, title: group.title }} />
               </div>
             </details>
           </Reveal>
