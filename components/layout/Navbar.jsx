@@ -300,7 +300,7 @@ function CurvedMenu({ reduced, activeId, onNavigate, onClose }) {
         <div className="mt-10 border-t border-white/10 pt-6">
           <a
             href={`mailto:${SITE.email}`}
-            className="relative inline-block font-mono text-sm text-gold-300 transition-colors before:absolute before:-inset-x-2 before:-inset-y-3 hover:text-gold-100"
+            className="max-w-full break-all relative inline-block font-mono text-sm text-gold-300 transition-colors before:absolute before:-inset-x-2 before:-inset-y-3 hover:text-gold-100"
           >
             {SITE.email}
           </a>

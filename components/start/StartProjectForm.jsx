@@ -44,7 +44,7 @@ export default function StartProjectForm() {
           wired to send just yet, to be sure it reaches us right now, drop the same note to{" "}
           <a
             href={`mailto:${SITE.email}`}
-            className="rounded-sm text-gold-300 underline-offset-4 transition-colors hover:text-gold-100 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-400"
+            className="max-w-full break-all rounded-sm text-gold-300 underline-offset-4 transition-colors hover:text-gold-100 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-400"
           >
             {SITE.email}
           </a>

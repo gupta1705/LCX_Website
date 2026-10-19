@@ -247,7 +247,7 @@ Headlines use `clamp(min, VWvw, max)` so they grow with the viewport and settle 
 - **StartProjectForm** is front-end only — it doesn't submit anywhere yet (needs an email/back-end wire-up).
 - **Placeholder content** remains in BrandStack (NOVA/HELIO/…) and the team roles.
 - `WorkCard.jsx` / `WorkGallery.jsx` are dead code and can be deleted.
-- Enquiries route to `suhasc@theviralfever.com` (set in `lib/site.js`, read by every mailto on the site). If a real inbox is ever created on `lightscameraexperiment.com`, change that one constant.
+- The contact address is `kartikeyap@lightscameraexperiment.com` (set in `lib/site.js`, shared by the contact section, navigation, footer, form guidance and service contact panels).
 - The live domain is `lightscameraexperiment.com` — **"experiment", singular**, not the plural of the studio name. `metadataBase` in `app/layout.jsx` matches it.
 
 ---

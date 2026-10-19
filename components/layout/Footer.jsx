@@ -40,7 +40,7 @@ export default function Footer() {
             </p>
             <a
               href={`mailto:${SITE.email}`}
-              className="link-underline relative mt-6 inline-block font-mono text-sm text-gold-300 transition-colors before:absolute before:-inset-x-2 before:-inset-y-3 hover:text-gold-100"
+              className="max-w-full break-all link-underline relative mt-6 inline-block font-mono text-sm text-gold-300 transition-colors before:absolute before:-inset-x-2 before:-inset-y-3 hover:text-gold-100"
             >
               {SITE.email}
             </a>
