@@ -78,8 +78,8 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${sans.variable} ${serif.variable} ${mono.variable}`}>
       <body className="font-sans antialiased">
-        {/* Persistent golden line-art scene — lives in the layout so it
-            flows seamlessly across every tab without remounting. */}
+        {/* The golden scene begins below the video hero and stays behind
+            the remaining sections as the visitor scrolls. */}
         <SceneBackground />
 
         <div className="relative z-10 flex min-h-screen flex-col">

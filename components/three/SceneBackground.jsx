@@ -12,7 +12,7 @@ export default function SceneBackground() {
   const [mounted, setMounted] = useState(false);
   const [reduced, setReduced] = useState(false);
   const [ready, setReady] = useState(false); // canvas has drawn → cue the fade-in
-  const wrapRef = useRef(null);
+  const sceneRef = useRef(null);
 
   useEffect(() => {
     setMounted(true);
@@ -20,39 +20,54 @@ export default function SceneBackground() {
     setReduced(mq.matches);
     const onChange = (e) => setReduced(e.matches);
     mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
+    const timer = setTimeout(() => setReady(true), 120);
+    return () => {
+      mq.removeEventListener("change", onChange);
+      clearTimeout(timer);
+    };
   }, []);
 
-  // Cinematic entrance + calm the scene down as the visitor scrolls past the hero.
+  // Move the entire canvas below the hero, then pin it when that section
+  // reaches the viewport top. Translating the scene keeps its composition
+  // intact instead of letting the video cover the upper half of the shape.
   useEffect(() => {
-    if (reduced || !mounted) return;
+    const hero = document.getElementById("home");
+    let heroBottom = window.innerHeight;
     let raf = 0;
     const update = () => {
-      const el = wrapRef.current;
-      if (el) {
-        const fade = Math.min(window.scrollY / (window.innerHeight * 1.1), 1);
-        // base entrance opacity (0 until ready) × scroll calm-down. Gentle, so the
-        // shape keeps morphing visibly as the visitor scrolls (never below ~0.7).
-        el.style.opacity = String((ready ? 1 : 0) * (1 - fade * 0.3));
+      if (sceneRef.current) {
+        sceneRef.current.style.transform = `translateY(${Math.max(0, heroBottom - window.scrollY)}px)`;
       }
       raf = 0;
+    };
+    const measure = () => {
+      heroBottom = hero ? hero.getBoundingClientRect().bottom + window.scrollY : 0;
+      update();
     };
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(update);
     };
-    update();
-    // let the first frames render before fading in
-    const t = setTimeout(() => setReady(true), 120);
+    measure();
+    const observer = new ResizeObserver(measure);
+    if (hero) observer.observe(hero);
+    window.addEventListener("resize", measure);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => {
-      clearTimeout(t);
+      observer.disconnect();
+      window.removeEventListener("resize", measure);
       window.removeEventListener("scroll", onScroll);
       if (raf) cancelAnimationFrame(raf);
     };
-  }, [reduced, mounted, ready]);
+  }, []);
 
   return (
-    <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0">
+    <div
+      ref={sceneRef}
+      aria-hidden="true"
+      data-scene-background
+      className="pointer-events-none fixed inset-0 z-0"
+      style={{ transform: "translateY(100svh)" }}
+    >
       {/* Always-present CSS fallback (also shown for reduced-motion / no-WebGL) */}
       <div className="absolute inset-0 bg-ink-900" />
       <div
@@ -66,8 +81,7 @@ export default function SceneBackground() {
       {/* The live golden attractor — fades in over ~1.2s after first paint */}
       {mounted && !reduced && (
         <div
-          ref={wrapRef}
-          style={{ opacity: 0 }}
+          style={{ opacity: ready ? 0.7 : 0 }}
           className="absolute inset-0 transition-opacity duration-[1200ms] ease-out"
         >
           <AttractorScene />

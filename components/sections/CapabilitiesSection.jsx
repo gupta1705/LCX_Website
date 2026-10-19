@@ -5,9 +5,7 @@ import CapabilitiesScroll from "@/components/capabilities/CapabilitiesScroll";
 
 export default function CapabilitiesSection() {
   return (
-    // relative: the hero showreel's fade bleeds down behind this section's
-    // heading, and the hero is positioned — so this has to be too, or the
-    // static heading would paint underneath the footage instead of over it.
+    // The revolving background starts in this section, below the video hero.
     <div id="capabilities" className="relative scroll-mt-24">
       <SectionHeader
         center

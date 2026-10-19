@@ -34,23 +34,19 @@ export default function Hero() {
 
   return (
     <section
-      className="relative isolate flex min-h-[100svh] items-center"
+      className="relative isolate flex min-h-[100svh] items-center overflow-hidden border-b border-gold-500/20 bg-ink-900"
     >
-      <div className="container-px grid w-full grid-cols-12 items-center gap-y-12 pb-16 pt-32 lg:gap-x-10 xl:gap-x-16">
+      <HeroShowreel />
+      <div className="container-px grid w-full grid-cols-12 pb-24 pt-32">
         <motion.div
           variants={stagger}
           initial="hidden"
           animate="show"
-          className="relative isolate col-span-12 lg:col-span-5"
+          className="relative col-span-12 lg:col-span-7 xl:col-span-6"
         >
-          {/* Keep the copy readable over the separate animated background. */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute -inset-x-6 -inset-y-8 -z-10 bg-[radial-gradient(70%_60%_at_35%_45%,rgba(10,9,8,0.7),transparent_72%)]"
-          />
           <motion.h1
             variants={item}
-            className="font-sans text-[clamp(2.6rem,7vw,6rem)] font-medium leading-[0.98] tracking-tightest text-bone lg:text-[clamp(3rem,5.2vw,5.2rem)]"
+            className="font-sans text-[clamp(2.6rem,7vw,8rem)] font-medium leading-[0.98] tracking-tightest text-bone"
           >
             {/* one clean sentence for screen readers; the visual cycle is hidden from AT */}
             <span className="sr-only">
@@ -94,7 +90,7 @@ export default function Hero() {
 
           <motion.p
             variants={item}
-            className="mt-8 max-w-xl text-balance font-sans text-lg font-normal leading-[1.75] text-bone-dim md:text-xl"
+            className="mt-8 max-w-xl text-balance font-sans text-lg font-normal leading-[1.75] text-bone md:text-xl xl:max-w-2xl xl:text-2xl"
           >
             From a single brief to a finished campaign, we use AI to{" "}
             <span className="gold-flow font-serif text-[1.05em] italic" style={{ animationDelay: "0s" }}>design</span>,{" "}
@@ -116,9 +112,6 @@ export default function Hero() {
             </Magnetic>
           </motion.div>
         </motion.div>
-        <div className="col-span-12 min-w-0 lg:col-span-7">
-          <HeroShowreel />
-        </div>
       </div>
     </section>
   );
