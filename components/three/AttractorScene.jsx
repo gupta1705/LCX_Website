@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { GlowPipeline, VIGNETTE_GLSL } from "./GlowPipeline";
-import { ATTRACTOR_RADIUS, fitAttractorFrame } from "./fitAttractorFrame.mjs";
+import { topEdgeOffset } from "./placeAttractorBelowEdge.mjs";
 
 /* ------------------------------------------------------------------ */
 /*  ONE Lorenz attractor, treated like a camera subject (the Axiom     */
@@ -77,7 +77,7 @@ function resampleUniform(src, count) {
 
 // Centre the attractor on the origin at a known radius so the keyframed
 // scales/positions below always frame it predictably.
-function normalize(arr, radius = ATTRACTOR_RADIUS) {
+function normalize(arr, radius = 3.7) {
   let minX = Infinity, minY = Infinity, minZ = Infinity;
   let maxX = -Infinity, maxY = -Infinity, maxZ = -Infinity;
   for (let i = 0; i < arr.length; i += 3) {
@@ -129,9 +129,19 @@ function goldColors() {
 const smoothstep = (f) => f * f * (3 - 2 * f);
 
 // Scroll choreography — the SAME shape presented like a camera subject.
-// p = desired position, s = relative zoom, r = base rotation (rad).
-// The framing helper bounds travel and zoom to keep the complete rotating
-// form inside the viewport, including its cursor deformation and edge space.
+// p = position, s = scale (zoom), r = base rotation (rad). rotY climbs
+// monotonically so scrolling always reads as continuous rotation.
+// Reviewed as a set. Two rules keep every pose sculptural rather than flat:
+//  1. TILT — rX stays in ~0.6–1.15 so we always read the lobes at an angle.
+//     Low tilt (the old 0.2/0.35/0.4 poses) flattens the form to a disc.
+//  2. DON'T DIVE INSIDE A LOBE — the camera sees viewH/(2*3.7*s) of the form,
+//     so past s≈2.05 less than half of it is in frame: you're within one wing
+//     and its spiral fills the screen as concentric rings (a bullseye with no
+//     form — the old s2.6 "rings fill the flank" and s2.9 poses). Capped at
+//     2.05, i.e. >=51% of the form always in frame.
+// Net: the baseline is bigger (min 1.35 → 1.7, typical ~1.8–2.0) while the
+// deep dives that produced the flat targets are gone. rotY still climbs
+// monotonically so scrolling always reads as one continuous rotation.
 const KEYS = [
   { p: [2.2, 0.15, 0], s: 1.7, r: [0.62, 0.6, 0.18] }, // hero: three-quarter, right of centre
   { p: [1.2, -0.2, 0.3], s: 1.9, r: [0.95, 1.2, -0.2] }, // off the hero: tilt in, angled
@@ -260,6 +270,7 @@ void main() {
 }`;
 
 function LorenzAttractor() {
+  const entrance = useRef();
   const group = useRef();
   const cursor = useRef();
   const headIndex = useRef(0); // position of the travelling glow along the curve
@@ -271,6 +282,7 @@ function LorenzAttractor() {
   const vel = useRef(0); // smoothed pointer velocity (event-decoupled)
   const prevPointer = useRef({ x: 0, y: 0 });
   const scrollMax = useRef(0); // scrollable height, cached — see below
+  const heroEnd = useRef(0);
   const { pointer, viewport, camera } = useThree();
 
   const tmp = useMemo(() => new THREE.Vector3(), []);
@@ -352,6 +364,8 @@ function LorenzAttractor() {
   useEffect(() => {
     const update = () => {
       scrollMax.current = document.documentElement.scrollHeight - window.innerHeight;
+      const hero = document.getElementById("home");
+      heroEnd.current = hero ? hero.getBoundingClientRect().bottom + window.scrollY : 0;
     };
     update();
     const ro = new ResizeObserver(update);
@@ -399,18 +413,22 @@ function LorenzAttractor() {
     g.rotation.x += (tRx + pointer.y * 0.4 - g.rotation.x) * 0.095;
     g.rotation.y += (tRy + ambient.current - g.rotation.y) * 0.095;
     g.rotation.z += (tRz + pointer.x * 0.3 - g.rotation.z) * 0.095;
-    const frame = fitAttractorFrame({
-      distance: camera.position.z - g.position.z,
-      fov: camera.fov,
-      aspect: camera.aspect,
-      zoom: tS * (1 + Math.sin(t * 0.4) * 0.02) * (1 - COMPRESS * Math.min(swirl.current, 1)),
-      x: g.position.x,
-      y: g.position.y,
-    });
-    g.scale.setScalar(frame.scale);
-    g.position.x = frame.x;
-    g.position.y = frame.y;
+    g.scale.setScalar(
+      tS * (1 + Math.sin(t * 0.4) * 0.02) * (1 - COMPRESS * Math.min(swirl.current, 1)),
+    );
     const sNow = g.scale.x;
+
+    // At the video boundary, lower the original-size form until its actual
+    // upper contour clears the edge. Once that boundary leaves the screen,
+    // ease back into the existing full-page choreography.
+    const entranceWeight = 1 - smoothstep(Math.min(1, Math.max(0, (window.scrollY - heroEnd.current) / (vh * 0.65))));
+    entrance.current.position.y = 0;
+    g.updateWorldMatrix(true, false);
+    if (entranceWeight > 0) {
+      entrance.current.position.y = -topEdgeOffset(
+        line.geometry.attributes.position.array, g.matrixWorld, camera.position.z, camera.fov,
+      ) * entranceWeight;
+    }
 
     // --- smoothed pointer velocity (decoupled from sparse pointermove events) ---
     const dpx = pointer.x - prevPointer.current.x;
@@ -463,14 +481,16 @@ function LorenzAttractor() {
     u.uRepel.value = repel.current;
     const sInv = sNow > 1e-4 ? 1 / sNow : 1;
     u.uHlR.value = HIGHLIGHT_R * sInv;
-    u.uRpR.value = REPEL_R * (frame.cursorRadius / VOID_R) * sInv;
-    u.uVdR.value = frame.cursorRadius * sInv;
+    u.uRpR.value = REPEL_R * sInv;
+    u.uVdR.value = VOID_R * sInv;
   });
 
   return (
     <>
-      <group ref={group} position={[2.4, 0.2, 0]} rotation={[0.5, 0, 0.2]}>
-        <primitive object={line} />
+      <group ref={entrance}>
+        <group ref={group} position={[2.4, 0.2, 0]} rotation={[0.5, 0, 0.2]}>
+          <primitive object={line} />
+        </group>
       </group>
 
       {/* cursor-following gold glow (outside the rotating group → screen-space) */}
