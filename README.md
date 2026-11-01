@@ -90,11 +90,13 @@ npx wrangler deploy
 
 ## Tests
 
+After `npm install`, run:
+
 ```bash
 node --test
 ```
 
-This runs the unit tests for the render budget and the Gmail draft builder.
+This runs the unit tests for the render budget, attractor placement and the Gmail draft builder.
 
 More detail on the design system, fonts and architecture is in
 [`TECH_STACK_DOCUMENTATION.md`](TECH_STACK_DOCUMENTATION.md).
