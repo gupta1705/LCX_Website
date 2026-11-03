@@ -35,6 +35,8 @@ function Poster({ youtubeId, thumbnail, thumbnailBg, href, onPlay, title, reduce
     <img
       src={src}
       alt=""
+      loading="lazy"
+      decoding="async"
       style={thumbnailBg ? { backgroundColor: thumbnailBg } : undefined}
       className={`absolute inset-0 h-full w-full ${fit} opacity-80 transition-opacity duration-500 group-hover/poster:opacity-100`}
     />

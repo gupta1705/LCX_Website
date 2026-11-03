@@ -10,7 +10,7 @@ import SystemCard from "@/components/work/SystemCard";
      image instead, and the whole poster links out on click.
    • Coffee Monster: drop a real cover frame at /public/work/coffee-monster.jpg
      (any still from the reel works) so `thumbnail` below has something to load.
-   • Chaayos: drop the brand logo at /public/work/chaayos-logo.png so its
+   • Chaayos: drop the brand logo at /public/work/chaayos-logo-v1.webp so its
      `thumbnail` below has something to load; the click-to-play embed still works.
    • Order The Studio to LEAD with the most finished, best-lit spec ad.
    • Stats live on the Engine side only. No view/follower counts on films.
@@ -25,7 +25,7 @@ const FILMS = [
     blurb:
       "A cinematic spot for a brand we love. Concept film, self-initiated, not affiliated with Chaayos.",
     youtubeId: "JCCdgJLM_Ag",
-    thumbnail: "/work/chaayos-logo.png", // drop the brand logo here, see checklist above
+    thumbnail: "/work/chaayos-logo-v1.webp", // web-sized copy of the original brand artwork
     thumbnailBg: "#018c36", // sampled from the logo's own background, blends the contain-fit margin
   },
   {
@@ -34,7 +34,7 @@ const FILMS = [
     blurb:
       "Premium, traditional, and shot without a set. Concept film, self-initiated, not affiliated with Laxmipati.",
     youtubeId: "q7iT_ydwMNw",
-    thumbnail: "/work/laxmipati-logo.png",
+    thumbnail: "/work/laxmipati-logo-v1.webp",
     thumbnailBg: "#fefefe", // sampled from the logo's own background
   },
   {
@@ -44,7 +44,7 @@ const FILMS = [
     blurb: "An animated micro-drama we write, produce, and publish ourselves.",
     linkLabel: "Watch on Instagram",
     href: "https://www.instagram.com/reel/DY9v1M6tWn-/",
-    thumbnail: "/work/coffee-logo.png",
+    thumbnail: "/work/coffee-logo-v1.webp",
     thumbnailBg: "#000000", // sampled from the logo's own background
   },
   {

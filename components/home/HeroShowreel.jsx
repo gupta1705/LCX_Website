@@ -2,12 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Pause, Play } from "lucide-react";
+import { createHeroVideoController, heroVideoPolicy, HERO_POSTER } from "@/lib/hero-video.mjs";
 
 export default function HeroShowreel() {
   const videoRef = useRef(null);
-  const wantsPlayback = useRef(true);
-  const syncPlayback = useRef(() => {});
-  const [playing, setPlaying] = useState(false);
+  const controllerRef = useRef(null);
+  const [playback, setPlayback] = useState({ mode: "poster", wantsPlayback: false });
 
   useEffect(() => {
     const video = videoRef.current;
@@ -15,15 +15,13 @@ export default function HeroShowreel() {
     const hero = video.closest("section");
     const bounds = hero.getBoundingClientRect();
     let visible = bounds.bottom > 0 && bounds.top < window.innerHeight;
-    wantsPlayback.current = motion.matches;
-    const updatePlayback = () => {
-      if (wantsPlayback.current && visible && !document.hidden) video.play().catch(() => {});
-      else video.pause();
-    };
-    syncPlayback.current = updatePlayback;
+    const connection = navigator.connection || {};
+    const policy = heroVideoPolicy(window.innerWidth, connection, !motion.matches);
+    const controller = createHeroVideoController(video, { profile: policy.profile, onState: setPlayback });
+    controllerRef.current = controller;
+    const updatePlayback = () => controller.setVisible(visible && !document.hidden);
     const onMotionChange = () => {
-      wantsPlayback.current = motion.matches;
-      updatePlayback();
+      controller.setIntent(heroVideoPolicy(window.innerWidth, connection, !motion.matches).autoplay);
     };
     const observer = new IntersectionObserver(([entry]) => {
       visible = entry.isIntersecting && entry.intersectionRatio > 0;
@@ -31,37 +29,43 @@ export default function HeroShowreel() {
     }, { threshold: [0, 0.001] });
     observer.observe(hero);
     updatePlayback();
+    controller.setIntent(policy.autoplay);
     motion.addEventListener("change", onMotionChange);
     document.addEventListener("visibilitychange", updatePlayback);
     return () => {
       observer.disconnect();
       motion.removeEventListener("change", onMotionChange);
       document.removeEventListener("visibilitychange", updatePlayback);
-      video.pause();
+      controller.destroy();
+      controllerRef.current = null;
     };
   }, []);
 
-  const togglePlayback = () => {
-    const video = videoRef.current;
-    wantsPlayback.current = video.paused;
-    syncPlayback.current();
-  };
+  const showVideo = playback.mode === "playing" || playback.mode === "paused";
 
   return (
     <>
       {/* Opaque, hero-sized footage. Nothing fades or bleeds into the next section. */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 overflow-hidden bg-ink-900">
+        <img
+          src={HERO_POSTER}
+          alt=""
+          fetchPriority="high"
+          width={1280}
+          height={720}
+          className="absolute inset-0 h-full w-full object-cover"
+          style={{ transform: "scale(1.35)" }}
+        />
         <video
           ref={videoRef}
           muted
           loop
           playsInline
-          preload="metadata"
-          onPlay={() => setPlaying(true)}
-          onPause={() => setPlaying(false)}
+          preload="none"
+          poster={HERO_POSTER}
+          data-playback={playback.mode}
           className="absolute inset-0 h-full w-full object-cover"
-          style={{ transform: "scale(1.35)" }}
-          src="/home/showreel.mp4"
+          style={{ transform: "scale(1.35)", opacity: showVideo ? 1 : 0 }}
         />
         {/* Contrast overlays stay inside the video section. */}
         <div className="absolute inset-0 bg-ink-900/25" />
@@ -70,11 +74,11 @@ export default function HeroShowreel() {
       </div>
       <button
         type="button"
-        onClick={togglePlayback}
-        aria-label={playing ? "Pause background video" : "Play background video"}
+        onClick={() => controllerRef.current?.toggle()}
+        aria-label={playback.wantsPlayback ? "Pause background video" : "Play background video"}
         className="absolute bottom-6 right-5 z-20 flex min-h-11 min-w-11 items-center justify-center rounded-full border border-white/25 bg-ink-900/75 text-bone transition-colors hover:bg-ink-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold-300 sm:right-8 lg:right-10"
       >
-        {playing ? <Pause size={16} aria-hidden="true" /> : <Play size={16} aria-hidden="true" />}
+        {playback.wantsPlayback ? <Pause size={16} aria-hidden="true" /> : <Play size={16} aria-hidden="true" />}
       </button>
     </>
   );

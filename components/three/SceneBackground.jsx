@@ -1,12 +1,19 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { Component, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 
 const AttractorScene = dynamic(() => import("./AttractorScene"), {
   ssr: false,
   loading: () => null,
 });
+
+// Decorative WebGL/chunk failures must never take the content or form down.
+class SceneFallback extends Component {
+  state = { failed: false };
+  static getDerivedStateFromError() { return { failed: true }; }
+  render() { return this.state.failed ? null : this.props.children; }
+}
 
 export default function SceneBackground() {
   const [mounted, setMounted] = useState(false);
@@ -101,7 +108,9 @@ export default function SceneBackground() {
           style={{ opacity: ready ? 0.7 : 0 }}
           className="absolute inset-0 transition-opacity duration-[1200ms] ease-out"
         >
-          <AttractorScene active={active} />
+          <SceneFallback>
+            <AttractorScene active={active} />
+          </SceneFallback>
         </div>
       )}
 

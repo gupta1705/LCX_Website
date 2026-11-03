@@ -255,3 +255,14 @@ Headlines use `clamp(min, VWvw, max)` so they grow with the viewport and settle 
 ---
 
 *Reflects the codebase as of the current `master` (commit `dd47ae7`).*
+
+
+### Network-aware hero media (November 2026)
+
+- The full 109-second reel is preserved. The hero uses versioned H.264 MP4 variants: 720p (10,438,238 bytes; capped at 800 kbps) and 480p (4,571,748 bytes; capped at 360 kbps), both 25 fps, video-only, with front-loaded MP4 metadata. The original `public/home/showreel.mp4` remains an unused source asset.
+- `lib/hero-video.mjs` chooses the light variant for small screens or slower reported connections; unsupported connection APIs fall back to viewport size. Data Saver, 2G, and reduced-motion visitors start with the 34 KB poster and can choose Play. No MP4 URL is attached until playback is wanted and the hero is visible.
+- The controller waits for three seconds of contiguous buffered footage, pauses offscreen/in hidden tabs, and preserves manual pause. A 10-second buffering timeout or two playback stalls downgrades the standard source once, preserving position. If the light source also fails, requests stop and the poster with a manual Play option remains. No automatic retry loop.
+- `public/_headers` (Cloudflare) and `vercel.json` apply one-year immutable browser caching only to explicitly versioned media. Bump filenames when changing those bytes. Vercel supports byte-range video responses; verify both hosts after deploy.
+- FilmCard thumbnails are lazy-loaded and decoded asynchronously. Three oversized logo PNGs (14.67 MB combined) are served as aspect-preserving WebPs up to 1280 pixels wide (113 KB combined). Original PNG sources are retained.
+- A local error boundary around the decorative 3D scene preserves website content if the animation chunk or WebGL fails.
+- Validate with `node --test lib/hero-video.test.mjs lib/gmail-compose.test.mjs components/three/renderBudget.test.mjs` and `npm run build`. Review playback, pause/resume, a constrained media connection, mobile source selection, poster fallback and deployed cache/range headers.
