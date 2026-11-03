@@ -1,4 +1,6 @@
 # These filenames are versioned; use a new version when replacing an asset.
+/home/attractor-still-v1.svg
+  Cache-Control: public, max-age=31536000, immutable
 /home/showreel-720-v2.mp4
   Cache-Control: public, max-age=31536000, immutable
 /home/showreel-480-v2.mp4

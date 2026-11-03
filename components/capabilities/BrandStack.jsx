@@ -64,7 +64,7 @@ export default function BrandStack() {
   const cursor = useRef(3 % BRANDS.length); // next brand to append
   const idRef = useRef(3); // monotonic keys so AnimatePresence never collides
   const hover = useRef(false);
-  const inView = useRef(false);
+  const syncCycle = useRef(() => {});
   const [cards, setCards] = useState(() =>
     BRANDS.slice(0, 3).map((b, i) => ({ id: i, brand: b })),
   );
@@ -78,20 +78,33 @@ export default function BrandStack() {
   // auto-advance only while visible + not hovered + motion allowed
   useEffect(() => {
     if (reduced) return;
+    let inView = false;
+    let interval;
+    const sync = () => {
+      const shouldRun = inView && !document.hidden && !hover.current;
+      if (shouldRun && interval === undefined) {
+        interval = setInterval(advance, CYCLE_MS);
+      } else if (!shouldRun && interval !== undefined) {
+        clearInterval(interval);
+        interval = undefined;
+      }
+    };
+    syncCycle.current = sync;
     const io = new IntersectionObserver(
       ([e]) => {
-        inView.current = e.isIntersecting;
+        inView = e.isIntersecting && e.intersectionRatio >= 0.3;
+        sync();
       },
       { threshold: 0.3 },
     );
     const el = rootRef.current;
     if (el) io.observe(el);
-    const iv = setInterval(() => {
-      if (inView.current && !hover.current) advance();
-    }, CYCLE_MS);
+    document.addEventListener("visibilitychange", sync);
     return () => {
       io.disconnect();
-      clearInterval(iv);
+      document.removeEventListener("visibilitychange", sync);
+      clearInterval(interval);
+      syncCycle.current = () => {};
     };
   }, [reduced]);
 
@@ -105,10 +118,16 @@ export default function BrandStack() {
       // until the user taps elsewhere, which silently froze the auto-cycle
       // on touch devices (hover.current stuck true forever)
       onPointerEnter={(e) => {
-        if (e.pointerType === "mouse") hover.current = true;
+        if (e.pointerType === "mouse") {
+          hover.current = true;
+          syncCycle.current();
+        }
       }}
       onPointerLeave={(e) => {
-        if (e.pointerType === "mouse") hover.current = false;
+        if (e.pointerType === "mouse") {
+          hover.current = false;
+          syncCycle.current();
+        }
       }}
     >
       {/* tap anywhere on the deck advances — the touch counterpart of the

@@ -1,7 +1,8 @@
 "use client";
 
-import { Component, useEffect, useRef, useState } from "react";
+import { Component, useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
+import { scenePolicy } from "@/lib/device-performance.mjs";
 
 const AttractorScene = dynamic(() => import("./AttractorScene"), {
   ssr: false,
@@ -12,19 +13,29 @@ const AttractorScene = dynamic(() => import("./AttractorScene"), {
 class SceneFallback extends Component {
   state = { failed: false };
   static getDerivedStateFromError() { return { failed: true }; }
+  componentDidCatch() { this.props.onFallback?.(); }
   render() { return this.state.failed ? null : this.props.children; }
 }
 
 export default function SceneBackground() {
-  const [mounted, setMounted] = useState(false);
-  const [reduced, setReduced] = useState(false);
-  const [ready, setReady] = useState(false); // canvas has drawn → cue the fade-in
+  const [seen, setSeen] = useState(false);
+  const [policy, setPolicy] = useState(null);
+  const [ready, setReady] = useState(false);
+  const [struggling, setStruggling] = useState(false);
   const sceneRef = useRef(null);
   const [active, setActive] = useState(false);
+  const onReady = useCallback(() => setReady(true), []);
+  const onStruggle = useCallback(() => setStruggling(true), []);
+  const mode = struggling ? "still" : policy?.mode;
+  const loadScene = seen && policy && mode !== "still";
 
   useEffect(() => {
     let inView = false;
-    const sync = () => setActive(inView && !document.hidden);
+    const sync = () => {
+      const visible = inView && !document.hidden;
+      setActive(visible);
+      if (visible) setSeen(true);
+    };
     const observer = new IntersectionObserver(([entry]) => {
       inView = entry.isIntersecting && entry.intersectionRatio > 0;
       sync();
@@ -38,17 +49,24 @@ export default function SceneBackground() {
   }, []);
 
   useEffect(() => {
-    setMounted(true);
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReduced(mq.matches);
-    const onChange = (e) => setReduced(e.matches);
-    mq.addEventListener("change", onChange);
-    const timer = setTimeout(() => setReady(true), 120);
+    const connection = navigator.connection;
+    const update = () => setPolicy(scenePolicy({
+      deviceMemory: navigator.deviceMemory,
+      hardwareConcurrency: navigator.hardwareConcurrency,
+      connection,
+      reducedMotion: mq.matches,
+    }));
+    update();
+    mq.addEventListener("change", update);
+    connection?.addEventListener("change", update);
     return () => {
-      mq.removeEventListener("change", onChange);
-      clearTimeout(timer);
+      mq.removeEventListener("change", update);
+      connection?.removeEventListener("change", update);
     };
   }, []);
+
+  useEffect(() => { if (!loadScene) setReady(false); }, [loadScene]);
 
   // Move the entire canvas below the hero, then pin it when that section
   // reaches the viewport top. Translating the scene keeps its composition
@@ -89,6 +107,8 @@ export default function SceneBackground() {
       aria-hidden="true"
       data-scene-background
       data-scene-active={active}
+      data-scene-mode={mode || "pending"}
+      data-scene-loaded={Boolean(loadScene)}
       className="pointer-events-none fixed inset-0 z-0"
       style={{ transform: "translateY(100svh)" }}
     >
@@ -102,14 +122,22 @@ export default function SceneBackground() {
         }}
       />
 
-      {/* The live golden attractor — fades in over ~1.2s after first paint */}
-      {mounted && !reduced && (
+      {/* A small vector of the same curve keeps the gold design while loading,
+          in data-saving mode, or on a device that cannot sustain WebGL. */}
+      {seen && (!ready || !loadScene) && (
+        <img src="/home/attractor-still-v1.svg" alt="" width={1600} height={1000}
+          className="absolute inset-0 h-full w-full object-cover opacity-70" />
+      )}
+
+      {/* Rendering this component triggers its code download, only after the
+          backdrop first enters view. The hero never competes with Three.js. */}
+      {loadScene && (
         <div
           style={{ opacity: ready ? 0.7 : 0 }}
           className="absolute inset-0 transition-opacity duration-[1200ms] ease-out"
         >
-          <SceneFallback>
-            <AttractorScene active={active} />
+          <SceneFallback onFallback={onStruggle}>
+            <AttractorScene active={active} fps={policy.fps} onReady={onReady} onStruggle={onStruggle} />
           </SceneFallback>
         </div>
       )}

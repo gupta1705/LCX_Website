@@ -3,9 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import {
   motion,
-  useMotionValueEvent,
+  scroll,
+  useMotionValue,
   useReducedMotion,
-  useScroll,
   useTransform,
 } from "framer-motion";
 
@@ -85,10 +85,14 @@ const ITEMS = [
 const ALPHA = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 const randInt = (max) => Math.floor(Math.random() * max);
 
-function Scramble({ text, className, duration = 975 }) {
+function Scramble({ text, className, duration = 975, active }) {
   const [display, setDisplay] = useState(text);
   const iter = useRef(0);
   useEffect(() => {
+    if (!active) {
+      setDisplay(text);
+      return;
+    }
     iter.current = 0;
     const chars = text.split("");
     const id = setInterval(
@@ -108,7 +112,7 @@ function Scramble({ text, className, duration = 975 }) {
       Math.max(duration / (chars.length * 3), 16),
     );
     return () => clearInterval(id);
-  }, [text, duration]);
+  }, [text, duration, active]);
   return <span className={className}>{display}</span>;
 }
 
@@ -176,20 +180,50 @@ function StaticStack() {
   );
 }
 
-export default function CapabilitiesScroll() {
-  const reduced = useReducedMotion();
+function AnimatedCapabilities() {
   const trackRef = useRef(null);
   const [activeIdx, setActiveIdx] = useState(0);
-  const { scrollYProgress } = useScroll({ target: trackRef, offset: ["start start", "end end"] });
+  const activeIndexRef = useRef(0);
+  const [active, setActive] = useState(false);
+  const scrollYProgress = useMotionValue(0);
 
-  // flip the active pillar at the midpoint (hysteresis avoids flip-flop)
-  useMotionValueEvent(scrollYProgress, "change", (v) => {
-    setActiveIdx((prev) => {
-      if (prev === 0 && v > 0.55) return 1;
-      if (prev === 1 && v < 0.45) return 0;
-      return prev;
+  // Unsubscribe from scroll measurements entirely while this track is out
+  // of view or the tab is hidden. Re-subscribing measures the current pose.
+  useEffect(() => {
+    let inView = false;
+    let stopScroll;
+    const sync = () => {
+      const shouldRun = inView && !document.hidden;
+      setActive(shouldRun);
+      if (shouldRun && !stopScroll) {
+        stopScroll = scroll((progress) => {
+          scrollYProgress.set(progress);
+          // Hysteresis avoids flip-flop, and only crossings update React.
+          const previous = activeIndexRef.current;
+          const next = previous === 0 && progress > 0.55 ? 1
+            : previous === 1 && progress < 0.45 ? 0 : previous;
+          if (next !== previous) {
+            activeIndexRef.current = next;
+            setActiveIdx(next);
+          }
+        }, { target: trackRef.current, offset: ["start start", "end end"] });
+      } else if (!shouldRun && stopScroll) {
+        stopScroll();
+        stopScroll = undefined;
+      }
+    };
+    const observer = new IntersectionObserver(([entry]) => {
+      inView = entry.isIntersecting;
+      sync();
     });
-  });
+    observer.observe(trackRef.current);
+    document.addEventListener("visibilitychange", sync);
+    return () => {
+      observer.disconnect();
+      document.removeEventListener("visibilitychange", sync);
+      stopScroll?.();
+    };
+  }, [scrollYProgress]);
 
   // morph 0 → 1 across most of the pinned scroll (drives the cards).
   // Wide range = brief static holds at each end, so little dead scroll.
@@ -209,8 +243,6 @@ export default function CapabilitiesScroll() {
   const c1x = useTransform(t, [0, 1], [34, 0]);
   const c1y = useTransform(t, [0, 1], [44, 0]);
   const c1op = useTransform(t, [0, 0.5], [0.6, 1]);
-
-  if (reduced) return <StaticStack />;
 
   const [A, B] = ITEMS;
   const item = ITEMS[activeIdx];
@@ -242,10 +274,10 @@ export default function CapabilitiesScroll() {
             {/* LEFT — scramble on change */}
             <div className="col-span-6">
               <h3 className="font-sans text-[clamp(2.6rem,6.5vw,7.25rem)] font-medium leading-[0.98] tracking-tightest text-bone">
-                <Scramble text={item.title} />
+                <Scramble text={item.title} active={active} />
               </h3>
               <p className="mt-3 text-lg leading-relaxed text-bone-dim">
-                <Scramble text={item.tag} duration={720} />.
+                <Scramble text={item.tag} duration={720} active={active} />.
               </p>
               <div className="relative mt-6 h-[2px] w-full max-w-[26rem] overflow-hidden rounded-full bg-white/12">
                 <motion.div style={{ scaleX: activeIdx === 0 ? fillA : fillB }} className={BAR_FILL} />
@@ -274,10 +306,31 @@ export default function CapabilitiesScroll() {
         </div>
       </section>
 
-      {/* Mobile: static stacked */}
-      <div className="lg:hidden">
-        <StaticStack />
-      </div>
+    </>
+  );
+}
+
+export default function CapabilitiesScroll() {
+  const reduced = useReducedMotion();
+  const [desktop, setDesktop] = useState(false);
+
+  useEffect(() => {
+    const media = window.matchMedia("(min-width: 1024px)");
+    const update = () => setDesktop(media.matches);
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
+
+  if (reduced) return <StaticStack />;
+  if (desktop) return <AnimatedCapabilities />;
+
+  return (
+    <>
+      {/* Reserve the desktop track's exact space before hydration; mobile
+          never mounts the hidden scroll listeners or scramble timers. */}
+      <div aria-hidden="true" className="relative hidden h-[170vh] lg:mt-[12vh] lg:block" />
+      <div className="lg:hidden"><StaticStack /></div>
     </>
   );
 }

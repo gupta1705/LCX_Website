@@ -3,6 +3,7 @@ import "./globals.css";
 import SceneBackground from "@/components/three/SceneBackground";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import VisibleDecorations from "@/components/ui/VisibleDecorations";
 
 // "The Engraved Ledger" type system — three rarely-used faces, one idea:
 // the site behaves like an engraved certificate of value (gold on near-black,
@@ -23,7 +24,7 @@ const sans = Schibsted_Grotesk({
 // read as extra "o" shapes at a glance).
 const serif = Zilla_Slab({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500"],
   style: ["normal", "italic"],
   variable: "--font-serif",
   display: "swap",
@@ -78,6 +79,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${sans.variable} ${serif.variable} ${mono.variable}`}>
       <body className="font-sans antialiased">
+        <VisibleDecorations />
         {/* The golden scene begins below the video hero and stays behind
             the remaining sections as the visitor scrolls. */}
         <SceneBackground />

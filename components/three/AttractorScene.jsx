@@ -6,6 +6,7 @@ import * as THREE from "three";
 import { GlowPipeline, VIGNETTE_GLSL } from "./GlowPipeline";
 import { topEdgeOffset } from "./placeAttractorBelowEdge.mjs";
 import { scenePixelRatio } from "./renderBudget.mjs";
+import { createFrameBudget, frameEase } from "@/lib/device-performance.mjs";
 
 /* ------------------------------------------------------------------ */
 /*  ONE Lorenz attractor, treated like a camera subject (the Axiom     */
@@ -270,7 +271,7 @@ void main() {
   #include <colorspace_fragment>
 }`;
 
-function LorenzAttractor({ active }) {
+function LorenzAttractor({ budget }) {
   const entrance = useRef();
   const group = useRef();
   const cursor = useRef();
@@ -379,8 +380,8 @@ function LorenzAttractor({ active }) {
   }, []);
 
   useFrame((state, delta) => {
-    if (!active) return;
-    delta = Math.min(delta, 0.05); // Resume smoothly after an offscreen/tab pause.
+    if (!budget.draw) return;
+    delta = Math.min(budget.delta, 0.1);
     const g = group.current;
     if (!g) return;
     const t = state.clock.elapsedTime;
@@ -402,9 +403,12 @@ function LorenzAttractor({ active }) {
     const kf = smoothstep(kt - ki);
     const KA = KEYS[ki];
     const KB = KEYS[ki + 1];
-    g.position.x += (KA.p[0] + (KB.p[0] - KA.p[0]) * kf - g.position.x) * 0.085;
-    g.position.y += (KA.p[1] + (KB.p[1] - KA.p[1]) * kf - g.position.y) * 0.085;
-    g.position.z += (KA.p[2] + (KB.p[2] - KA.p[2]) * kf - g.position.z) * 0.085;
+    const positionEase = frameEase(0.085, delta);
+    const rotationEase = frameEase(0.095, delta);
+    const cursorEase = frameEase(0.15, delta);
+    g.position.x += (KA.p[0] + (KB.p[0] - KA.p[0]) * kf - g.position.x) * positionEase;
+    g.position.y += (KA.p[1] + (KB.p[1] - KA.p[1]) * kf - g.position.y) * positionEase;
+    g.position.z += (KA.p[2] + (KB.p[2] - KA.p[2]) * kf - g.position.z) * positionEase;
     const tS = KA.s + (KB.s - KA.s) * kf;
     const tRx = KA.r[0] + (KB.r[0] - KA.r[0]) * kf;
     const tRy = KA.r[1] + (KB.r[1] - KA.r[1]) * kf;
@@ -413,9 +417,9 @@ function LorenzAttractor({ active }) {
     // ambient spin layered on the keyframed pose — faster while scrolling, and
     // the form compresses slightly in motion, relaxing open at rest
     ambient.current += delta * (0.05 + swirl.current * SWIRL_GAIN);
-    g.rotation.x += (tRx + pointer.y * 0.4 - g.rotation.x) * 0.095;
-    g.rotation.y += (tRy + ambient.current - g.rotation.y) * 0.095;
-    g.rotation.z += (tRz + pointer.x * 0.3 - g.rotation.z) * 0.095;
+    g.rotation.x += (tRx + pointer.y * 0.4 - g.rotation.x) * rotationEase;
+    g.rotation.y += (tRy + ambient.current - g.rotation.y) * rotationEase;
+    g.rotation.z += (tRz + pointer.x * 0.3 - g.rotation.z) * rotationEase;
     g.scale.setScalar(
       tS * (1 + Math.sin(t * 0.4) * 0.02) * (1 - COMPRESS * Math.min(swirl.current, 1)),
     );
@@ -453,11 +457,11 @@ function LorenzAttractor({ active }) {
     if (cursor.current) {
       cursor.current.position.set(cx, cy, glowZ);
       const targetScale = 1 + Math.min(speed * 0.4, 2.2);
-      cursor.current.scale.setScalar(cursor.current.scale.x + (targetScale - cursor.current.scale.x) * 0.15);
+      cursor.current.scale.setScalar(cursor.current.scale.x + (targetScale - cursor.current.scale.x) * cursorEase);
       // solid focal dot whenever a fine pointer is on the page (the centre of
       // the parted "eye"), swelling slightly with movement
       const targetOp = fine && hasPointer.current ? Math.min(0.8 + speed * 0.05, 0.95) : 0;
-      cursor.current.material.opacity += (targetOp - cursor.current.material.opacity) * 0.15;
+      cursor.current.material.opacity += (targetOp - cursor.current.material.opacity) * cursorEase;
     }
 
     // --- the cursor's sight-line in the attractor's LOCAL space: from the
@@ -510,9 +514,10 @@ function LorenzAttractor({ active }) {
 // straight to the screen, then the glow composited on top. Threshold,
 // smoothing and radius are the old <Bloom> props; intensity is lower than
 // its 1.05 to match its look from the lower-res source (see GlowPipeline).
-function GlowRenderer({ active }) {
+function GlowRenderer({ active, budget, fps, onReady }) {
   const { gl, scene, camera, size, viewport } = useThree();
   const glowAge = useRef(Infinity);
+  const notified = useRef(false);
   useEffect(() => { glowAge.current = Infinity; }, [active]);
   const pipeline = useMemo(
     () =>
@@ -536,16 +541,18 @@ function GlowRenderer({ active }) {
   }, [gl, pipeline, size.width, size.height, viewport.dpr]);
 
   useFrame((_, delta) => {
-    if (!active) return;
+    if (!budget.draw) return;
+    delta = budget.delta;
     const autoClear = gl.autoClear;
     gl.autoClear = false;
     // The soft halo can refresh at 30 Hz while the crisp geometry and pointer
     // keep the display's full frame rate. Reuse its texture between updates.
     glowAge.current += delta;
-    if (glowAge.current >= 1 / 30) {
+    const glowInterval = fps <= 30 ? 1 / 15 : 1 / 30;
+    if (glowAge.current >= glowInterval) {
       SHARED.uVignette.value = 0;
       pipeline.renderGlow(gl, scene, camera);
-      glowAge.current = Number.isFinite(glowAge.current) ? glowAge.current % (1 / 30) : 0;
+      glowAge.current = Number.isFinite(glowAge.current) ? glowAge.current % glowInterval : 0;
     }
     SHARED.uVignette.value = 1;
     gl.setRenderTarget(null);
@@ -553,12 +560,13 @@ function GlowRenderer({ active }) {
     gl.render(scene, camera);
     pipeline.composite(gl);
     gl.autoClear = autoClear;
+    if (!notified.current) { notified.current = true; onReady?.(); }
   }, 1);
 
   return null;
 }
 
-function FloatingDust({ count = 200, active }) {
+function FloatingDust({ count = 200, budget }) {
   const ref = useRef();
   const positions = useMemo(() => {
     const arr = new Float32Array(count * 3);
@@ -575,7 +583,7 @@ function FloatingDust({ count = 200, active }) {
   }, [count]);
 
   useFrame((state, delta) => {
-    if (active && ref.current) ref.current.rotation.y += Math.min(delta, 0.05) * 0.012;
+    if (budget.draw && ref.current) ref.current.rotation.y += budget.delta * 0.012;
   });
 
   return (
@@ -588,10 +596,11 @@ function FloatingDust({ count = 200, active }) {
   );
 }
 
-function AdaptiveResolution({ active, onChange }) {
+function AdaptiveResolution({ active, fps, onChange, onStruggle }) {
   const { size } = useThree();
   const quality = useRef(1);
   const sample = useRef({ seconds: 0, frames: 0 });
+  const slowSamples = useRef(0);
   useEffect(() => {
     onChange(scenePixelRatio(size.width, size.height, window.devicePixelRatio, quality.current));
     sample.current = { seconds: 0, frames: 0 };
@@ -599,11 +608,15 @@ function AdaptiveResolution({ active, onChange }) {
   useFrame((_, delta) => {
     // Ignore tab resumes, then require a sustained slow sample before reducing
     // resolution. Only step down: no constant quality oscillation/reallocation.
-    if (!active || delta <= 0 || delta > 0.2 || quality.current <= 0.7) return;
+    if (!active || delta <= 0 || delta > 0.5) return;
     sample.current.seconds += delta;
     sample.current.frames++;
     if (sample.current.seconds < 3) return;
-    if (sample.current.frames / sample.current.seconds < 50) {
+    const measured = sample.current.frames / sample.current.seconds;
+    if (measured < 18) slowSamples.current++;
+    else slowSamples.current = 0;
+    if (slowSamples.current >= 2 && quality.current <= 0.7) onStruggle?.();
+    if (measured < fps * 0.83 && quality.current > 0.7) {
       quality.current = Math.max(0.7, quality.current - 0.15);
       onChange(scenePixelRatio(size.width, size.height, window.devicePixelRatio, quality.current));
     }
@@ -612,23 +625,30 @@ function AdaptiveResolution({ active, onChange }) {
   return null;
 }
 
-export default function AttractorScene({ active = true }) {
+function FrameBudget({ active, budget }) {
+  useFrame((_, delta) => budget.advance(delta, active), -2);
+  return null;
+}
+
+export default function AttractorScene({ active = true, fps = 60, onReady, onStruggle }) {
   const [dpr, setDpr] = useState(1);
+  const budget = useMemo(() => createFrameBudget(fps), [fps]);
 
   return (
     <Canvas
       dpr={dpr}
-      gl={{ antialias: false, alpha: true, powerPreference: "high-performance" }}
+      gl={{ antialias: false, alpha: true, powerPreference: "default" }}
       camera={{ position: [0, 0, 9.5], fov: 45 }}
       style={{ background: "transparent" }}
       eventSource={typeof document !== "undefined" ? document.documentElement : undefined}
       eventPrefix="client"
     >
       <fog attach="fog" args={["#0a0908", 9, 22]} />
-      <AdaptiveResolution active={active} onChange={setDpr} />
-      <LorenzAttractor active={active} />
-      <FloatingDust active={active} />
-      <GlowRenderer active={active} />
+      <FrameBudget active={active} budget={budget} />
+      <AdaptiveResolution active={active} fps={fps} onChange={setDpr} onStruggle={onStruggle} />
+      <LorenzAttractor budget={budget} />
+      <FloatingDust budget={budget} />
+      <GlowRenderer active={active} budget={budget} fps={fps} onReady={onReady} />
     </Canvas>
   );
 }

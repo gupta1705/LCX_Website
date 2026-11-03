@@ -54,6 +54,7 @@ body {
     background-clip: text;
     color: transparent;
     @apply animate-shimmer;
+    animation-play-state: var(--decoration-animation-state, paused);
   }
 
   /* Gold light-flow: a concentrated bright sheen sweeps across an accent word
@@ -75,7 +76,7 @@ body {
     color: transparent;
     filter: drop-shadow(0 0 7px rgba(241, 208, 138, 0.35));
     animation: gold-flow 3.6s ease-in-out infinite;
-    animation-play-state: var(--hero-animation-state, running);
+    animation-play-state: var(--decoration-animation-state, paused);
   }
 
   /* Text link with an underline that draws in from the left on hover/focus

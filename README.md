@@ -96,7 +96,7 @@ After `npm install`, run:
 node --test
 ```
 
-This runs the unit tests for the render budget, attractor placement and the Gmail draft builder.
+This runs the unit tests for device/frame budgets, video playback and buffering, attractor placement, and the Gmail draft builder.
 
 More detail on the design system, fonts and architecture is in
 [`TECH_STACK_DOCUMENTATION.md`](TECH_STACK_DOCUMENTATION.md).
